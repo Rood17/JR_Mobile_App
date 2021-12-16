@@ -20,6 +20,8 @@
  import MiPerfil_2 from './app/components/pages/MiPerfil_2'
  import ForgottenPwd from './app/components/pages/ForgottenPwd'
  import Recharge from './app/components/Payments/Recharge';
+ import Recharge_2 from './app/components/Payments/Recharge_2'
+ import Recharge_3 from './app/components/Payments/Recharge_3'
 
  import {MAIN_CONTAINER_STYLE} from './app/res/values/styles/StylesConstants'
  import {
@@ -61,13 +63,15 @@
   //<MiPerfil_2>
 
   // Pagos
-  //<Recarga />
+  //<Recharge />
+  //<Recharge_2 />
+  //<Recharge_3 />
 
 
    return (
      <SafeAreaView style={MAIN_CONTAINER_STYLE}>
        <StatusBarHandler hideBar={true} />
-       {showIntro ? <Intro/> : <Recharge />}
+       {showIntro ? <Intro/> : <Recharge_3 />}
         
      </SafeAreaView>
    );
