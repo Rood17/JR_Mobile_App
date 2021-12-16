@@ -29,7 +29,7 @@ import {
 } from 'react-native';
 
 // Card
-export const CardPerfil = ({ }) => {
+export const CardPerfil = () => {
     return (
 
         <View style={stylesCardPerfil.boxShadow}>
@@ -46,7 +46,6 @@ export const CardPerfil = ({ }) => {
                 <View style={stylesCardPerfil.headContainer}>
                     <Input
                         placeholder="[Cargar nombre del usuario]"
-                        keyboardType='dafault'
                         autoComplete='name'
                         secureTextEntry={false}
                         leftIcon={{ type: 'font-awesome', name: 'user', size:18, color:'grey' }}
@@ -54,16 +53,13 @@ export const CardPerfil = ({ }) => {
                     />
                     <Input
                         placeholder="Apellido(s)"
-                        keyboardType='dafault'
-                        autoComplete='name-family'
                         secureTextEntry={false}
                         leftIcon={{ type: 'font-awesome', name: 'user', size:18, color:'grey'  }}
                         onChangeText={text => onChangeLastName(text)}
                     />
                     <Input
                         placeholder="[Cargar email del usuario]"
-                        keyboardType='dafault'
-                        textContentType='email'
+                        textContentType='emailAddress'
                         keyboardType='email-address'
                         secureTextEntry={false}
                         autoComplete='email'
@@ -74,7 +70,6 @@ export const CardPerfil = ({ }) => {
                     </View>
                     <Input
                         placeholder="Introducir Actual contraseña"
-                        keyboardType='dafault'
                         textContentType='password'
                         maxLength={constants.MAX_NUMBER_LENGTH}
                         secureTextEntry={true}

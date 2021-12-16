@@ -188,7 +188,7 @@ const Register_2: () => Node = ({ recovery }) => {
                                 <View>
                                     <Input
                                         placeholder="Email"
-                                        textContentType='email'
+                                        textContentType='emailAddress'
                                         keyboardType='email-address'
                                         autoComplete='email'
                                         secureTextEntry={false}
