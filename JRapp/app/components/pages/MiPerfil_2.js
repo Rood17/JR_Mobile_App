@@ -59,7 +59,7 @@ export const CardPerfil = () => {
                     />
                     <Input
                         placeholder="[Cargar email del usuario]"
-                        textContentType='email'
+                        textContentType='emailAddress'
                         keyboardType='email-address'
                         secureTextEntry={false}
                         autoComplete='email'
