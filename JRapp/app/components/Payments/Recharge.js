@@ -100,7 +100,9 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor }) => {
 const stylesMainCard = StyleSheet.create({
     inputContainer: {
         width: '100%',
-        padding: 20
+        paddingTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     headContainer: {
         padding: 5,
@@ -174,19 +176,19 @@ export const MoneyCard = () => {
                     style={stylesMoneyCard.box}
                     onPress={() => setGbProduct(5)}
                 >
-                    <Text>$20</Text>
+                    <Text>$100</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                     style={stylesMoneyCard.box}
                     onPress={() => setGbProduct(5)}
                 >
-                    <Text>$30</Text>
+                    <Text>$150</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                     style={stylesMoneyCard.box}
                     onPress={() => setGbProduct(5)}
                 >
-                    <Text>$50</Text>
+                    <Text>$200</Text>
                 </TouchableHighlight>
             </View>
             <View style={stylesMoneyCard.horizontalCard}>
@@ -194,19 +196,19 @@ export const MoneyCard = () => {
                     style={stylesMoneyCard.box}
                     onPress={() => setGbProduct(5)}
                 >
-                    <Text>$20</Text>
+                    <Text style={{alignItems:'center'}}>$300</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                     style={stylesMoneyCard.box}
                     onPress={() => setGbProduct(5)}
                 >
-                    <Text>$30</Text>
+                    <Text>$400</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                     style={stylesMoneyCard.box}
                     onPress={() => setGbProduct(5)}
                 >
-                    <Text>$50</Text>
+                    <Text>$500</Text>
                 </TouchableHighlight>
             </View>
         </View>
@@ -218,15 +220,22 @@ const stylesMoneyCard = StyleSheet.create({
 
     },
     horizontalCard: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+
     },
     box: {
-        borderColor: 'red',
+        borderColor: styleConst.MAINCOLORSLIGHT[3],
         padding: 5,
-        borderWidth: 1
+        borderWidth: .8,
+        width:70,
+        height:70,
+        alignItems:'center',
+        backgroundColor:styleConst.MAINCOLORSLIGHT[0],
+        justifyContent: 'center',
+
     },
     boxShadow: {
-        marginTop: 0,
+        marginTop: 10,
         margin: 20,
         backgroundColor: 'white',
         shadowColor: "#000",
@@ -238,6 +247,7 @@ const stylesMoneyCard = StyleSheet.create({
         shadowRadius: 4.65,
 
         elevation: 6,
+        alignItems:'center'
     }
 });
 
@@ -332,8 +342,8 @@ const OverlayModal = () => {
     return (
         <View>
             <View style={{ alignItems: 'center' }}>
-                <View style={styles.iconContainer}>
-                    <View style={styles.icon}>
+                <View style={modalStyle.iconContainer}>
+                    <View style={modalStyle.icon}>
                         <Icon
                             raised
                             name='dropbox'
@@ -342,7 +352,7 @@ const OverlayModal = () => {
                             onPress={togglePlans} />
                         <Text>Planes JR</Text>
                     </View>
-                    <View style={styles.icon}>
+                    <View style={modalStyle.icon}>
                         <Icon
                             raised
                             name='dollar'
@@ -374,8 +384,8 @@ const OverlayModal = () => {
             <Overlay isVisible={visible2} onBackdropPress={togglePrices}>
                 <View style={modalStyle.headContainer}>
                     <Text style={modalStyle.headTxt}>Recarga Saldo</Text>
-                    <View style={modalStyle.bodyContainer}>
-                        <Text style={{ margin: 15 }}>Slecciona una compra</Text>
+                    <View style={[modalStyle.bodyContainer, {width:'100%', marginTop:20}]}>
+                        <Text style={{ margin: 15, width:'100%' }}>Slecciona una compra</Text>
                         <MoneyCard />
                     </View>
                     <View style={modalStyle.footer}>
@@ -392,10 +402,14 @@ const OverlayModal = () => {
 const modalStyle = StyleSheet.create({
     headContainer: {
         margin: 20,
-        alignItems: 'center'
+        alignItems:'center',
+        justifyContent:'center'
     },
     bodyContainer: {
         width: '80%',
+        alignItems:'center',
+        justifyContent:'center'
+        
 
     },
     footer: {
@@ -405,13 +419,24 @@ const modalStyle = StyleSheet.create({
         fontWeight: 'bold',
         color: styleConst.MAINCOLORS[1]
     },
+    iconContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginBottom:20
+    },
+    icon: {
+        alignItems: 'center',
+        flexBasis: '35%',
+    },
 });
 
-const Recharge = () => {
+const Recharge = (chargeResume) => {
     // header, text, icon
+    chargeResume = 'Plan JR 50'
     return (
         <>
-            <View style={styles.container} >
+            <ScrollView style={styles.container} >
                 <ReturnHeader title='Recarga de saldo' />
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
@@ -427,7 +452,7 @@ const Recharge = () => {
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>Plan 50</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{chargeResume}</Text>
                         </TouchableOpacity>
 
 
@@ -436,17 +461,36 @@ const Recharge = () => {
                         <View style={styles.inline}>
                             <LetterCircle insightData={2} color={1} />
                         </View>
-                        <View style={styles.inline}>
+                        <View style={{ marginLeft: 15 }}>
                             <Text>Realiza tu pago.</Text>
                         </View>
-                        <View style={{marginLeft:15}3
-                    325.}>
-                            <Text style={}>tertyyyyyy</Text>
-                        </View>
                     </View>
-
+                    <View style={styles.cardsContainer}>
+                        <View style={styles.cardsLogo}>
+                        <Image
+                            style={{ height: 50,width:50}}
+                            source={require('../../res/drawable/logo/cards/mc.jpg')}
+                        />
+                        </View>
+                        <View style={[styles.cardsLogo, {height:40}]}>
+                        <Image
+                            style={{ height: 20,width:60}}
+                            source={require('../../res/drawable/logo/cards/visa.png')}
+                        />
+                        </View>
+                        <View style={styles.cardsLogo}>
+                        <Image
+                            style={{ height: 30,width:50, marginLeft:15}}
+                            source={require('../../res/drawable/logo/cards/ae.jpg')}
+                        />
+                        </View>
+                        
+                
+                        
+                        <Text></Text>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </>
     );
 }
@@ -482,19 +526,21 @@ const styles = StyleSheet.create({
         flex: 2,
         alignItems: 'center'
     },
-    iconContainer: {
+    
+    cardsContainer: {
+        marginTop: 0,
+        marginLeft: 40,
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center'
+        alignItems: 'center'
+
     },
-    icon: {
-        alignItems: 'center',
-        flexBasis: '35%',
+    cardsLogo: {
+        width: 50,
+        height:50,
+        margin:5,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    inline:{
-        
-    }
-    ,
 });
 
 export default Recharge;

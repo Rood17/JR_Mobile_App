@@ -29,7 +29,7 @@ import {
 } from 'react-native';
 
 // Card
-export const CardPerfil = ({ }) => {
+export const CardPerfil = () => {
     return (
 
         <View style={stylesCardPerfil.boxShadow}>
