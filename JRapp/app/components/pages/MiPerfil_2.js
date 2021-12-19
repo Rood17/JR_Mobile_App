@@ -64,6 +64,7 @@ export const CardPerfil = () => {
                         secureTextEntry={false}
                         autoComplete='email'
                         leftIcon={{ type: 'font-awesome', name: 'envelope', size:18, color:'grey'  }}
+                        onChangeText={pwd => onChangeOldPwd(pwd)}
                     />
                     <View style={stylesCardPerfil.pwdContainer}>
                         <Text>Cambio de Contraseña</Text>
@@ -75,7 +76,7 @@ export const CardPerfil = () => {
                         secureTextEntry={true}
                         leftIcon={{ type: 'font-awesome', name: 'lock', size:18, color:'grey'  }}
                         color={styleConst.MAINCOLORS[1]}
-                        onChangeText={text => onChangeText(text)}
+                        onChangeText={pwd => onChangeNewPwd(pwd)}
                     />
                     <NewPwd 
                     emailPass={false}

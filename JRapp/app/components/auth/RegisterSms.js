@@ -48,13 +48,13 @@ const RegisterSms: () => Node = () => {
     const [pass2, setPass2] = useState(true);
     const [btnDisabledFlag, setBtnDisabledFlag] = useState(true)
     const [numberAgain, setNumberAgain] = useState(false);
-    const codeBase = 666
+    const codeBase = 6666
     const numberBaseData = 88555
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
 
 
     const onChangeCode = (code) => {
-        if (code === codeBase) {
+        if (code == codeBase) {
             setPass1(true)
         } else {
             setPass1(false)
@@ -71,7 +71,7 @@ const RegisterSms: () => Node = () => {
     }
 
     useEffect(() => {
-        if (pass1 && pass2)
+        if (pass1)
             setBtnDisabledFlag(false)
         else
             setBtnDisabledFlag(true)
@@ -92,7 +92,7 @@ const RegisterSms: () => Node = () => {
                         <Input
                             placeholder="Código SMS"
                             keyboardType='number-pad'
-                            maxLength={constants.MAX_NUMBER_LENGTH}
+                            maxLength={4}
                             secureTextEntry={false}
                             leftIcon={{ type: 'font-awesome', name: 'key', size: 18, color: 'grey' }}
                             onChangeText={code => onChangeCode(code)}

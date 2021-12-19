@@ -71,7 +71,7 @@
    return (
      <SafeAreaView style={MAIN_CONTAINER_STYLE}>
        <StatusBarHandler hideBar={true} />
-       {showIntro ? <Intro/> : <Recharge_3 />}
+       {showIntro ? <Intro/> : <Asistance />}
         
      </SafeAreaView>
    );

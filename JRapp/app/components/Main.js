@@ -103,7 +103,7 @@ const Main = () => {
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
     // respuesta Api
-    const validityUser = ' 2021/12/16'
+    const validityUser = ' 2021/12/18'
     const validityUserCode = validityUser.replace(/\//g, '')
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
@@ -147,7 +147,7 @@ const Main = () => {
                     </View>
                     <View>
                         <MainCard
-                            title='PLAN JR Master'
+                            title='Carga - $50'
                             subtitle={validityResponse}
                             subtitleColor={validityColor}
                             bodyHeadOne='MB Totales'

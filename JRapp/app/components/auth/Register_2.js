@@ -93,7 +93,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label }) => {
         }
         else {
             setChackColor3('grey');
-            isBold3 = ''
+            isBold3 = 'normal'
             if (i === pass3 - 1)
                 pass3 = undefined
         }

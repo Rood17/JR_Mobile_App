@@ -49,7 +49,7 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor }) => {
             } else {
                 setDisplayColor('red')
                 setDisabledBtn(true)
-                setErrorMsg('Este número aún no tiene una cuenta registrada.')
+                setErrorMsg('El número de tarjeta es incorrecto.')
             }
 
         }
@@ -68,7 +68,7 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor }) => {
             <View style={stylesMainCard.inputContainer}>
                 <Text>Introduce el número a recargar</Text>
                 <Input
-                    placeholder="Tarjeta (10 dígitos)"
+                    placeholder="Tarjeta (16 dígitos)"
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
@@ -107,7 +107,6 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor }) => {
                         <Input
                             placeholder="Código Postal"
                             keyboardType='number-pad'
-                            errorMessage={errorMsg}
                             maxLength={constants.MAX_NUMBER_LENGTH}
                             style={{ borderBottomColor: displayColor, color: displayColor }}
                             onChangeText={number => onChangePostalC(number)}
