@@ -17,7 +17,9 @@ import * as constants from '../../utils/constants/Constants';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
-import { Icon, Input } from 'react-native-elements'
+import { Icon, Input, countDown } from 'react-native-elements'
+import { NavigationContainer, CommonActions } from '@react-navigation/native';
+
 
 import {
     Button,
@@ -41,19 +43,75 @@ import {
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+// Global Vars
+let countPass = 0
+const numberBaseDatos = '666';
+const oldNumber = 5555555555;
+const codeBase = 6666
+const numberBaseData = 88555
+
+const TouchableBtn = ({ text, finish, countDown, action, disabledSms }) => {
+    let sendAgainColor = '';
+    let disabled = false;
+
+    if (countDown != null || finish) {
+        disabled = true
+    }
+    else {
+        disabled = false;
+    }
+
+    if (disabledSms != null) {
+        if (disabledSms) {
+            disabled = true
+        } else {
+            disabled = false
+        }
+    }
+
+    // Set Colors
+    if (disabled)
+        sendAgainColor = styleConst.MAINCOLORSLIGHT[2]
+    else
+        sendAgainColor = styleConst.MAINCOLORSLIGHT[1]
+
+
+
+    return (
+        <>
+            {disabled ?
+                <Text style={[styles.phoneTxt, { color: sendAgainColor, textAlign: 'center' }]}>{text} {countDown}</Text>
+                :
+                <TouchableOpacity
+                    style={{ alignItems: 'center' }}
+                    onPress={action}
+                >
+                    <Text style={[styles.phoneTxt, { color: sendAgainColor }]}>{text} {countDown}</Text>
+                </TouchableOpacity>
+            }
+        </>
+    );
+}
+
+
 // Btn Disabled Flaf Team
-const RegisterSms: () => Node = () => {
+const RegisterSms: () => Node = ({ navigation, route }) => {
 
     const [pass1, setPass1] = useState(false);
     const [pass2, setPass2] = useState(true);
     const [btnDisabledFlag, setBtnDisabledFlag] = useState(true)
     const [numberAgain, setNumberAgain] = useState(false);
-    const codeBase = 6666
-    const numberBaseData = 88555
+    const [returnRegister, setReturnRegister] = useState(false);
+    const [isFinish, setIsFinish] = useState(false);
+    const [smsSendDisabled, setSmsSendDisabled] = useState(true)
+    const [btnText, setBtnText] = useState('Siguiente');
+    const [countDown, setCountDown] = useState(1);
+
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
 
 
     const onChangeCode = (code) => {
+        console.log(code)
         if (code == codeBase) {
             setPass1(true)
         } else {
@@ -61,10 +119,33 @@ const RegisterSms: () => Node = () => {
         }
     }
 
+    // Verify Number
+    const verifyNumber = (number) => {
+
+        if (number.length == constants.MAX_NUMBER_LENGTH) {
+            if (number == oldNumber) {
+                setSmsSendDisabled(true)
+                setReturnRegister(true)
+                return
+            }
+            if (number.toString().indexOf(numberBaseDatos) != -1)
+                setSmsSendDisabled(false)
+            else
+                setSmsSendDisabled(true)
+        } else {
+            setSmsSendDisabled(true)
+        }
+
+    }
+
     const onChangeNumber = (number) => {
         if (numberBaseData.toString().indexOf(number) != -1) {
             setPass2(true)
             // send sms
+            if (numberAgain) {
+                setBtnText('Siguiente')
+                setNumberAgain(false)
+            }
         } else {
             setPass2(false)
         }
@@ -75,66 +156,170 @@ const RegisterSms: () => Node = () => {
             setBtnDisabledFlag(false)
         else
             setBtnDisabledFlag(true)
+
+        // Count Down
+        setTimeout(() => {
+
+            // Finish
+            if (countDown === 99)
+                return
+
+            // If count is valid
+            if (countDown > 0) {
+                setCountDown(countDown - 1);
+            }
+
+            // Set color btn send sms txt
+            if (countDown == 0) {
+                setCountDown(null);
+            }
+
+        }, 1000);
+
+
+
     });
+
+    // SMS Handler
+    const smsHandler = (action) => {
+
+        // Set other number
+        if (action === 'Return') {
+            countPass = 0;
+            navigation.goBack()
+        }
+        // ReachLimit to send sms
+        if (isLimitReached(countPass))
+            return
+        // Sending again SMS
+        if (action === 'SendAgain') {
+            //alert('send SMS')
+            setCountDown(6)
+            countPass += 1;
+        } else if (action === 'SendAgain2') {
+            //alert('send SMS')
+            setNumberAgain(false)
+        }
+        // Set other number
+        if (action === 'NumberAgain') {
+
+            setNumberAgain(true)
+            setBtnText('Mandar Sms')
+        }
+    }
+
+    const isLimitReached = (countPass) => {
+
+        // Limit to send sms
+        if (countPass === 1) {
+            setReturnRegister(true)
+            setIsFinish(true)
+            return true
+        }
+
+        return false
+    }
+
+
+
+
 
     // Si viene de recuperar pwd no se muestra introducir número de nuevo
 
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
-            <ScrollView >
-                <View style={styles.logoContainer}>
-                    <DisplayLogo stylesLogo={styles.logo} />
-                </View>
-                <View style={styles.btnActionContainer}>
-                    <Text>Favor de ingresar el código enviado por SMS.</Text>
-                    <View>
-                        <Input
-                            placeholder="Código SMS"
-                            keyboardType='number-pad'
-                            maxLength={4}
-                            secureTextEntry={false}
-                            leftIcon={{ type: 'font-awesome', name: 'key', size: 18, color: 'grey' }}
-                            onChangeText={code => onChangeCode(code)}
-                        />
-                        {numberAgain ?
-                            <Input
-                                placeholder="Apellido(s)"
-                                secureTextEntry={false}
-                                leftIcon={{ type: 'font-awesome', name: 'mobile', size: 24, color: 'grey' }}
-                                onChangeText={number => onChangeNumber(number)}
-                                maxLength={constants.MAX_NUMBER_LENGTH}
-                            />
-                            : null}
+                <ScrollView >
+                    <View style={styles.logoContainer}>
+                        <DisplayLogo stylesLogo={styles.logo} />
+                    </View>
+                    <View style={styles.btnActionContainer}>
+
+                        <View>
+
+                            {numberAgain ?
+                                <>
+                                    <Text>Favor de ingresar de nuevo un número.</Text>
+                                    <Input
+                                        placeholder="Número JR Movil"
+                                        secureTextEntry={false}
+                                        keyboardType='number-pad'
+                                        leftIcon={{ type: 'font-awesome', name: 'mobile', size: 24, color: 'grey' }}
+                                        onChangeText={number => verifyNumber(number)}
+                                        maxLength={constants.MAX_NUMBER_LENGTH}
+                                    />
+                                </>
+                                :
+                                <>
+                                    <Text>Favor de ingresar el código enviado por SMS.</Text>
+                                    <Input
+                                        placeholder="Código SMS"
+                                        keyboardType='number-pad'
+                                        maxLength={4}
+                                        secureTextEntry={false}
+                                        leftIcon={{ type: 'font-awesome', name: 'key', size: 18, color: 'grey' }}
+                                        onChangeText={code => onChangeCode(code)}
+                                    />
+                                </>
+                            }
+
+
+                        </View>
+                        <View>
+                            {numberAgain ?
+                                null
+
+                                :
+                                <IntentBtn
+                                    isDisabled={btnDisabledFlag}
+                                    intent='Register_2'
+                                    navigation={navigation}
+                                    btnText={btnText} />
+                            }
+                            <View style={{ alignItems: 'center' }}>
+                                {!numberAgain ?
+                                    <View style={styles.btnsContainer}>
+                                        <TouchableBtn
+                                            text='Mandar SMS de nuevo'
+                                            finish={isFinish}
+                                            countDown={countDown}
+                                            action={() => smsHandler('SendAgain')}
+                                        />
+                                        <Text>  /  </Text>
+                                        <TouchableBtn
+                                            text='Introducir otro número'
+                                            finish={isFinish}
+                                            action={() => smsHandler('NumberAgain')}
+                                        />
+                                    </View>
+                                    : <TouchableBtn
+                                        text='Mandar SMS'
+                                        disabledSms={smsSendDisabled}
+                                        action={() => smsHandler('SendAgain2')}
+                                    />}
+                                {returnRegister ?
+                                    <View style={styles.btnsContainer}>
+                                        <TouchableOpacity onPress={() => smsHandler('Return')} style={{ alignItems: 'center' }}>
+                                            <Text style={[styles.phoneTxt]}>Regresar</Text>
+                                        </TouchableOpacity>
+
+                                    </View>
+                                    :
+                                    null}
+                            </View>
+                        </View>
                         {!pass2 ?
-                            <View style={{alignItems:'center'}}>
+                            <View style={{ alignItems: 'center' }}>
                                 <Text>Este número ya está registrado.
                                     <TouchableWithoutFeedback>
-                                        <Text> Ingresar</Text>
+                                        <Text style={{ color: styleConst.MAINCOLORS[0] }}> Ingresar</Text>
                                     </TouchableWithoutFeedback></Text>
                             </View>
                             : null}
-
                     </View>
-                    <View>
-                        <IntentBtn
-                            isDisabled={btnDisabledFlag}
-                            intent='goToMain'
-                            btnText='Siguiente' />
-                        <TouchableOpacity onPress={() => setNumberAgain(true)} style={{alignItems:'center'}}>
-                        <Text style={styles.phoneTxt}>Introducir otro número</Text>
-
-                        </TouchableOpacity>
-                    </View>
-
-
-
-                </View>
-
-                
-            </ScrollView>
-        </TouchableWithoutFeedback>
-        <Help />
+                </ScrollView>
+            </TouchableWithoutFeedback>
+            <Help navigation={navigation} />
         </View>
     );
 };
@@ -156,6 +341,9 @@ const styles = StyleSheet.create({
     helpContainer: {
         flex: 1,
         marginTop: '48%'
+    },
+    btnsContainer: {
+        flexDirection: 'row',
     },
     logo: {
         flex: 1,

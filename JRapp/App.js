@@ -9,6 +9,8 @@
 import React, { useState } from 'react';
 import type { Node } from 'react';
 import StatusBarHandler from './app/utils/StatusBarHandler';
+
+// Views
 import Intro from './app/components/Intro'
 import Login from './app/components/auth/Login'
 import Register from './app/components/auth/Register'
@@ -81,7 +83,7 @@ const App: () => Node = () => {
       <SafeAreaView style={MAIN_CONTAINER_STYLE}>
         <StatusBarHandler hideBar={true} />
 
-        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="Register" screenOptions={{ headerShown: false }}>
           {
             showIntro ?
               <Stack.Screen name="Intro" component={Intro} />
@@ -98,8 +100,7 @@ const App: () => Node = () => {
           <Stack.Screen name="MiPerfil_2" component={MiPerfil_2} />
           <Stack.Screen name="Recharge" component={Recharge} />
           <Stack.Screen name="Recharge_2" component={Recharge_2} />
-          <Stack.Screen name="Recharge_3" component={Recharge_3} />
-
+          <Stack.Screen name="Recharge_3" component={Recharge_3} />   
         </Stack.Navigator>
       </SafeAreaView>
     </NavigationContainer>

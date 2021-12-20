@@ -43,7 +43,7 @@ import {
 // Btn Disabled Flaf Team
 let pass1, pass2, pass3, isBold1, isBold2, isBold3, i;
 
-export const NewPwd = ({ emailPass, goToIntent, btnTxt, label }) => {
+export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => {
 
 
     const [chackColor, setChackColor] = useState('grey');
@@ -67,7 +67,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label }) => {
         }
         else {
             setChackColor('grey');
-            isBold1 = ''
+            isBold1 = 'normal'
             if (i === pass1 - 1) {
                 pass1 = undefined
             }
@@ -145,7 +145,8 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label }) => {
                 </View>
                 <IntentBtn
                     isDisabled={btnDisabledFlag}
-                    intent={goToIntent}
+                    intent='Main'
+                    navigation={navigation}
                     btnText={btnTxt} />
             </View>
 
@@ -154,13 +155,13 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label }) => {
 
 }
 
-const Register_2: () => Node = ({ recovery }) => {
+const Register_2: () => Node = ({ recovery, navigation }) => {
 
     const [emailIsCorrect, setEmailIsCorrect] = useState(false);
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
 
     const onChangeEmail = (email) => {
-        if (email.indexOf('@') != -1 && email.indexOf('.com') != -1) {
+        if (email.indexOf('@') != -1 && email.indexOf('.') != -1) {
             setEmailIsCorrect(true)
             console.log('dentro : ' + emailIsCorrect)
         } else {
@@ -206,8 +207,9 @@ const Register_2: () => Node = ({ recovery }) => {
 
                         <NewPwd
                             label='Ingresar Nueva Contraseña'
-                            goToIntent='Registro'
+                            goToIntent='Register_Sms'
                             btnTxt='Registrarse'
+                            navigation={navigation}
                             emailPass={emailIsCorrect}
                         />
 
@@ -216,7 +218,7 @@ const Register_2: () => Node = ({ recovery }) => {
 
                 </ScrollView>
             </TouchableWithoutFeedback>
-            <Help />
+            <Help navigation={navigation}/>
         </View>
     );
 };

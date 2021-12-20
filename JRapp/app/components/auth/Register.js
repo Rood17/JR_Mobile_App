@@ -41,7 +41,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 // Btn Disabled Flaf Team
-const Register: () => Node = () => {
+const Register: () => Node = ({navigation}) => {
 
     const [pass1, setPass1] = useState(false);
     const [pass2, setPass2] = useState(false);
@@ -100,7 +100,8 @@ const Register: () => Node = () => {
                     <View>
                         <IntentBtn
                             isDisabled={btnDisabledFlag}
-                            intent='goToMain'
+                            navigation={navigation}
+                            intent='RegisterSms'
                             btnText='Ingresar' />
                     </View>
 
@@ -111,7 +112,7 @@ const Register: () => Node = () => {
                     
             </ScrollView>
         </TouchableWithoutFeedback>
-        <Help />
+        <Help navigation={navigation}/>
         </View>
     );
 };
