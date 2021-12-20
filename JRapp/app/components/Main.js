@@ -98,7 +98,7 @@ const stylesProductCard = StyleSheet.create({
     }
 });
 
-const Main = () => {
+const Main = ({navigation}) => {
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
@@ -191,7 +191,7 @@ const Main = () => {
                         </View>
                     </View>
                 </ScrollView>
-                <MainFooter />
+                <MainFooter navigation={navigation} />
             </View>
         </>
     );
