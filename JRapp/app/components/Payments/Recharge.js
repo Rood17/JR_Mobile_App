@@ -431,13 +431,13 @@ const modalStyle = StyleSheet.create({
     },
 });
 
-const Recharge = (chargeResume) => {
+const Recharge = ({navigation, chargeResume}) => {
     // header, text, icon
     chargeResume = 'Plan JR 50'
     return (
         <>
             <ScrollView style={styles.container} >
-                <ReturnHeader title='Recarga de saldo' />
+                <ReturnHeader title='Recarga de saldo' nav={navigation}/>
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>

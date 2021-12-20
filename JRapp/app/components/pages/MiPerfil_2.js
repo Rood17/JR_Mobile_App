@@ -163,11 +163,11 @@ const stylesCardPerfil = StyleSheet.create({
 });
 // END Card
 
-const MiPerfil = () => {
+const MiPerfil = ({navigation}) => {
     // header, text, icon
     return (
         <ScrollView style={styles.container} >
-            <ReturnHeader title='Administrar mi perfil' />
+            <ReturnHeader title='Administrar mi perfil' nav={navigation}/>
             <CardPerfil />
         </ScrollView>
 

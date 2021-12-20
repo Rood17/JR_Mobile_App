@@ -299,15 +299,10 @@ const SocialSimpleCard = StyleSheet.create({
 // END Card
 
 // Retorn Header
-export const ReturnHeader = ({ title }) => {
-
-    const onPress = () => {
-        alert("Go to Back")
-    }
-
+export const ReturnHeader = ({ title, nav }) => {
     return (
         <>
-            <TouchableOpacity style={stylesReturn.container} onPress={onPress}>
+            <TouchableOpacity style={stylesReturn.container} onPress={() => nav.goBack()}>
                 <View style={stylesReturn.returnElement}>
                     <Icon
                         name='arrow-left'
@@ -418,7 +413,7 @@ const styleHeadMain = StyleSheet.create({
         height: 65,
         backgroundColor: styleConst.MAINCOLORS[0],
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     returnHeadTxt: {
         color: 'white',
@@ -428,7 +423,7 @@ const styleHeadMain = StyleSheet.create({
     },
     iconContainer: {
         marginLeft: 20,
-        flex: 0
+        flex: 0,
     },
     nameContainer: {
         margin: 10,
@@ -445,7 +440,7 @@ const styleHeadMain = StyleSheet.create({
 // END MainHeader
 
 // MainFooter
-export const MainFooter = ({ name }) => {
+export const MainFooter = ({ name, navigation}) => {
 
     const onPress = () => {
         //  console.log("goToAyuda")
@@ -454,39 +449,42 @@ export const MainFooter = ({ name }) => {
     return (
         <>
             <View style={styleFooterMain.container} onPress={onPress}>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                onPress={() => navigation.navigate('Main')}>
                     <Icon
                         name='home'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[1]}
-                        onPress={() => alert('ok..')}
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                onPress={() => navigation.navigate('Main')}>
                     <Icon
                         name='mobile'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        onPress={() => alert('ok..')}
+                        
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity 
+                onPress={() => navigation.navigate('Recharge')}
+                style={styleFooterMain.iconContainer}>
                     <Icon
                         name='file'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        onPress={() => alert('ok..')}
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Saldo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity 
+                onPress={() => navigation.navigate('Asistance')}
+                style={styleFooterMain.iconContainer}>
                     <Icon
                         name='question'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        onPress={() => alert('ok..')}
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Ayuda</Text>
                 </TouchableOpacity>

@@ -1,11 +1,12 @@
 
+import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, StyleSheet, Button, Keyboard } from 'react-native';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 
 let mainColor;
 
-const IntentBtn = ({ color, stylesBtn, stylesBtnText, intent, btnText, isDisabled }) => {
+const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation, intent, btnText, isDisabled }) => {
 
   //Here go the intent
   const goIntent = () => {
@@ -39,7 +40,7 @@ const IntentBtn = ({ color, stylesBtn, stylesBtnText, intent, btnText, isDisable
         :
         <Button
           //style={stylesBtn == null ? btnNormal() : stylesBtn}
-          onPress={() => goIntent()}
+          onPress={() => navigation.navigate(intent)}
           color={mainColor}
           title={btnText}
         />

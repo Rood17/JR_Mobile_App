@@ -128,14 +128,14 @@
 
  
  // Main
- const Recharge_2 = (chargeResume, numToCharge) => {
+ const Recharge_2 = (chargeResume, numToCharge,{navigation}) => {
      // header, text, icon
      chargeResume = 'Plan JR 50'
      numToCharge = '55 66 88 99'
      return (
          <>
              <ScrollView style={styles.container} >
-                 <ReturnHeader title='Recarga de saldo' />
+                 <ReturnHeader title='Recarga de saldo' nav={navigation} />
                  <View style={{ flex: 1 }}>
                      <View style={styles.promoContainer}>
                          <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>

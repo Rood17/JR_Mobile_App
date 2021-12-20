@@ -47,7 +47,7 @@ import {
 // Global Vars
 let isNumberJr = false;
 
-const PwdInput = () => {
+const PwdInput = ({ nav }) => {
     const [pwdFail, setPwdFail] = useState(false)
     const [disabledBtn, setDisabledBtn] = useState(true)
 
@@ -74,7 +74,8 @@ const PwdInput = () => {
                 null}
             <IntentBtn
                 isDisabled={disabledBtn}
-                intent='goToMain'
+                navigation={nav}
+                intent='Main'
                 btnText='Ingresar' />
             <View style={{ alignItems: 'center' }}>
                 <Text style={styles.phoneTxt}>¿Olvidaste tu contraseña?</Text>
@@ -85,13 +86,13 @@ const PwdInput = () => {
 
 }
 
-const PassOrRegister = ({ numberFlag }) => {
+const PassOrRegister = ({ numberFlag, navigation }) => {
     return (
         <>
             {numberFlag ?
-                <PwdInput />
+                <PwdInput nav={navigation} />
                 :
-                <View style={{ marginBottom: 40, }}>
+                <View style={{ marginBottom: 0, }}>
                     <Text style={{ textAlign: 'center', }}>
                         Hemos detectado que aún no tienes una cuenta,
                         si gustas puedes registrarte para aglizar tus consultas
@@ -99,7 +100,8 @@ const PassOrRegister = ({ numberFlag }) => {
                     </Text>
                     <Text style={{ textAlign: 'center', }}>¡Es totalmente gratuito!</Text>
                     <IntentBtn
-                        intent='goToRegister'
+                        intent='Register'
+                        navigation={navigation}
                         btnText='Registrarse' />
                 </View>
             }
@@ -107,7 +109,7 @@ const PassOrRegister = ({ numberFlag }) => {
     );
 }
 
-const LoginBody = () => {
+const LoginBody = ({ nav }) => {
     const [phoneIsCorrect, setPhoneIsCorrect] = useState(false);
     const [keyboardIsOpen, setKeyBoardIsOpen] = useState(false);
 
@@ -145,72 +147,68 @@ const LoginBody = () => {
 
 
     return (
+        <View style={styles.container}>
+            <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
+                <ScrollView>
 
-        <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
-            <View style={styles.container}>
-                <View style={styles.logoContainer}>
-                    <DisplayLogo stylesLogo={styles.logo} />
+                    <View style={styles.logoContainer}>
+                        <DisplayLogo stylesLogo={styles.logo} />
+                    </View>
+                    <View style={styles.btnActionContainer}>
+                        <Input
+                            placeholder="Número JRmovil (10 dígitos)"
+                            keyboardType='number-pad'
+                            textContentType='telephoneNumber'
+                            leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18 }}
+                            maxLength={constants.MAX_NUMBER_LENGTH}
+                            onChangeText={number => onChangeNumber(number)}
+                        />
+                        {phoneIsCorrect ?
+                            <PassOrRegister numberFlag={isNumberJr} navigation={nav} />
+                            :
+                            null
+                        }
+
+                    </View>
+                </ScrollView>
+            </ TouchableWithoutFeedback>
+            <View style={styles.lineContainer}>
+                <Line color='grey' />
+                <View style={styles.iconContainer}>
+                    <View style={styles.icon}>
+                        <Icon
+                            raised
+                            name='mobile'
+                            type='font-awesome'
+                            color={styleConst.MAINCOLORSLIGHT[1]}
+                            onPress={() => nav.navigate('Recharge')} />
+                        <Text>Recarga</Text>
+                    </View>
+                    <View style={styles.icon}>
+                        <Icon
+                            raised
+                            name='file'
+                            type='font-awesome'
+                            color={styleConst.MAINCOLORSLIGHT[1]}
+                            onPress={() => nav.navigate('Consulting')} />
+                        <Text>Consulta</Text>
+                    </View>
+
+
                 </View>
-                <View style={styles.btnActionContainer}>
-                    <Input
-                        placeholder="Número JRmovil (10 dígitos)"
-                        keyboardType='number-pad'
-                        textContentType='telephoneNumber'
-                        leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18 }}
-                        maxLength={constants.MAX_NUMBER_LENGTH}
-                        onChangeText={number => onChangeNumber(number)}
-                    />
-                    {phoneIsCorrect ?
-                        <PassOrRegister numberFlag={isNumberJr} />
-                        :
-                        null
-                    }
-
-                </View>
-                {!keyboardIsOpen ?
-                    <>
-                        <View style={styles.lineContainer}>
-                            <Line color='grey' />
-                            <View style={styles.iconContainer}>
-                                <View style={styles.icon}>
-                                    <Icon
-                                        raised
-                                        name='mobile'
-                                        type='font-awesome'
-                                        color={styleConst.MAINCOLORSLIGHT[1]}
-                                        onPress={() => alert("Agrega saldo bro")} />
-                                    <Text>Recarga</Text>
-                                </View>
-                                <View style={styles.icon}>
-                                    <Icon
-                                        raised
-                                        name='file'
-                                        type='font-awesome'
-                                        color={styleConst.MAINCOLORSLIGHT[1]}
-                                        onPress={() => alert("Consulta saldo bro")} />
-                                    <Text>Consulta</Text>
-                                </View>
-
-
-                            </View>
-                        </View>
-                        <View>
-                            <Help />
-                        </View>
-                    </>
-                    : null}
             </View>
-        </ TouchableWithoutFeedback>
+            <Help navigation={nav} />
+        </View>
 
     );
 
 }
 
-const Login: () => Node = () => {
+const Login = ({ navigation }) => {
 
     return (
         <>
-            <LoginBody />
+            <LoginBody nav={navigation} />
         </>
     );
 };
@@ -232,7 +230,8 @@ const styles = StyleSheet.create({
 
     },
     btnActionContainer: {
-        padding: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
         flex: 1
     },
     phoneTxt: {
@@ -242,7 +241,7 @@ const styles = StyleSheet.create({
         margin: 1
     },
     lineContainer: {
-        flex: 1,
+        flex: 1.5,
         padding: 35,
         justifyContent: 'center'
     },
@@ -250,7 +249,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 35,
         flexWrap: 'wrap',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flex: 1
     },
     icon: {
         alignItems: 'center',
