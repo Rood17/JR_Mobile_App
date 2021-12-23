@@ -27,7 +27,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-
+let payload;
 // MainCard
 export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
@@ -117,7 +117,7 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
                 <IntentBtn
                     isDisabled={disabledBtn}
                     intent={['Recharge_2', {
-                        chargeId: 86,
+                        chargeId: payload,
                         numToCharge: initNumber,
                     }]}
                     navigation={navigation}
@@ -176,9 +176,9 @@ const stylesMainCard = StyleSheet.create({
 export const MoneyCard = ({ setGbProduct, togglePrices }) => {
 
     // handle money bby
-    const moneyHandler = (payload) => {
+    const moneyHandler = (payloadCode) => {
         // set pay charge
-        setGbProduct(payload)
+        setGbProduct(payloadCode)
         // Close modal
         togglePrices()
     }
@@ -426,7 +426,7 @@ const OverlayModal = ({ setGbProduct }) => {
                 <View style={modalStyle.headContainer}>
                     <Text style={modalStyle.headTxt}>Recarga Saldo</Text>
                     <View style={[modalStyle.bodyContainer, { width: '100%', marginTop: 20 }]}>
-                        <Text style={{ margin: 15, width: '100%' }}>Slecciona una compra</Text>
+                        <Text style={{ margin: 15, width: '100%' }}>Selecciona una compra</Text>
                         <MoneyCard setGbProduct={setGbProduct} togglePrices={togglePrices} />
                     </View>
                     <View style={[modalStyle.footer, { width: '100%' }]}>
@@ -474,14 +474,13 @@ const modalStyle = StyleSheet.create({
     },
 });
 
-const Recharge = ({ navigation, chargeResume }) => {
+// Compute recharge type
+export const setProductType = (payloadCode) => {
 
-    const [gbProduct, setGbProduct] = useState('Plan JR10 - $99')
-    let payload = gbProduct;
-
+    payload = 'Plan JR10 - $99';
     // Feed the caharge resume
-    if (typeof gbProduct == 'string') {
-        switch (gbProduct) {
+    if (typeof payloadCode == 'string') {
+        switch (payloadCode) {
             case 'A':
                 payload = 'Plan JR5 - $49';
                 break;
@@ -498,8 +497,8 @@ const Recharge = ({ navigation, chargeResume }) => {
                 payload = 'Plan JR10 - $99';
         }
     }
-    if (typeof gbProduct == 'number') {
-        switch (gbProduct) {
+    if (typeof payloadCode == 'number') {
+        switch (payloadCode) {
             case 20:
                 payload = 'Carga - $20';
                 break;
@@ -527,8 +526,19 @@ const Recharge = ({ navigation, chargeResume }) => {
             case 500:
                 payload = 'Carga - $500';
                 break;
+            default:
+                payload = 'Plan JR10 - $99';
         }
     }
+
+    return payload;
+}
+
+const Recharge = ({ navigation, chargeResume }) => {
+
+    const [gbProduct, setGbProduct] = useState()
+
+    payload = setProductType(gbProduct)
 
 
     return (
@@ -549,7 +559,7 @@ const Recharge = ({ navigation, chargeResume }) => {
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight:'bold' }}>{payload}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>
 
 
