@@ -36,6 +36,7 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
     const [errorMsg, setErrorMsg] = useState('');
     const [errorMsg2, setErrorMsg2] = useState('');
     const [initNumber, setInitNumber] = useState();
+    const [pass1, setPass1] = useState(false);
 
     const numberExist = 888
 
@@ -50,10 +51,12 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
             if (number.toString().indexOf(numberExist) != -1) {
                 setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
                 setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
+                setPass1(true);
             } else {
                 setDisplayColor1('red')
                 setDisabledBtn(true)
                 setErrorMsg(<WarningAdvice type={2} warningText='El número no es Jr' />)
+                setPass1(false);
             }
 
         }
@@ -61,13 +64,14 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
             setDisabledBtn(true)
             setDisplayColor1(styleConst.MAINCOLORSLIGHT[2])
             setErrorMsg('')
+            setPass1(false);
         }
 
     }
 
     // Validate if Number account exist
     const onChangeNewNumber = (number) => {
-        if (number.length === constants.MAX_NUMBER_LENGTH) {
+        if (number.length === constants.MAX_NUMBER_LENGTH && pass1) {
             if (number === initNumber) {
                 setDisabledBtn(false)
                 setDisplayColor2(styleConst.MAINCOLORSLIGHT[1])
