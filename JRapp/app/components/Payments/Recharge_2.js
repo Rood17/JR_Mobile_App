@@ -93,7 +93,7 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
         return false
     }
 
-
+    // Detect wich card will pay
     switch (cardDisplay) {
         case 0:
             displayMaster = 'flex';

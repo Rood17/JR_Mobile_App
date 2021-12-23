@@ -6,7 +6,7 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 
 let mainColor;
 
-const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation,intent, btnText, isDisabled }) => {
+const IntentBtn = ({ color, justAction,navigation,intent, btnText, isDisabled }) => {
 
   let btnParams = [];
   let goToView = '';
@@ -39,13 +39,21 @@ const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation,intent, btnText,
           title={btnText}
           disabled
         />
-        :
+        : !justAction ?
         <Button
           //style={stylesBtn == null ? btnNormal() : stylesBtn}
           onPress={() => navigation.navigate(goToView, btnParams)}
           color={mainColor}
           title={btnText}
         />
+        :
+        <Button
+          //style={stylesBtn == null ? btnNormal() : stylesBtn}
+          onPress={() => justAction}
+          color={mainColor}
+          title={btnText}
+        />
+      
       }
     </View>
   );
