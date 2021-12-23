@@ -278,8 +278,9 @@ const Recharge_2 = ({ navigation, route }) => {
 
     return (
         <>
+        <ReturnHeader title='Recarga de saldo' nav={navigation} />
             <ScrollView style={styles.container} >
-                <ReturnHeader title='Recarga de saldo' nav={navigation} />
+                
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
@@ -293,7 +294,7 @@ const Recharge_2 = ({ navigation, route }) => {
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{JSON.stringify(chargeId)}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight:'bold' }}>{JSON.stringify(chargeId)}</Text>
                         </TouchableOpacity>
                         <Text>Número JR Movil:</Text>
                         <TouchableOpacity>

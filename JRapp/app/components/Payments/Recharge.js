@@ -543,8 +543,9 @@ const Recharge = ({ navigation, chargeResume }) => {
 
     return (
         <>
+        <ReturnHeader title='Recarga de saldo' nav={navigation} />
             <ScrollView style={styles.container} >
-                <ReturnHeader title='Recarga de saldo' nav={navigation} />
+                
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
