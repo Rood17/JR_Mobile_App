@@ -440,7 +440,7 @@ const styleHeadMain = StyleSheet.create({
 // END MainHeader
 
 // MainFooter
-export const MainFooter = ({ name, navigation}) => {
+export const MainFooter = ({ name, navigation }) => {
 
     const onPress = () => {
         //  console.log("goToAyuda")
@@ -450,7 +450,7 @@ export const MainFooter = ({ name, navigation}) => {
         <>
             <View style={styleFooterMain.container} onPress={onPress}>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
-                onPress={() => navigation.navigate('Main')}>
+                    onPress={() => navigation.navigate('Main')}>
                     <Icon
                         name='home'
                         type='font-awesome'
@@ -459,18 +459,18 @@ export const MainFooter = ({ name, navigation}) => {
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
-                onPress={() => navigation.navigate('Main')}>
+                    onPress={() => navigation.navigate('Main')}>
                     <Icon
                         name='mobile'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        
+
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                onPress={() => navigation.navigate('Recharge')}
-                style={styleFooterMain.iconContainer}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Recharge')}
+                    style={styleFooterMain.iconContainer}>
                     <Icon
                         name='file'
                         type='font-awesome'
@@ -478,9 +478,9 @@ export const MainFooter = ({ name, navigation}) => {
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Saldo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                onPress={() => navigation.navigate('Asistance')}
-                style={styleFooterMain.iconContainer}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Asistance')}
+                    style={styleFooterMain.iconContainer}>
                     <Icon
                         name='question'
                         type='font-awesome'
@@ -516,9 +516,9 @@ const styleFooterMain = StyleSheet.create({
 
 
 // CIRCLE
-export const LetterCircle = ({insightData, color}) => {
+export const LetterCircle = ({ insightData, color }) => {
     let letterColor;
-    if ( color === 1 ){
+    if (color === 1) {
         color = styleConst.MAINCOLORSLIGHT[3]
         letterColor = 'white'
     } else {
@@ -539,7 +539,7 @@ export const LetterCircle = ({insightData, color}) => {
                 underlayColor='#ccc'
                 onPress={() => alert('Yaay!')}
             >
-                <Text style={stylesCircle.textAvatar, {color:letterColor}}> {insightData} </Text>
+                <Text style={stylesCircle.textAvatar, { color: letterColor }}> {insightData} </Text>
 
             </TouchableHighlight>
         </>
@@ -550,5 +550,82 @@ const stylesCircle = StyleSheet.create({
     circle: { height: 30, width: 30, borderRadius: 30, },
     textAvatar: {
         fontSize: 20
+    }
+});
+
+
+// Warning Advice  1
+export const WarningAdvice = ({ type, warningText, size }) => {
+
+    let icon;
+    let iconColor;
+    let iconSize;
+    let warningTextColor = '';
+    let warningColor = '';
+    let borderWidth = 3;
+    let margin = 10;
+    let padding = 15;
+
+    warningColor = '#f8d7da'
+    icon = 'exclamation-triangle'
+    iconColor = 'red'
+    warningTextColor = 'red'
+
+
+    if (type === 2) {
+        warningColor = 'transparent';
+        icon = 'exclamation-circle';
+        iconColor = 'red';
+        warningTextColor = 'red';
+        borderWidth = 0;
+        iconSize = 20
+        margin = 0;
+        padding = 5;
+    }
+
+    if (type === 3) {
+        warningColor = 'transparent';
+        icon = 'check-circle';
+        iconColor = styleConst.MAINCOLORSLIGHT[1]
+        warningTextColor = styleConst.MAINCOLORSLIGHT[1]
+        borderWidth = 0;
+        iconSize = 20
+        margin = 0;
+        padding = 5;
+    }
+
+    if ( size ) {
+        iconSize = size
+    }
+
+    return (
+        <>
+            <View style={[warningStyles.container, {
+                backgroundColor: warningColor,
+                borderLeftWidth: borderWidth,
+                borderLeftColor: 'red',
+                margin: margin,
+                padding: padding,
+            }]}>
+                <Icon
+                    name={icon}
+                    type='font-awesome'
+                    color={warningTextColor}
+                    size={15}
+                />
+                <Text style={[warningStyles.text, { color: warningTextColor }]}>{warningText}</Text>
+            </View>
+        </>
+    );
+}
+
+const warningStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    text: {
+        paddingLeft: 10
     }
 });

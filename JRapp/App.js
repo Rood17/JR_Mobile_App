@@ -83,7 +83,7 @@ const App: () => Node = () => {
       <SafeAreaView style={MAIN_CONTAINER_STYLE}>
         <StatusBarHandler hideBar={true} />
 
-        <Stack.Navigator initialRouteName="Register" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
           {
             showIntro ?
               <Stack.Screen name="Intro" component={Intro} />

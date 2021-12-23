@@ -42,10 +42,11 @@ import {
     LearnMoreLinks,
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { WarningAdvice } from '../elements/Elements';
 
 
 // Global Vars
-let isNumberJr = false;
+let isNumberRegister = false;
 
 const PwdInput = ({ nav }) => {
     const [pwdFail, setPwdFail] = useState(false)
@@ -109,39 +110,48 @@ const PassOrRegister = ({ numberFlag, navigation }) => {
     );
 }
 
+const PhoneIsNotJr = ({flag}) => {
+    return (
+        <>
+            {flag ?
+                <WarningAdvice warningText='Este no es un número JR Móvil.'/>
+                :
+                null
+            }
+        </>
+    );
+}
+
 const LoginBody = ({ nav }) => {
     const [phoneIsCorrect, setPhoneIsCorrect] = useState(false);
-    const [keyboardIsOpen, setKeyBoardIsOpen] = useState(false);
+    const [jrAlert, setJrAlert] = useState(false);
 
     const isJR = '888'
-
-    // Keyboard Listener for disapear icons
-    Keyboard.addListener('keyboardDidShow',
-        () => {
-            setKeyBoardIsOpen(true);
-        },
-    );
-
-    Keyboard.addListener('keyboardDidHide',
-        () => {
-            setKeyBoardIsOpen(false);
-        },
-    );
+    const isRegister = '56'
 
 
     const onChangeNumber = (number) => {
 
         // Validate if is Jr Movil
-        if (number.length == constants.MAX_NUMBER_LENGTH) {
+        if (number.length == constants.MAX_NUMBER_LENGTH ) {
             // Validate if es JR
-            if (number.toString().indexOf(isJR) != -1)
-                isNumberJr = true
-            else
-                isNumberJr = false
-            setPhoneIsCorrect(true)
+            if (number.toString().indexOf(isJR) != -1){
+                setJrAlert(false)
+                setPhoneIsCorrect(true)
+                // Is register??
+                if (number.toString().indexOf(isRegister) != -1)
+                    isNumberRegister = true
+                else
+                    isNumberRegister = false
+            } else {
+                setJrAlert(true)
+            }
+                
+            
         }
         if (number.length < constants.MAX_NUMBER_LENGTH) {
             setPhoneIsCorrect(false)
+            setJrAlert(false)
         }
     }
 
@@ -164,9 +174,9 @@ const LoginBody = ({ nav }) => {
                             onChangeText={number => onChangeNumber(number)}
                         />
                         {phoneIsCorrect ?
-                            <PassOrRegister numberFlag={isNumberJr} navigation={nav} />
+                            <PassOrRegister numberFlag={isNumberRegister} navigation={nav} />
                             :
-                            null
+                            <PhoneIsNotJr flag={jrAlert}/>
                         }
 
                     </View>

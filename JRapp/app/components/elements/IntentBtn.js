@@ -6,14 +6,10 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 
 let mainColor;
 
-const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation, intent, btnText, isDisabled }) => {
+const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation,intent, btnText, isDisabled }) => {
 
-  //Here go the intent
-  const goIntent = () => {
-    console.log("Intent - " + intent)
-    alert("Intent - " + intent)
-  }
-
+  let btnParams = [];
+  let goToView = '';
 
   //Styles
   if (color == undefined || color === 0)
@@ -24,15 +20,21 @@ const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation, intent, btnText
     mainColor = styleConst.MAINCOLORS[2]
   else
     mainColor = color
+  
+  if (typeof intent == 'object' ){
+    goToView = intent[0]
+    btnParams = intent[1]
+  } else {
+    goToView = intent
+  }
 
-  //console.log("Intent - " + mainColor)
+  console.log('goToView : ' + goToView)
 
   return (
     <View style={styles.btnContainer}>
       {isDisabled ?
         <Button
           //style={stylesBtn == null ? btnNormal() : stylesBtn}
-          onPress={() => goIntent()}
           color={mainColor}
           title={btnText}
           disabled
@@ -40,7 +42,7 @@ const IntentBtn = ({ color, stylesBtn, stylesBtnText,navigation, intent, btnText
         :
         <Button
           //style={stylesBtn == null ? btnNormal() : stylesBtn}
-          onPress={() => navigation.navigate(intent)}
+          onPress={() => navigation.navigate(goToView, btnParams)}
           color={mainColor}
           title={btnText}
         />

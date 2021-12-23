@@ -9,7 +9,7 @@
 
 import React, { useState } from 'react';
 import type { Node } from 'react';
-import { LetterCircle, ReturnHeader } from "../elements/Elements";
+import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
@@ -30,31 +30,60 @@ import {
 
 
 // MainCard
-export const RechargeOneCard = ({ title, subtitle, subtitleColor }) => {
+export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
-    const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
+    const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
+    const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [errorMsg, setErrorMsg] = useState('');
+    const [errorMsg2, setErrorMsg2] = useState('');
+    const [initNumber, setInitNumber] = useState();
 
     const numberExist = 888
 
+
     // Validate if Number account exist
     const onChangeNumber = (number) => {
+
+        // Set number
+        setInitNumber(number);
+
         if (number.length === constants.MAX_NUMBER_LENGTH) {
             if (number.toString().indexOf(numberExist) != -1) {
-                setDisabledBtn(false)
-                setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
-                setErrorMsg('')
+                setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
+                setErrorMsg(<WarningAdvice type={3} warningText='Número correcto'/>)
             } else {
-                setDisplayColor('red')
+                setDisplayColor1('red')
                 setDisabledBtn(true)
-                setErrorMsg('Este número aún no tiene una cuenta registrada.')
+                setErrorMsg(<WarningAdvice type={2} warningText='El número no es Jr'/>)
             }
 
         }
         else {
             setDisabledBtn(true)
-            setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
+            setDisplayColor1(styleConst.MAINCOLORSLIGHT[2])
             setErrorMsg('')
+        }
+
+    }
+
+    // Validate if Number account exist
+    const onChangeNewNumber = (number) => {
+        if (number.length === constants.MAX_NUMBER_LENGTH) {
+            if (number === initNumber) {
+                setDisabledBtn(false)
+                setDisplayColor2(styleConst.MAINCOLORSLIGHT[1])
+                setErrorMsg2('')
+            } else {
+                setDisplayColor2('red')
+                setDisabledBtn(true)
+                setErrorMsg2(<WarningAdvice type={2} warningText='el número no coincide'/>)
+            }
+
+        }
+        else {
+            setDisabledBtn(true)
+            setDisplayColor2(styleConst.MAINCOLORSLIGHT[2])
+            setErrorMsg2('')
         }
 
     }
@@ -70,27 +99,29 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor }) => {
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
-                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor }}
+                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor1 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
-                    style={{ borderBottomColor: displayColor, color: displayColor }}
                     onChangeText={number => onChangeNumber(number)}
                 />
                 <Input
                     placeholder="Introduce de nuevo tu número"
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
-                    errorMessage={errorMsg}
-                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor }}
+                    errorMessage={errorMsg2}
+                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor2 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
-                    style={{ borderBottomColor: displayColor, color: displayColor }}
-                    onChangeText={number => onChangeNumber(number)}
+                    onChangeText={number => onChangeNewNumber(number)}
                 />
             </View>
             <OverlayModal />
             <View style={{ marginBottom: 30, width: '80%' }}>
                 <IntentBtn
                     isDisabled={disabledBtn}
-                    intent='goToEnterCode'
+                    intent={['Recharge_2' , {
+                        chargeId: 86,
+                        numToCharge: initNumber,
+                      }]}
+                    navigation={navigation}
                     btnText='Continuar' />
             </View>
         </View>
@@ -448,7 +479,7 @@ const Recharge = ({navigation, chargeResume}) => {
                             <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
                         </View>
                     </View>
-                    <RechargeOneCard />
+                    <RechargeOneCard navigation={navigation}/>
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>

@@ -44,11 +44,12 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 // Global Vars
-let countPass = 0
+let countPass = 0;
+let countNewNumberPass = 0;
 const numberBaseDatos = '666';
 const oldNumber = 5555555555;
-const codeBase = 6666
-const numberBaseData = 88555
+const codeBase = 6666;
+const numberBaseData = 555;
 
 const TouchableBtn = ({ text, finish, countDown, action, disabledSms }) => {
     let sendAgainColor = '';
@@ -127,8 +128,10 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
                 setSmsSendDisabled(true)
                 setReturnRegister(true)
                 return
+            } else {
+                setReturnRegister(false)
             }
-            if (number.toString().indexOf(numberBaseDatos) != -1)
+            if (number.toString().indexOf(numberBaseDatos.toString()) != -1)
                 setSmsSendDisabled(false)
             else
                 setSmsSendDisabled(true)
@@ -153,9 +156,10 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
 
     useEffect(() => {
         if (pass1)
-            setBtnDisabledFlag(false)
+            {setBtnDisabledFlag(false)
+            navigation.navigate('Register_2')}
         else
-            setBtnDisabledFlag(true)
+            {setBtnDisabledFlag(true)}
 
         // Count Down
         setTimeout(() => {
@@ -194,10 +198,12 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
         // Sending again SMS
         if (action === 'SendAgain') {
             //alert('send SMS')
-            setCountDown(6)
+            setCountDown(3)
             countPass += 1;
-        } else if (action === 'SendAgain2') {
+        } 
+        if (action === 'SendAgain2') {
             //alert('send SMS')
+            setSmsSendDisabled(true)
             setNumberAgain(false)
         }
         // Set other number
