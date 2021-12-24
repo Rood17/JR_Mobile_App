@@ -200,7 +200,7 @@ const LoginBody = ({ nav }) => {
                             name='file'
                             type='font-awesome'
                             color={styleConst.MAINCOLORSLIGHT[1]}
-                            onPress={() => nav.navigate('Consulting')} />
+                            onPress={() => nav.navigate('Details')} />
                         <Text>Consulta</Text>
                     </View>
 

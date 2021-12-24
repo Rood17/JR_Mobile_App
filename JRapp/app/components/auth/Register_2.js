@@ -60,7 +60,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
         console.log(text.length)
         if (utils.CheckUppercase(text)) {
             setChackColor(styleConst.MAINCOLORS[0]);
-            isBold1 = '600'
+            isBold1 = 'bold'
             // solo pase la primera vez
             if (pass1 === undefined)
                 pass1 = i
@@ -74,7 +74,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
         }
         if (utils.checkIfHasNum(text)) {
             setChackColor2(styleConst.MAINCOLORS[0]);
-            isBold2 = '600'
+            isBold2 = 'bold'
             // solo pase la primera vez
             if (pass2 === undefined)
                 pass2 = i
@@ -87,7 +87,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
         }
         if (text.length > 7) {
             setChackColor3(styleConst.MAINCOLORS[0]);
-            isBold3 = '600'
+            isBold3 = 'bold'
             if (pass3 === undefined)
                 pass3 = i
         }
@@ -121,6 +121,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
                 />
                 <Text>Favor de Introducir como mínimo los siguientes criterios:</Text>
                 <View style={{ margin: 20 }}>
+                    <View style={{ flexDirection: 'row' }} >
                     <View style={{ flexDirection: 'row' }}>
                         <Text>{'\u2022'}</Text>
                         <Text style={{
@@ -135,12 +136,6 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
                             color: chackColor2, fontWeight: isBold2
                         }}>Un Número</Text>
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text>{'\u2022'}</Text>
-                        <Text style={{
-                            flex: 1, paddingLeft: 5,
-                            color: chackColor3, fontWeight: isBold3
-                        }}>8 caracteres</Text>
                     </View>
                 </View>
                 <IntentBtn

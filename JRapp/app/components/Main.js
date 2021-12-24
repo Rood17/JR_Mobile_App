@@ -167,12 +167,12 @@ const Main = ({navigation}) => {
                         <View style={styles.btnsContainer}>
                             <View style={styles.btnAction}>
                             <IntentBtn
-                                intent='goToRegister'
+                                intent='Recharge'
                                 btnText='Paquetes' />
                             </View>
                             <View style={styles.btnAction}>
                             <IntentBtn
-                                intent='goToRegister'
+                                intent='Recharge'
                                 btnText='Cargar Saldo' />
                             </View>
                         </View>

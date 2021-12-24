@@ -24,6 +24,7 @@ import ForgottenPwd from './app/components/pages/ForgottenPwd'
 import Recharge from './app/components/Payments/Recharge';
 import Recharge_2 from './app/components/Payments/Recharge_2'
 import Recharge_3 from './app/components/Payments/Recharge_3'
+import Details from './app/components/Details/Details'
 
 // React navigation
 import { NavigationContainer } from '@react-navigation/native';
@@ -76,6 +77,8 @@ const App: () => Node = () => {
   //<Recharge_2 />
   //<Recharge_3 />
 
+  // Details
+
 
   return (
 
@@ -100,7 +103,8 @@ const App: () => Node = () => {
           <Stack.Screen name="MiPerfil_2" component={MiPerfil_2} />
           <Stack.Screen name="Recharge" component={Recharge} />
           <Stack.Screen name="Recharge_2" component={Recharge_2} />
-          <Stack.Screen name="Recharge_3" component={Recharge_3} />   
+          <Stack.Screen name="Recharge_3" component={Recharge_3} /> 
+          <Stack.Screen name="Details" component={Details} />   
         </Stack.Navigator>
       </SafeAreaView>
     </NavigationContainer>
