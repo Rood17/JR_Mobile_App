@@ -28,13 +28,114 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+let monthFlag, yearFlag, secretFlag, postalFlag, emailFlag;
+
+// Modal
+const OverlayModal = ({ chargeId, numToCharge, navigation, safeCard, disabledBtn, fail }) => {
+    const [visible, setVisible] = useState(false);
+    const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
+
+    const toggleResume = () => {
+        setVisible(!visible);
+    };
+
+    // Set safe card
+    safeCard = 'xxxx xxxx xxxx ' + safeCard.toString().slice(12);
+
+    const safePaymentHandler = () => {
+        if (safePaymentSuccess) {
+            navigation.navigate('Recharge_3', {
+                chargeId: chargeId,
+                numToCharge: numToCharge,
+            })
+        } else {
+            toggleResume()
+            fail('Error')
+        }
+    }
+
+
+
+
+    return (
+        <View>
+
+            <View style={{ marginLeft: 20, marginRight: 20, marginTop: 15, marginBottom: 5 }}>
+
+                <Button
+                    //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                    onPress={toggleResume}
+                    color={styleConst.MAINCOLORS[0]}
+                    title='Continuar'
+                    disabled={false}
+                />
+
+            </View>
+
+
+            <Overlay isVisible={visible} onBackdropPress={toggleResume}>
+                <View style={modalStyle.containerModal}>
+                    <View style={modalStyle.headContainer}>
+                        <Text style={modalStyle.headTxt}>Resumen de compra</Text>
+                    </View>
+
+                    <View style={modalStyle.bodyContainer}>
+                        <Text style={{ margin: 5 }}>Recarga :
+                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{chargeId}</Text>
+                        </Text>
+                        <Text style={{ margin: 5 }}>Número :
+                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{numToCharge}</Text>
+                        </Text>
+                        <Text style={{ margin: 5 }}>Tarjeta :
+                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{safeCard}</Text>
+                        </Text>
+                    </View>
+
+                    <View style={modalStyle.footer}>
+                        <Button
+                            //style={stylesBtn == null ? btnNormal() : stylesBtn}
+
+                            onPress={safePaymentHandler}
+                            color={styleConst.MAINCOLORS[0]}
+                            title='Pagar'
+                        />
+                    </View>
+                </View>
+            </Overlay>
+        </View>
+    );
+};
+const modalStyle = StyleSheet.create({
+    containerModal: {
+        margin: 20
+    },
+    headContainer: {
+        margin: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    bodyContainer: {
+        alignItems: 'flex-start',
+        margin: 20,
+        justifyContent: 'center'
+    },
+    footer: {
+        margin: 10
+    },
+    headTxt: {
+        fontWeight: 'bold',
+        color: styleConst.MAINCOLORS[1]
+    },
+});
 
 // MainCard
-export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
+export const RechargeTwoCard = ({ chargeId, numToCharge, navigation }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
     const [errorMsg, setErrorMsg] = useState('');
     const [cardDisplay, setCardDisplay] = useState();
+    const [cardData, setCardData] = useState(false);
+    const [safeCard, setSafeCard] = useState(5555);
     let { displayMaster, displayVisa, displayAmerican } = 'flex';
 
     const materCard = 888
@@ -44,15 +145,15 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
 
     // Validate if Number account exist
     const onChangeCard = (card) => {
-
-
-
         if (card.length === 16) {
             if (isMasterCard(card) || isVisa(card) || isAmerican(card)) {
-                setDisabledBtn(false)
+                setCardData(true)
+                setSafeCard(card)
+
             } else {
                 setDisplayColor('red')
                 setDisabledBtn(true)
+                setCardData(false)
                 setErrorMsg(<WarningAdvice type={2} warningText='El número de tarjeta no existe' />)
             }
         }
@@ -60,10 +161,61 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
             setDisabledBtn(true)
             setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
             setErrorMsg('')
+            setCardData(false)
             setCardDisplay(9)
         }
-
     }
+
+    function setMonth(month) {
+        if (month.length == 2)
+            monthFlag = true;
+        else
+            monthFlag = false;
+
+        runVerification()
+    }
+    function setYear(year) {
+        if (year.length == 4)
+            yearFlag = true;
+        else
+            yearFlag = false;
+
+        runVerification()
+    }
+    function setSecret(secret) {
+        if (secret.length === 3)
+            secretFlag = true;
+        else
+            secretFlag = false;
+
+        runVerification()
+    }
+    function setPostal(postal) {
+        if (postal.length > 5)
+            postalFlag = true;
+        else
+            postalFlag = false;
+
+        runVerification()
+    }
+    function setEmail(email) {
+        if (email.length > 5 && email.indexOf('@') != -1 && email.lastIndexOf('.') != -1)
+            emailFlag = true;
+        else
+            emailFlag = false;
+
+        runVerification();
+    }
+    function runVerification() {
+        if (monthFlag && yearFlag && secretFlag && postalFlag && emailFlag) {
+            setDisabledBtn(false)
+
+        }
+        else {
+            setDisabledBtn(true)
+        }
+    }
+
 
     const isMasterCard = (card) => {
         if (card.toString().indexOf(materCard) != -1) {
@@ -74,7 +226,6 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
 
         return false
     }
-
     const isVisa = (card) => {
         if (card.toString().indexOf(visa) != -1) {
             setCardDisplay(1)
@@ -83,7 +234,6 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
 
         return false
     }
-
     const isAmerican = (card) => {
         if (card.toString().indexOf(american) != -1) {
             setCardDisplay(2)
@@ -144,7 +294,15 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
                     />
                 </View>
                 <Text></Text>
+
             </View>
+            {safeCard === 'Error' ?
+                <View style={{marginLeft:20, marginRight:20}}>
+                    <WarningAdvice type={1} warningText='No se pudo realizar el pago, favor de intentar de nuevo.' />
+                </View>
+                :
+                null
+            }
             <View>
                 <View style={stylesMainCard.boxShadow}>
 
@@ -159,26 +317,39 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
                             maxLength={16}
                             onChangeText={card => onChangeCard(card)}
                         />
-                        {!disabledBtn ?
-                            <View style={stylesMainCard.dataUserContainer}>
-                                <View style={stylesMainCard.inputsRow}>
+                        {cardData ?
+                            <View style={[stylesMainCard.dataUserContainer, { paddingLeft: 15, paddingRight: 15 }]}>
+                                <View style={{ flex: 1 }}>
                                     <Input
-                                        placeholder="Vencimiento"
+                                        placeholder="MM"
                                         keyboardType='number-pad'
-                                        errorMessage={errorMsg}
-                                        maxLength={constants.MAX_NUMBER_LENGTH}
-                                        style={{ borderBottomColor: displayColor, color: displayColor }}
-                                        onChangeText={number => onChangePostalC(number)}
+                                        maxLength={2}
+                                        style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
+                                        onChangeText={month => setMonth(month)}
                                     />
+
                                 </View>
-                                <View style={stylesMainCard.inputsRow}>
+                                <View style={{ flex: 0, alignItems: 'center', alignContent: 'center' }}>
+                                    <Text style={{ fontSize: 25, marginBottom: 25 }}>/</Text>
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Input
+                                        placeholder="YYYY"
+                                        keyboardType='number-pad'
+                                        maxLength={4}
+                                        style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
+                                        onChangeText={year => setYear(year)}
+                                    />
+
+                                </View>
+                                <View style={{ flex: 1.5 }}>
                                     <Input
                                         placeholder="CVV"
                                         keyboardType='number-pad'
-                                        errorMessage={errorMsg}
-                                        maxLength={constants.MAX_NUMBER_LENGTH}
+                                        secureTextEntry={true}
+                                        maxLength={3}
                                         style={{ borderBottomColor: displayColor, color: displayColor }}
-                                        onChangeText={number => onChangePostalC(number)}
+                                        onChangeText={secret => setSecret(secret)}
                                     />
                                 </View>
                             </View>
@@ -189,9 +360,9 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
                                 <Input
                                     placeholder="Código Postal"
                                     keyboardType='number-pad'
-                                    maxLength={constants.MAX_NUMBER_LENGTH}
+                                    maxLength={7}
                                     style={{ borderBottomColor: displayColor, color: displayColor }}
-                                    onChangeText={number => onChangePostalC(number)}
+                                    onChangeText={postal => setPostal(postal)}
                                 />
                             </View>
                             <View style={stylesMainCard.inputsRow}>
@@ -201,16 +372,20 @@ export const RechargeTwoCard = ({ title, subtitle, subtitleColor, pasar }) => {
                                     keyboardType='email-address'
                                     autoComplete='email'
                                     secureTextEntry={false}
-                                    onChangeText={email => onChangeEmail(email)}
+                                    onChangeText={email => setEmail(email)}
                                 />
                             </View>
                         </View>
                     </View>
-                    <View style={{ marginBottom: 30, width: '80%' }}>
-                        <IntentBtn
-                            isDisabled={disabledBtn}
-                            intent='goToEnterCode'
-                            btnText='Continuar' />
+                    <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
+                        <OverlayModal
+                            navigation={navigation}
+                            numToCharge={numToCharge}
+                            chargeId={chargeId}
+                            safeCard={safeCard}
+                            fail={setSafeCard}
+                            disabledBtn={disabledBtn}
+                        />
                     </View>
                 </View>
             </View>
@@ -240,7 +415,8 @@ const stylesMainCard = StyleSheet.create({
         marginLeft: 20,
     },
     dataUserContainer: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     inputsRow: {
         flex: 1
@@ -278,9 +454,9 @@ const Recharge_2 = ({ navigation, route }) => {
 
     return (
         <>
-        <ReturnHeader title='Recarga de saldo' nav={navigation} />
+            <ReturnHeader title='Recarga de saldo' nav={navigation} />
             <ScrollView style={styles.container} >
-                
+
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
@@ -294,7 +470,7 @@ const Recharge_2 = ({ navigation, route }) => {
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight:'bold' }}>{JSON.stringify(chargeId)}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{JSON.stringify(chargeId)}</Text>
                         </TouchableOpacity>
                         <Text>Número JR Movil:</Text>
                         <TouchableOpacity>
@@ -311,7 +487,7 @@ const Recharge_2 = ({ navigation, route }) => {
                             <Text>Realiza tu pago.</Text>
                         </View>
                     </View>
-                    <RechargeTwoCard />
+                    <RechargeTwoCard chargeId={chargeId} numToCharge={numToCharge} navigation={navigation} />
                     <View style={styles.registerContainer}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>Ir Atras</Text>
