@@ -299,21 +299,37 @@ const SocialSimpleCard = StyleSheet.create({
 // END Card
 
 // Retorn Header
-export const ReturnHeader = ({ title, nav }) => {
+export const ReturnHeader = ({ title, nav, clear }) => {
     return (
         <>
-            <TouchableOpacity style={stylesReturn.container} onPress={() => nav.goBack()}>
-                <View style={stylesReturn.returnElement}>
-                    <Icon
-                        name='arrow-left'
-                        type='font-awesome'
-                        color={styleConst.MAINCOLORS[0]}
-                    />
-                </View>
-                <View style={stylesReturn.returnElement}>
-                    <Text style={stylesReturn.returnHeadTxt}>{title}</Text>
-                </View>
-            </TouchableOpacity>
+            {clear ?
+                <TouchableOpacity style={stylesReturn.container} onPress={() => nav.popToTop()}>
+                    <View style={stylesReturn.returnElement}>
+                        <Icon
+                            name='home'
+                            type='font-awesome'
+                            color={styleConst.MAINCOLORS[0]}
+                        />
+                    </View>
+                    <View style={stylesReturn.returnElement}>
+                        <Text style={stylesReturn.returnHeadTxt}>{title}</Text>
+                    </View>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity style={stylesReturn.container} onPress={() => nav.goBack()}>
+                    <View style={stylesReturn.returnElement}>
+                        <Icon
+                            name='arrow-left'
+                            type='font-awesome'
+                            color={styleConst.MAINCOLORS[0]}
+                        />
+                    </View>
+                    <View style={stylesReturn.returnElement}>
+                        <Text style={stylesReturn.returnHeadTxt}>{title}</Text>
+                    </View>
+                </TouchableOpacity>
+            }
+
         </>
     );
 }
@@ -459,7 +475,7 @@ export const MainFooter = ({ name, navigation }) => {
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
-                    onPress={() => navigation.navigate('Main')}>
+                    onPress={() => navigation.navigate('Recharge')}>
                     <Icon
                         name='mobile'
                         type='font-awesome'
@@ -469,7 +485,7 @@ export const MainFooter = ({ name, navigation }) => {
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Recharge')}
+                    onPress={() => navigation.navigate('Details')}
                     style={styleFooterMain.iconContainer}>
                     <Icon
                         name='file'
@@ -594,7 +610,7 @@ export const WarningAdvice = ({ type, warningText, size }) => {
         padding = 5;
     }
 
-    if ( size ) {
+    if (size) {
         iconSize = size
     }
 
