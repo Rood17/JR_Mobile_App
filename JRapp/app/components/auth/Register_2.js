@@ -121,7 +121,6 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
                 />
                 <Text>Favor de Introducir como mínimo los siguientes criterios:</Text>
                 <View style={{ margin: 20 }}>
-                    <View style={{ flexDirection: 'row' }} >
                     <View style={{ flexDirection: 'row' }}>
                         <Text>{'\u2022'}</Text>
                         <Text style={{
@@ -136,6 +135,12 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
                             color: chackColor2, fontWeight: isBold2
                         }}>Un Número</Text>
                     </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text>{'\u2022'}</Text>
+                        <Text style={{
+                            flex: 1, paddingLeft: 5,
+                            color: chackColor3, fontWeight: isBold3
+                        }}>8 caracteres</Text>
                     </View>
                 </View>
                 <IntentBtn
