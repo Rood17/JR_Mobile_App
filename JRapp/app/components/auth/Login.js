@@ -110,11 +110,11 @@ const PassOrRegister = ({ numberFlag, navigation }) => {
     );
 }
 
-const PhoneIsNotJr = ({flag}) => {
+const PhoneIsNotJr = ({ flag }) => {
     return (
         <>
             {flag ?
-                <WarningAdvice warningText='Este no es un número JR Móvil.'/>
+                <WarningAdvice warningText='Este no es un número JR Móvil.' />
                 :
                 null
             }
@@ -125,42 +125,64 @@ const PhoneIsNotJr = ({flag}) => {
 const LoginBody = ({ nav }) => {
     const [phoneIsCorrect, setPhoneIsCorrect] = useState(false);
     const [jrAlert, setJrAlert] = useState(false);
+    const [keyboardIsOpen, setKeyBoardIsOpen] = useState(false);
+    const [iconFlex, setIconFlex] = useState(1.5)
 
     const isJR = '888'
     const isRegister = '56'
+    const isDebug = true;
 
-
+    // Auth handler
     const onChangeNumber = (number) => {
 
         // Validate if is Jr Movil
-        if (number.length == constants.MAX_NUMBER_LENGTH ) {
+        if (number.length == constants.MAX_NUMBER_LENGTH) {
             // Validate if es JR
-            if (number.toString().indexOf(isJR) != -1){
+            if (number.toString().indexOf(isJR) != -1) {
                 setJrAlert(false)
                 setPhoneIsCorrect(true)
+                setIconFlex(4)
                 // Is register??
-                if (number.toString().indexOf(isRegister) != -1)
+                if (number.toString().indexOf(isRegister) != -1) {
                     isNumberRegister = true
-                else
+                    setIconFlex(5)
+                }
+                else {
                     isNumberRegister = false
+                }
             } else {
                 setJrAlert(true)
+                setIconFlex(1.5)
             }
-                
-            
+
+
         }
+        // Clear
         if (number.length < constants.MAX_NUMBER_LENGTH) {
             setPhoneIsCorrect(false)
             setJrAlert(false)
+            setIconFlex(1.5)
         }
     }
+
+    // Keyboard Listener for disapear icons
+    Keyboard.addListener('keyboardDidShow',
+        () => {
+            setKeyBoardIsOpen(true);
+        },
+    );
+
+    Keyboard.addListener('keyboardDidHide',
+        () => {
+            setKeyBoardIsOpen(false);
+        },
+    );
 
 
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
                 <ScrollView>
-
                     <View style={styles.logoContainer}>
                         <DisplayLogo stylesLogo={styles.logo} />
                     </View>
@@ -176,38 +198,44 @@ const LoginBody = ({ nav }) => {
                         {phoneIsCorrect ?
                             <PassOrRegister numberFlag={isNumberRegister} navigation={nav} />
                             :
-                            <PhoneIsNotJr flag={jrAlert}/>
+                            <PhoneIsNotJr flag={jrAlert} />
                         }
 
                     </View>
+                        
+
+
                 </ScrollView>
             </ TouchableWithoutFeedback>
-            <View style={styles.lineContainer}>
-                <Line color='grey' />
-                <View style={styles.iconContainer}>
-                    <View style={styles.icon}>
-                        <Icon
-                            raised
-                            name='mobile'
-                            type='font-awesome'
-                            color={styleConst.MAINCOLORSLIGHT[1]}
-                            onPress={() => nav.navigate('Recharge')} />
-                        <Text>Recarga</Text>
-                    </View>
-                    <View style={styles.icon}>
-                        <Icon
-                            raised
-                            name='file'
-                            type='font-awesome'
-                            color={styleConst.MAINCOLORSLIGHT[1]}
-                            onPress={() => nav.navigate('Details')} />
-                        <Text>Consulta</Text>
-                    </View>
-
-
-                </View>
-            </View>
-            <Help navigation={nav} />
+            {keyboardIsOpen ?
+                null :
+                <>
+                <View style={[styles.lineIconContainer, {flex:iconFlex}]}>
+                            <Line color='grey' />
+                            <View style={styles.iconContainer}>
+                                <View style={styles.icon}>
+                                    <Icon
+                                        raised
+                                        name='mobile'
+                                        type='font-awesome'
+                                        color={styleConst.MAINCOLORSLIGHT[1]}
+                                        onPress={() => nav.navigate('Recharge')} />
+                                    <Text style={styles.icon_text}>Recarga</Text>
+                                </View>
+                                <View style={styles.icon}>
+                                    <Icon
+                                        raised
+                                        name='file'
+                                        type='font-awesome'
+                                        color={styleConst.MAINCOLORSLIGHT[1]}
+                                        onPress={() => nav.navigate('Details')} />
+                                    <Text style={styles.icon_text}>Consulta</Text>
+                                </View>
+                            </View>
+                        </View>
+                <Help navigation={nav} />
+                </>
+            }
         </View>
 
     );
@@ -250,10 +278,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 1
     },
-    lineContainer: {
-        flex: 1.5,
+    lineIconContainer: {
+        //Flex dinámico
         padding: 35,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     iconContainer: {
         flexDirection: 'row',
@@ -265,6 +293,9 @@ const styles = StyleSheet.create({
     icon: {
         alignItems: 'center',
         flexBasis: '35%',
+    },
+    icon_text: {
+        color: styleConst.P_LIGHT_THEME[3]
     },
     txtError: {
         margin: 10,
