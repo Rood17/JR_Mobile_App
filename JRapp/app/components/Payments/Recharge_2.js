@@ -31,7 +31,7 @@ import {
 let monthFlag, yearFlag, secretFlag, postalFlag, emailFlag;
 
 // Modal
-const OverlayModal = ({ chargeId, numToCharge, navigation, safeCard, disabledBtn, fail }) => {
+const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
     const [visible, setVisible] = useState(false);
     const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
 
@@ -45,8 +45,9 @@ const OverlayModal = ({ chargeId, numToCharge, navigation, safeCard, disabledBtn
     const safePaymentHandler = () => {
         if (safePaymentSuccess) {
             navigation.navigate('Recharge_3', {
-                chargeId: chargeId,
-                numToCharge: numToCharge,
+                payload: payload,
+                idSubscriber: idSubscriber,
+                isRegister:isRegister
             })
         } else {
             toggleResume()
@@ -69,7 +70,6 @@ const OverlayModal = ({ chargeId, numToCharge, navigation, safeCard, disabledBtn
                     title='Continuar'
                     disabled={false}
                 />
-
             </View>
 
 
@@ -81,10 +81,10 @@ const OverlayModal = ({ chargeId, numToCharge, navigation, safeCard, disabledBtn
 
                     <View style={modalStyle.bodyContainer}>
                         <Text style={{ margin: 5 }}>Recarga :
-                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{chargeId}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{payload}</Text>
                         </Text>
                         <Text style={{ margin: 5 }}>Número :
-                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{numToCharge}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{idSubscriber}</Text>
                         </Text>
                         <Text style={{ margin: 5 }}>Tarjeta :
                             <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>{safeCard}</Text>
@@ -129,7 +129,7 @@ const modalStyle = StyleSheet.create({
 });
 
 // MainCard
-export const RechargeTwoCard = ({ chargeId, numToCharge, navigation }) => {
+export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
     const [errorMsg, setErrorMsg] = useState('');
@@ -380,11 +380,12 @@ export const RechargeTwoCard = ({ chargeId, numToCharge, navigation }) => {
                     <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
                         <OverlayModal
                             navigation={navigation}
-                            numToCharge={numToCharge}
-                            chargeId={chargeId}
+                            idSubscriber={idSubscriber}
+                            payload={payload}
                             safeCard={safeCard}
                             fail={setSafeCard}
                             disabledBtn={disabledBtn}
+                            isRegister={isRegister}
                         />
                     </View>
                 </View>
@@ -448,13 +449,12 @@ const stylesMainCard = StyleSheet.create({
 // Main
 const Recharge_2 = ({ navigation, route }) => {
 
-    const { chargeId, numToCharge } = route.params;
-
-
+    const { idSubscriber, sendPayload, isRegister } = route.params;
+    const payload = sendPayload;
 
     return (
         <>
-            <ReturnHeader title='Recarga de saldo' nav={navigation} />
+            <ReturnHeader title='Recarga de saldo' navigation={navigation} />
             <ScrollView style={styles.container} >
 
                 <View style={{ flex: 1 }}>
@@ -470,11 +470,11 @@ const Recharge_2 = ({ navigation, route }) => {
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{JSON.stringify(chargeId)}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{JSON.stringify(payload)}</Text>
                         </TouchableOpacity>
                         <Text>Número JR Movil:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{JSON.stringify(numToCharge)}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{JSON.stringify(idSubscriber)}</Text>
                         </TouchableOpacity>
 
 
@@ -487,7 +487,12 @@ const Recharge_2 = ({ navigation, route }) => {
                             <Text>Realiza tu pago.</Text>
                         </View>
                     </View>
-                    <RechargeTwoCard chargeId={chargeId} numToCharge={numToCharge} navigation={navigation} />
+                    <RechargeTwoCard 
+                        isRegister={isRegister} 
+                        payload={payload} 
+                        idSubscriber={idSubscriber} 
+                        navigation={navigation} 
+                    />
                     <View style={styles.registerContainer}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>Ir Atras</Text>

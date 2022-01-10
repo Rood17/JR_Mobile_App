@@ -6,9 +6,8 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 
 let mainColor;
 
-const IntentBtn = ({ color, justAction,navigation,intent, btnText, isDisabled }) => {
+const IntentBtn = ({ color,btnParams, justAction,navigation,intent, btnText, isDisabled }) => {
 
-  let btnParams = [];
   let goToView = '';
 
   //Styles
@@ -27,8 +26,6 @@ const IntentBtn = ({ color, justAction,navigation,intent, btnText, isDisabled })
   } else {
     goToView = intent
   }
-
-  console.log('goToView : ' + goToView)
 
   return (
     <View style={styles.btnContainer}>

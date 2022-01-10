@@ -109,7 +109,8 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
     const [countDown, setCountDown] = useState(1);
 
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
-
+    const { name, lastName } = route.params;
+    //setSafeName(name)
 
     const onChangeCode = (code) => {
         console.log(code)
@@ -154,12 +155,13 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
         }
     }
 
+    // Authomatic pass after inserting the correct code
     useEffect(() => {
-        if (pass1)
-            {setBtnDisabledFlag(false)
-            navigation.navigate('Register_2')}
-        else
-            {setBtnDisabledFlag(true)}
+        if (pass1) {
+            setBtnDisabledFlag(false)
+            navigation.navigate('Register_2', { passName: name, passLastName: lastName })
+        }
+        else { setBtnDisabledFlag(true) }
 
         // Count Down
         setTimeout(() => {
@@ -200,7 +202,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
             //alert('send SMS')
             setCountDown(3)
             countPass += 1;
-        } 
+        }
         if (action === 'SendAgain2') {
             //alert('send SMS')
             setSmsSendDisabled(true)
@@ -274,13 +276,15 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
                         <View>
                             {numberAgain ?
                                 null
-
                                 :
-                                <IntentBtn
-                                    isDisabled={btnDisabledFlag}
-                                    intent='Register_2'
-                                    navigation={navigation}
-                                    btnText={btnText} />
+                                <>
+                                    <IntentBtn
+                                        isDisabled={btnDisabledFlag}
+                                        intent='Register_2'
+                                        btnParams={{ passName: name, passLastName: lastName }}
+                                        navigation={navigation}
+                                        btnText='Continuar' />
+                                </>
                             }
                             <View style={{ alignItems: 'center' }}>
                                 {!numberAgain ?

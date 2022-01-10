@@ -134,7 +134,7 @@ const ForgottenPwd = ({navigation}) => {
     return (
         <>
             <View style={styles.container} >
-                <ReturnHeader title='Recuperar contraseña' nav={navigation}/>
+                <ReturnHeader title='Recuperar contraseña' navigation={navigation}/>
                 <View style={{ flex: 1 }}>
                     <PwdRecoveryCard />
                     <View style={styles.registerContainer}>

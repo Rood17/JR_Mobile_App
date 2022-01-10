@@ -14,6 +14,7 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
+import {setProductType} from '../../utils/Utils'
 
 import {
     Button,
@@ -29,7 +30,7 @@ import {
 
 let payload;
 // MainCard
-export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, setGbProduct }) => {
+export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
@@ -39,7 +40,7 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
     const [pass1, setPass1] = useState(false);
 
     const numberExist = 888
-
+    let phoneValue;
 
     // Validate if Number account exist
     const onChangeNumber = (number) => {
@@ -75,11 +76,11 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
             if (number === initNumber) {
                 setDisabledBtn(false)
                 setDisplayColor2(styleConst.MAINCOLORSLIGHT[1])
-                setErrorMsg2('')
+                setErrorMsg2(<WarningAdvice type={3} warningText='El número coincide' />)
             } else {
                 setDisplayColor2('red')
                 setDisabledBtn(true)
-                setErrorMsg2(<WarningAdvice type={2} warningText='el número no coincide' />)
+                setErrorMsg2(<WarningAdvice type={2} warningText='El número no coincide' />)
             }
 
         }
@@ -90,6 +91,16 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
         }
 
     }
+
+    // IsRegister
+    if ( isJr ) {
+        // Set input value
+        phoneValue = initNumber
+    }
+        
+
+    console.log("Recharge > idSubscriber : "+ idSubscriber)
+
 
     return (
 
@@ -102,6 +113,7 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
+                    value={phoneValue}
                     leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor1 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
                     onChangeText={number => onChangeNumber(number)}
@@ -121,8 +133,8 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor, navigation, se
                 <IntentBtn
                     isDisabled={disabledBtn}
                     intent={['Recharge_2', {
-                        chargeId: payload,
-                        numToCharge: initNumber,
+                        sendPayload: payload,
+                        idSubscriber: initNumber,
                     }]}
                     navigation={navigation}
                     btnText='Continuar' />
@@ -370,9 +382,10 @@ const stylesProductCard = StyleSheet.create({
 
 
 // Modal
-const OverlayModal = ({ setGbProduct }) => {
+export const OverlayModal = ({ setGbProduct, main }) => {
     const [visible1, setVisible1] = useState(false);
     const [visible2, setVisible2] = useState(false);
+    let [backgroundIconColor, iconColor] = ['white', styleConst.MAINCOLORSLIGHT[1]]
 
     const togglePlans = () => {
         setVisible1(!visible1);
@@ -381,6 +394,12 @@ const OverlayModal = ({ setGbProduct }) => {
     const togglePrices = () => {
         setVisible2(!visible2);
     };
+
+    // If we are in main
+    if (main) {
+        backgroundIconColor = styleConst.MAINCOLORS[0];
+        iconColor = styleConst.MAINCOLORS[0];
+    }
 
     return (
         <View>
@@ -391,7 +410,7 @@ const OverlayModal = ({ setGbProduct }) => {
                             raised
                             name='dropbox'
                             type='font-awesome'
-                            color={styleConst.MAINCOLORSLIGHT[1]}
+                            color={iconColor}
                             onPress={togglePlans} />
                         <Text>Planes JR</Text>
                     </View>
@@ -400,7 +419,7 @@ const OverlayModal = ({ setGbProduct }) => {
                             raised
                             name='dollar'
                             type='font-awesome'
-                            color={styleConst.MAINCOLORSLIGHT[1]}
+                            color={iconColor}
                             onPress={togglePrices} />
                         <Text>Cargar saldo</Text>
                     </View>
@@ -478,76 +497,21 @@ const modalStyle = StyleSheet.create({
     },
 });
 
-// Compute recharge type
-export const setProductType = (payloadCode) => {
-
-    payload = 'Plan JR10 - $99';
-    // Feed the caharge resume
-    if (typeof payloadCode == 'string') {
-        switch (payloadCode) {
-            case 'A':
-                payload = 'Plan JR5 - $49';
-                break;
-            case 'B':
-                payload = 'Plan JR10 - $99';
-                break;
-            case 'C':
-                payload = 'Plan JR20 - $199';
-                break;
-            case 'D':
-                payload = 'Plan JR50 - $449';
-                break;
-            default:
-                payload = 'Plan JR10 - $99';
-        }
-    }
-    if (typeof payloadCode == 'number') {
-        switch (payloadCode) {
-            case 20:
-                payload = 'Carga - $20';
-                break;
-            case 30:
-                payload = 'Carga - $30';
-                break;
-            case 50:
-                payload = 'Carga - $50';
-                break;
-            case 100:
-                payload = 'Carga - $100';
-                break;
-            case 150:
-                payload = 'Carga - $150';
-                break;
-            case 200:
-                payload = 'Carga - $200';
-                break;
-            case 300:
-                payload = 'Carga - $300';
-                break;
-            case 400:
-                payload = 'Carga - $400';
-                break;
-            case 500:
-                payload = 'Carga - $500';
-                break;
-            default:
-                payload = 'Plan JR10 - $99';
-        }
-    }
-
-    return payload;
-}
-
-const Recharge = ({ navigation, chargeResume }) => {
+const Recharge = ({ navigation, chargeResume, route }) => {
 
     const [gbProduct, setGbProduct] = useState()
+    const { idSubscriber, isRegister, isJr, sendPayload } = route.params;
 
-    payload = setProductType(gbProduct)
-
+    // Set the prodcut type
+    console.log("Recharge - sendPayload : " + sendPayload)
+    if ( sendPayload )
+        payload = setProductType(sendPayload)
+    else
+        payload = setProductType(gbProduct)
 
     return (
         <>
-        <ReturnHeader title='Recarga de saldo' nav={navigation} />
+        <ReturnHeader title='Recarga de saldo' navigation={navigation} />
             <ScrollView style={styles.container} >
                 
                 <View style={{ flex: 1 }}>
@@ -560,7 +524,11 @@ const Recharge = ({ navigation, chargeResume }) => {
                             <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
                         </View>
                     </View>
-                    <RechargeOneCard navigation={navigation} setGbProduct={setGbProduct} />
+                    <RechargeOneCard 
+                    idSubscriber={idSubscriber}
+                    isRegister={isRegister}
+                    isJr={isJr}
+                    navigation={navigation} setGbProduct={setGbProduct} />
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>

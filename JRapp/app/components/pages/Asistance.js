@@ -26,7 +26,7 @@ const Asistance = ({navigation}) => {
     // header, text, icon
     return (
         <View style={styles.container} >
-            <ReturnHeader title='¿Te Podemos Ayudar?' nav={navigation}/>
+            <ReturnHeader title='¿Te Podemos Ayudar?' navigation={navigation}/>
             <View style={{paddingLeft:15, marginTop:35}}>
                 <Text>Estamos para atender cualquiera de tus dudas, 
                     aclaraciones o comentarios.</Text>

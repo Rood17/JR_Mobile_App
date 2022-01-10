@@ -28,6 +28,32 @@ const Line = ({ color }) => {
 export default Line;
 // END Line
 
+// Review User Data card
+export const UserDataCard = ({ header, text, icon, actionBtnTxt }) => {
+    return (
+
+        <View style={stylesCard.boxShadow}>
+            <View style={stylesCard.infoContainer}>
+                <View style={stylesCard.iconContainer}>
+                    <Icon
+                        name={icon}
+                        type='font-awesome'
+                        color={styleConst.WARNINGS[0]}
+                    />
+                    <View style={stylesCard.headContainer}>
+                    
+                    <Text>{text}</Text>
+                    <Text style={stylesCard.cardHeadTxt}>{header}</Text>
+                </View>
+                </View>
+                
+            </View>
+                
+        </View>
+
+    );
+}
+
 // Card
 export const Card = ({ header, text, icon, actionBtnTxt }) => {
     return (
@@ -104,7 +130,7 @@ const stylesCard = StyleSheet.create({
 
 // MainCard
 export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
-    bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles }) => {
+    bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
     return (
 
         <View style={stylesMainCard.boxShadow}>
@@ -144,7 +170,12 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
 
             {showDetalles ?
                 <View style={stylesMainCard.detalles}>
-                    <TouchableOpacity onPress={() => alert('holaa')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Details',{
+                        idSubscriber:idSubscriber,
+                        isRegister:true,
+                        isJr:true
+                    })}
+                    >
                         <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Ver más detalles</Text>
                     </TouchableOpacity>
                 </View>
@@ -299,11 +330,26 @@ const SocialSimpleCard = StyleSheet.create({
 // END Card
 
 // Retorn Header
-export const ReturnHeader = ({ title, nav, clear }) => {
+export const ReturnHeader = ({ title, navigation, clear, isRegister, idSubscriber }) => {
+
+    const handleIntent = () => {
+        if ( isRegister )
+            navigation.reset({
+                index: 0,
+                routes: [
+                {
+                    name: 'Main', 
+                    params: { idSubscriber:idSubscriber, isRegister: isRegister },
+                },
+                ],
+            })
+        else
+            navigation.popToTop()
+    }
     return (
         <>
             {clear ?
-                <TouchableOpacity style={stylesReturn.container} onPress={() => nav.popToTop()}>
+                <TouchableOpacity style={stylesReturn.container} onPress={() => handleIntent()}>
                     <View style={stylesReturn.returnElement}>
                         <Icon
                             name='home'
@@ -316,7 +362,7 @@ export const ReturnHeader = ({ title, nav, clear }) => {
                     </View>
                 </TouchableOpacity>
                 :
-                <TouchableOpacity style={stylesReturn.container} onPress={() => nav.goBack()}>
+                <TouchableOpacity style={stylesReturn.container} onPress={() => navigation.goBack()}>
                     <View style={stylesReturn.returnElement}>
                         <Icon
                             name='arrow-left'
@@ -456,7 +502,7 @@ const styleHeadMain = StyleSheet.create({
 // END MainHeader
 
 // MainFooter
-export const MainFooter = ({ name, navigation }) => {
+export const MainFooter = ({ name, navigation, idSubscriber }) => {
 
     const onPress = () => {
         //  console.log("goToAyuda")
@@ -465,8 +511,7 @@ export const MainFooter = ({ name, navigation }) => {
     return (
         <>
             <View style={styleFooterMain.container} onPress={onPress}>
-                <TouchableOpacity style={styleFooterMain.iconContainer}
-                    onPress={() => navigation.navigate('Main')}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}>
                     <Icon
                         name='home'
                         type='font-awesome'
@@ -475,7 +520,11 @@ export const MainFooter = ({ name, navigation }) => {
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
-                    onPress={() => navigation.navigate('Recharge')}>
+                    onPress={() => navigation.navigate('Recharge',{
+                        idSubscriber:idSubscriber,
+                        isRegister:true,
+                        isJr:true
+                        })}>
                     <Icon
                         name='mobile'
                         type='font-awesome'
@@ -484,23 +533,27 @@ export const MainFooter = ({ name, navigation }) => {
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Details')}
-                    style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                    onPress={() => navigation.navigate('Details',{
+                        idSubscriber:idSubscriber,
+                        isRegister:true,
+                        isJr:true
+                        })}>
                     <Icon
                         name='file'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
+
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Saldo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Asistance')}
-                    style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                    onPress={() => navigation.navigate('Asistance')}>
                     <Icon
                         name='question'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
+
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Ayuda</Text>
                 </TouchableOpacity>

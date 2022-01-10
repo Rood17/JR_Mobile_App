@@ -48,15 +48,17 @@ import { WarningAdvice } from '../elements/Elements';
 // Global Vars
 let isNumberRegister = false;
 
-const PwdInput = ({ nav }) => {
+const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [pwdFail, setPwdFail] = useState(false)
     const [disabledBtn, setDisabledBtn] = useState(true)
 
     const onChangeText = (pwd) => {
         if (pwd.length > 0)
-            setDisabledBtn(false)
+            {setDisabledBtn(false);
+            setIsPwdOk(true)}
         else
-            setDisabledBtn(true)
+            {setDisabledBtn(true)
+            setIsPwdOk(false)}
     }
     return (
         <>
@@ -77,6 +79,7 @@ const PwdInput = ({ nav }) => {
                 isDisabled={disabledBtn}
                 navigation={nav}
                 intent='Main'
+                btnParams={{idSubscriber: idSubscriber, isRegister: true}}
                 btnText='Ingresar' />
             <View style={{ alignItems: 'center' }}>
                 <Text style={styles.phoneTxt}>¿Olvidaste tu contraseña?</Text>
@@ -87,11 +90,15 @@ const PwdInput = ({ nav }) => {
 
 }
 
-const PassOrRegister = ({ numberFlag, navigation }) => {
+const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) => {
     return (
         <>
             {numberFlag ?
-                <PwdInput nav={navigation} />
+                <PwdInput
+                setIsPwdOk={setIsPwdOk}
+                nav={navigation} 
+                idSubscriber={idSubscriber} 
+                />
                 :
                 <View style={{ marginBottom: 0, }}>
                     <Text style={{ textAlign: 'center', }}>
@@ -102,6 +109,7 @@ const PassOrRegister = ({ numberFlag, navigation }) => {
                     <Text style={{ textAlign: 'center', }}>¡Es totalmente gratuito!</Text>
                     <IntentBtn
                         intent='Register'
+                        btnParams={{idSubscriber:idSubscriber, isRegister:true}}
                         navigation={navigation}
                         btnText='Registrarse' />
                 </View>
@@ -110,11 +118,11 @@ const PassOrRegister = ({ numberFlag, navigation }) => {
     );
 }
 
-const PhoneIsNotJr = ({ flag }) => {
+const PhoneIsNotJr = ({ flag, errorText }) => {
     return (
         <>
             {flag ?
-                <WarningAdvice warningText='Este no es un número JR Móvil.' />
+                <WarningAdvice warningText={errorText} />
                 :
                 null
             }
@@ -127,16 +135,24 @@ const LoginBody = ({ nav }) => {
     const [jrAlert, setJrAlert] = useState(false);
     const [keyboardIsOpen, setKeyBoardIsOpen] = useState(false);
     const [iconFlex, setIconFlex] = useState(1.5)
+    const [errorStr, setErrorStr] = useState('')
+    const [idSubscriber, setIdSubscriber] = useState(0)
+    const [isPwdOk, setIsPwdOk] = useState(false)
+    const [dinamicColor, setDinamicColor] = useState(styleConst.MAINCOLORSLIGHT[1])
 
     const isJR = '888'
     const isRegister = '56'
-    const isDebug = true;
 
     // Auth handler
     const onChangeNumber = (number) => {
+        setIdSubscriber(number)
 
         // Validate if is Jr Movil
         if (number.length == constants.MAX_NUMBER_LENGTH) {
+
+            // Clear input error
+            setErrorStr('')
+            
             // Validate if es JR
             if (number.toString().indexOf(isJR) != -1) {
                 setJrAlert(false)
@@ -152,6 +168,7 @@ const LoginBody = ({ nav }) => {
                 }
             } else {
                 setJrAlert(true)
+                setErrorStr('Este no es un número JR Móvil.')
                 setIconFlex(1.5)
             }
 
@@ -162,6 +179,8 @@ const LoginBody = ({ nav }) => {
             setPhoneIsCorrect(false)
             setJrAlert(false)
             setIconFlex(1.5)
+            setErrorStr('')
+            setIsPwdOk(false)
         }
     }
 
@@ -177,6 +196,36 @@ const LoginBody = ({ nav }) => {
             setKeyBoardIsOpen(false);
         },
     );
+
+    // Consulta handler
+    const iconActionHandler = (intent) => {
+        // If is JR Movil
+        console.log("Login > isRegister : " + isPwdOk)
+        if ( intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH )
+        {
+            
+            nav.navigate(intent, {
+                idSubscriber: idSubscriber,
+                isRegister : isPwdOk,
+                isJr: phoneIsCorrect
+            })
+            setErrorStr('')
+            
+        } else if ( intent === 'Recharge') {
+            console.log("Login > inside else if iconactionhandler idSubscriber : " + idSubscriber)
+            console.log(isPwdOk)
+
+            nav.navigate(intent, {
+                idSubscriber: idSubscriber,
+                isRegister : isPwdOk,
+                isJr:phoneIsCorrect
+            })
+        } else {
+            setJrAlert(true);
+            setErrorStr('Favor de Ingresar un Número JR')
+        }
+
+    }
 
 
     return (
@@ -196,9 +245,13 @@ const LoginBody = ({ nav }) => {
                             onChangeText={number => onChangeNumber(number)}
                         />
                         {phoneIsCorrect ?
-                            <PassOrRegister numberFlag={isNumberRegister} navigation={nav} />
+                            <PassOrRegister 
+                                setIsPwdOk={setIsPwdOk}
+                                idSubscriber={idSubscriber} 
+                                numberFlag={isNumberRegister} 
+                                navigation={nav} />
                             :
-                            <PhoneIsNotJr flag={jrAlert} />
+                            <PhoneIsNotJr flag={jrAlert} errorText={errorStr} />
                         }
 
                     </View>
@@ -218,8 +271,8 @@ const LoginBody = ({ nav }) => {
                                         raised
                                         name='mobile'
                                         type='font-awesome'
-                                        color={styleConst.MAINCOLORSLIGHT[1]}
-                                        onPress={() => nav.navigate('Recharge')} />
+                                        color={dinamicColor}
+                                        onPress={() => iconActionHandler('Recharge')} />
                                     <Text style={styles.icon_text}>Recarga</Text>
                                 </View>
                                 <View style={styles.icon}>
@@ -227,8 +280,8 @@ const LoginBody = ({ nav }) => {
                                         raised
                                         name='file'
                                         type='font-awesome'
-                                        color={styleConst.MAINCOLORSLIGHT[1]}
-                                        onPress={() => nav.navigate('Details')} />
+                                        color={dinamicColor}
+                                        onPress={() => iconActionHandler('Main')} />
                                     <Text style={styles.icon_text}>Consulta</Text>
                                 </View>
                             </View>

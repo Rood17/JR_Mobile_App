@@ -17,7 +17,7 @@ import * as constants from '../../utils/constants/Constants';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
-import { Icon, Input } from 'react-native-elements'
+import { Icon, Input, Overlay } from 'react-native-elements'
 
 import {
     Button,
@@ -43,7 +43,7 @@ import {
 // Btn Disabled Flaf Team
 let pass1, pass2, pass3, isBold1, isBold2, isBold3, i;
 
-export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => {
+export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
 
 
     const [chackColor, setChackColor] = useState('grey');
@@ -143,11 +143,15 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
                         }}>8 caracteres</Text>
                     </View>
                 </View>
-                <IntentBtn
+
+
+                <OverlayModal
+                    btnText={btnTxt}
                     isDisabled={btnDisabledFlag}
-                    intent='Main'
                     navigation={navigation}
-                    btnText={btnTxt} />
+                    fail={btnDisabledFlag}
+                    dataArray={dataArray}
+                />
             </View>
 
         </>
@@ -155,10 +159,93 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation }) => 
 
 }
 
-const Register_2: () => Node = ({ recovery, navigation }) => {
+// Modal
+const OverlayModal = ({ btnDisabledFlag, navigation, fail,dataArray }) => {
+    const [visible, setVisible] = useState(false);
+    const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
 
+    const toggleResume = () => {
+        setVisible(!visible);
+    };
+
+    const safePaymentHandler = () => {
+        if (safePaymentSuccess) {
+            navigation.navigate('Main', {
+                userArray: dataArray,
+            })
+        } else {
+            toggleResume()
+            fail('Error')
+        }
+    }
+
+    return (
+        <View>
+
+            <View style={{ marginLeft: 20, marginRight: 20, marginTop: 15, marginBottom: 5 }}>
+
+                <Button
+                    //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                    onPress={toggleResume}
+                    color={styleConst.MAINCOLORS[0]}
+                    title='Continuar 55'
+                    disabled={btnDisabledFlag}
+                />
+
+            </View>
+
+
+            <Overlay isVisible={visible} onBackdropPress={toggleResume}>
+                <View style={modalStyle.containerModal}>
+                    <View style={modalStyle.headContainer}>
+                        <Text style={modalStyle.headTxt}>¡Gracias {dataArray.passName}!</Text>
+                        <Text >Tu cuenta se ha registrado exitosamente.</Text>
+                    </View>
+
+
+
+                    <View style={modalStyle.footer}>
+                        <Button
+                            //style={stylesBtn == null ? btnNormal() : stylesBtn}
+
+                            onPress={safePaymentHandler}
+                            color={styleConst.MAINCOLORS[0]}
+                            title='Ir a tu portal'
+                        />
+                    </View>
+                </View>
+            </Overlay>
+        </View>
+    );
+};
+const modalStyle = StyleSheet.create({
+    containerModal: {
+        margin: 20
+    },
+    headContainer: {
+        margin: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    bodyContainer: {
+        alignItems: 'flex-start',
+        margin: 20,
+        justifyContent: 'center'
+    },
+    footer: {
+        margin: 10
+    },
+    headTxt: {
+        fontWeight: 'bold',
+        color: styleConst.MAINCOLORS[1]
+    },
+});
+
+const Register_2: () => Node = ({ recovery, navigation, route }) => {
+
+    // Params
+    const { passName, passLastName } = route.params;
     const [emailIsCorrect, setEmailIsCorrect] = useState(false);
-    // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
 
     const onChangeEmail = (email) => {
         if (email.indexOf('@') != -1 && email.indexOf('.') != -1) {
@@ -183,9 +270,9 @@ const Register_2: () => Node = ({ recovery, navigation }) => {
                         {!recovery ?
                             <>
                                 <Text>
-                                    Para entrar a tu portal "JR movil" es necesario que 
+                                    Para entrar a tu portal "JR movil" es necesario que
                                     introduzcas tus datos.
-                                    </Text>
+                                </Text>
                                 <View>
                                     <Input
                                         placeholder="Email"
@@ -199,7 +286,7 @@ const Register_2: () => Node = ({ recovery, navigation }) => {
                                 </View>
                             </>
                             :
-                            <Text style={{marginBottom:20}}>
+                            <Text style={{ marginBottom: 20 }}>
                                 Ingresa una nueva contraseña segura, para poder ingresar a tu portal JR Movil.
                             </Text>
                         }
@@ -211,14 +298,16 @@ const Register_2: () => Node = ({ recovery, navigation }) => {
                             btnTxt='Registrarse'
                             navigation={navigation}
                             emailPass={emailIsCorrect}
+                            dataArray={{passName:passName, passLastName:passLastName}}
                         />
 
                     </View>
 
 
+
                 </ScrollView>
             </TouchableWithoutFeedback>
-            <Help navigation={navigation}/>
+            <Help navigation={navigation} />
         </View>
     );
 };

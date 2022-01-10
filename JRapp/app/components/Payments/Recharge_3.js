@@ -130,12 +130,18 @@ const stylesMainCard = StyleSheet.create({
 // Main
 const Recharge_3 = ({ navigation, route }) => {
 
-    const { chargeId, numToCharge } = route.params;
+    const { payload, idSubscriber, isRegister } = route.params;
     // header, text, icon
     return (
         <>
             <ScrollView style={styles.container} >
-                <ReturnHeader title='Ir a Inicio' nav={navigation} clear={true} />
+                <ReturnHeader 
+                    title='Ir a Inicio' 
+                    navigation={navigation} 
+                    clear={true} 
+                    isRegister={isRegister}
+                    idSubscriber={idSubscriber}
+                />
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
@@ -150,11 +156,11 @@ const Recharge_3 = ({ navigation, route }) => {
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{chargeId}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>
                         <Text>Número JR Movil:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{numToCharge}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{idSubscriber}</Text>
                         </TouchableOpacity>
                         <View style={{ marginBottom: 30, width: '80%' }}>
                             

@@ -43,35 +43,36 @@ import {
 // Btn Disabled Flaf Team
 const Register: () => Node = ({navigation}) => {
 
-    const [pass1, setPass1] = useState(false);
-    const [pass2, setPass2] = useState(false);
+    const [name, setName] = useState(false);
+    const [lastName, setLastName] = useState(false);
     const [btnDisabledFlag, setBtnDisabledFlag] = useState(true)
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
 
 
-    const onChangeName = (txt) => {
-        if (txt.length >= 4) {
-            setPass1(true)
+    const onChangeName = (inputName) => {
+        if (inputName.length >= 4) {
+            setName(inputName)
         } else {
-            setPass1(false)
+            setName("")
         }
     }
 
-    const onChangeLastName = (lastName) => {
-        if (lastName.length > 4 && pass1) {
-            setPass2(true)
+    const onChangeLastName = (inputLastName) => {
+        if (inputLastName.length > 4 && name.length > 4) {
+            setLastName(inputLastName)
         } else {
-            setPass2(false)
+            setLastName("")
         }
     }
 
     useEffect(() => {
-        if (pass1 && pass2)
+        /// dev 99999
+        if (true)
             setBtnDisabledFlag(false)
         else
             setBtnDisabledFlag(true)
     });
-
+ 
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
@@ -85,10 +86,10 @@ const Register: () => Node = ({navigation}) => {
                         <Input
                             placeholder="Nombre(s)"
                             autoComplete='name'
-                            maxLength={constants.MAX_NUMBER_LENGTH}
+                            maxLength={20}
                             secureTextEntry={false}
                             leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
-                            onChangeText={text => onChangeName(text)}
+                            onChangeText={name => onChangeName(name)}
                         />
                         <Input
                             placeholder="Apellido(s)"
@@ -102,6 +103,7 @@ const Register: () => Node = ({navigation}) => {
                             isDisabled={btnDisabledFlag}
                             navigation={navigation}
                             intent='RegisterSms'
+                            btnParams={{name : name, lastName : lastName}}
                             btnText='Ingresar' />
                     </View>
 

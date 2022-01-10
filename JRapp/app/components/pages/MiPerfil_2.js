@@ -167,7 +167,7 @@ const MiPerfil = ({navigation}) => {
     // header, text, icon
     return (
         <ScrollView style={styles.container} >
-            <ReturnHeader title='Administrar mi perfil' nav={navigation}/>
+            <ReturnHeader title='Administrar mi perfil' navigation={navigation}/>
             <CardPerfil />
         </ScrollView>
 

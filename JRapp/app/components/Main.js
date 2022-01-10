@@ -7,15 +7,19 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Node } from 'react';
 
 import DisplayLogo from './elements/DisplayLogo';
 import IntentBtn from './elements/IntentBtn';
-import { Icon, Input } from 'react-native-elements'
-import { MainHeader, MainFooter, MainCard, SocialMainCard } from './elements/Elements';
+import { Icon, Input, } from 'react-native-elements'
+import { WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
 import * as styleConst from '../res/values/styles/StylesConstants'
 import * as constants from '../utils/constants/Constants'
+import { formatApiDate, setProductType } from '../utils/Utils'
+import { OverlayModal } from '../components/Payments/Recharge'
+// Services
+import * as data from '../utils/services/perfil_uf.json'
 
 
 import {
@@ -29,36 +33,60 @@ import {
     View,
     Image,
     TouchableHighlight,
-    TouchableWithoutFeedback ,
+    TouchableOpacity,
 } from 'react-native';
 
 
 // Card
-export const ProductCard = () => {
+export const ProductCard = ({ navigation, idSubscriber, isRegister }) => {
+
+    const productCardHandler = (charge) => {
+        let intent
+
+        // Is Register?
+        if (isRegister)
+            intent = 'Recharge_2'
+        else
+            intent = 'Recharge'
+
+        // Set product
+        charge = setProductType(charge)
+
+        // Go to
+        navigation.navigate(intent, {
+            idSubscriber: idSubscriber,
+            isRegister: isRegister,
+            isJr: true,
+            sendPayload: charge
+        })
+    }
+
     return (
         <ScrollView horizontal >
             <TouchableHighlight
-                onPress={() => alert('Yaay!')}
+                onPress={() => productCardHandler('A')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/2.jpg')}
                 />
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => alert('Yaay!')}
+            <TouchableHighlight onPress={() => productCardHandler('B')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/3.jpg')}
                 />
             </TouchableHighlight>
-            <TouchableHighlight style={stylesProductCard.boxShadow}>
+            <TouchableHighlight onPress={() => productCardHandler('C')}
+                style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/4.jpg')}
                 />
             </TouchableHighlight>
-            <TouchableHighlight style={stylesProductCard.boxShadow}>
+            <TouchableHighlight onPress={() => productCardHandler('D')}
+                style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/5.jpg')}
@@ -98,12 +126,80 @@ const stylesProductCard = StyleSheet.create({
     }
 });
 
-const Main = ({navigation}) => {
+const Main = ({ navigation, route }) => {
+    //data.responseSubscriber.status.subStatus
+    const userIsActive = false;
+    const { idSubscriber, isRegister } = route.params;
+    const [payload, setPayload] = useState('Carga - $50');
+    const [gbProduct, setGbProduct] = useState()
+
+
+    let [totalMBData, unsuedMBData, expireMBData, actualMBData,
+        totalSMSData, unsuedSMSData, expireSMSData, actualSMSData,
+        totalMINData, unsuedMINData, expireMINData, actualMINData] = [0]
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
     // respuesta Api
-    const validityUser = ' 2021/12/18'
+
+
+    data.responseSubscriber.freeUnits.map((item, i) => {
+        // Get data 'mb'
+        if (item.name.indexOf("FreeData_Altan") != -1) {
+            // set Vars
+            totalMBData = item.freeUnit.totalAmt;
+            unsuedMBData = item.freeUnit.unusedAmt;
+            actualMBData = totalMBData - unsuedMBData;
+
+            // if unsed data is none
+            if (actualMBData == 0)
+                actualMBData = totalMBData
+
+            // Get Expirtaion Date
+            item.detailOfferings.map((subItem) => {
+                console.log(subItem.expireDate)
+                expireMBData = subItem.expireDate;
+            })
+        }
+
+        // get 'sms'  y 'tiempo'
+        if (item.name.indexOf("FU_SMS_Altan-NR-LDI_NA") != -1) {
+            // set Vars
+            totalSMSData = item.freeUnit.totalAmt;
+            unsuedSMSData = item.freeUnit.unusedAmt;
+            actualSMSData = totalSMSData - unsuedSMSData;
+
+            // if unsed data is none
+            if (actualSMSData == 0)
+                actualSMSData = totalSMSData
+
+            // Get Expirtaion Date
+            item.detailOfferings.map((subItem) => {
+                console.log(subItem.expireDate)
+                expireSMSData = subItem.expireDate;
+            })
+        }
+        if (item.name.indexOf("FU_Min_Altan-NR-IR-LDI_NA") != -1) {
+            // set Vars
+            totalMINData = item.freeUnit.totalAmt;
+            unsuedMINData = item.freeUnit.unusedAmt;
+            actualMINData = totalMINData - unsuedMINData;
+
+            // if unsed data is none
+            if (actualMINData == 0)
+                actualMINData = totalMINData
+
+            // Get Expirtaion Date
+            item.detailOfferings.map((subItem) => {
+                console.log(subItem.expireDate)
+                expireMINData = subItem.expireDate;
+            })
+        }
+    })
+
+
+    // Just accept this format '2022/02/18'
+    const validityUser = formatApiDate(expireMBData)
     const validityUserCode = validityUser.replace(/\//g, '')
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
@@ -132,10 +228,33 @@ const Main = ({navigation}) => {
     }
 
 
+    // Payload select
+    useEffect(() => {
+
+        if (gbProduct) {
+            // Set product
+            let charge = setProductType(gbProduct)
+
+            // Intent to Recharge_2
+            navigation.navigate('Recharge_2', {
+                idSubscriber: idSubscriber,
+                isRegister: isRegister,
+                isJr: true,
+                sendPayload: charge
+            })
+        }
+    });
+
+
     return (
         <>
+
             <View style={styles.container}>
-                <MainHeader name='Hola [Usuario]' />
+                {isRegister ?
+                    <MainHeader name='Hola [Usuario]' />
+                    :
+                    <ReturnHeader title='Detalles de tu Saldo' navigation={navigation} />
+                }
                 <ScrollView style={styles.container}>
                     <View style={styles.numberContainer}>
                         <Icon
@@ -143,39 +262,87 @@ const Main = ({navigation}) => {
                             type='font-awesome'
                             color={styleConst.MAINCOLORSLIGHT[1]}
                         />
-                        <Text style={styles.number}>55 89 54 78 21</Text>
+                        <Text style={styles.number}>{idSubscriber}</Text>
                     </View>
                     <View>
                         <MainCard
-                            title='Carga - $50'
+                            title={payload}
                             subtitle={validityResponse}
                             subtitleColor={validityColor}
                             bodyHeadOne='MB Totales'
                             bodyHeadTwo='MB Disponibles'
-                            dataOne='10,000 MB'
-                            dataTwo='1,312 MB'
+                            dataOne={totalMBData + ' MB'}
+                            dataTwo={actualMBData + ' MB'}
                             MBC='true'
-                            text='Consumos de datos:' />
-                        <SocialMainCard />
-                        <MainCard
-                            bodyHeadOne='Min Consumidos'
-                            bodyHeadTwo='SMS Consumidos'
-                            dataOne='255 Min'
-                            dataTwo='5 Msj'
-                            showDetalles />
-                          
-                        <View style={styles.btnsContainer}>
-                            <View style={styles.btnAction}>
-                            <IntentBtn
-                                intent='Recharge'
-                                btnText='Paquetes' />
+                            text='Consumos de datos:'
+                        />
+                        {isRegister ?
+                            <>
+                                <SocialMainCard />
+                                <MainCard
+                                    bodyHeadOne='Min Consumidos'
+                                    bodyHeadTwo='SMS Consumidos'
+                                    dataOne={actualSMSData + ' Sms'}
+                                    dataTwo={actualMINData + ' Min'}
+                                    showDetalles
+                                    navigation={navigation}
+                                    idSubscriber={idSubscriber}
+                                />
+                                {/** Exported from recharge */}
+                                <View style={{ marginTop: 20 }}>
+                                    <OverlayModal setGbProduct={setGbProduct} main />
+                                </View>
+                                {/**
+                                <View style={styles.btnsContainer}>
+                                    <View style={styles.btnAction}>
+                                        <IntentBtn
+                                            navigation={navigation}
+                                            intent='Recharge'
+                                            btnParams={{ idSubscriber: idSubscriber, isRegister: isRegister, isJr: true }}
+                                            btnText='Paquetes' />
+                                    </View>
+                                    <View style={styles.btnAction}>
+                                    <IntentBtn
+                                            navigation={navigation}
+                                            intent='Recharge'
+                                            btnParams={{ 
+                                                idSubscriber: idSubscriber, 
+                                                isRegister: isRegister, 
+                                                isJr: true,
+                                                sendPayload: 'B'
+                                             }}
+                                            btnText='Cargar Saldo' />
+                                    </View>
+                                </View>**/}
+                            </>
+                            :
+                            <View style={styles.infoNoRegisterTxt}>
+                                <TouchableOpacity>
+                                    <Text style={{ textAlign: 'center' }}>
+                                        Para más información
+                                        <Text style={{ color: styleConst.MAINCOLORS[0] }}> Ingresa </Text>
+                                        a tu "Cuenta".
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Text style={{ textAlign: 'center' }}>
+                                        O<Text style={{ color: styleConst.MAINCOLORS[0] }}> Registrate Aquí. </Text>
+                                        ¡Es gratuito!
+                                    </Text>
+                                </TouchableOpacity>
+                                <View style={styles.btnsContainer}>
+                                    <View style={styles.btnAction}>
+                                        <IntentBtn
+                                            navigation={navigation}
+                                            intent='Recharge'
+                                            btnParams={{ idSubscriber: idSubscriber, isRegister: isRegister, isJr: true }}
+                                            btnText='Recarga' />
+                                    </View>
+                                </View>
                             </View>
-                            <View style={styles.btnAction}>
-                            <IntentBtn
-                                intent='Recharge'
-                                btnText='Cargar Saldo' />
-                            </View>
-                        </View>
+                        }
+
+
                     </View>
                     <View style={{ marginBottom: 30 }}>
                         <View style={styles.productTitleContiner}>
@@ -187,12 +354,27 @@ const Main = ({navigation}) => {
                             <Text style={{ marginLeft: 15 }}>Selecciona el plan que más te convenga</Text>
                         </View>
                         <View>
-                            <ProductCard />
+                            <ProductCard
+                                navigation={navigation}
+                                idSubscriber={idSubscriber}
+                                isRegister={isRegister}
+                            />
                         </View>
                     </View>
                 </ScrollView>
-                <MainFooter navigation={navigation} />
+
+
+                {isRegister ?
+                    <MainFooter
+                        navigation={navigation}
+                        idSubscriber={idSubscriber}
+                    />
+                    :
+                    null
+                }
             </View>
+
+
         </>
     );
 }
@@ -206,15 +388,15 @@ const styles = StyleSheet.create({
         margin: 25,
         alignItems: 'center',
     },
-    btnsContainer:{
-        margin:10,
-        marginLeft:20,
-        marginRight:20,
-        flexDirection:'row',
+    btnsContainer: {
+        margin: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        flexDirection: 'row',
     },
     btnAction: {
         margin: 5,
-        flex:1
+        flex: 1
     },
     productTitleContiner: {
         flexDirection: 'row',
@@ -228,7 +410,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'grey',
         fontSize: 18
-    }
+    },
+    infoNoRegisterTxt: {
+        marginLeft: 50,
+        marginRight: 50,
+        marginBottom: 20,
+        marginTop: 20,
+        alignItems: 'center',
+    },
 });
 
 export default Main;
