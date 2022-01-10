@@ -9,15 +9,15 @@
 
 import React, { useState } from 'react';
 import type { Node } from 'react';
-import { LetterCircle, ReturnHeader } from "../elements/Elements";
+import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
+import {setProductType} from '../../utils/Utils'
 
 import {
     Button,
-    SafeAreaView,
     ScrollView,
     Image,
     Dimensions,
@@ -28,36 +28,79 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-
+let payload;
 // MainCard
-export const RechargeOneCard = ({ title, subtitle, subtitleColor }) => {
+export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
-    const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
+    const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
+    const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [errorMsg, setErrorMsg] = useState('');
+    const [errorMsg2, setErrorMsg2] = useState('');
+    const [initNumber, setInitNumber] = useState();
+    const [pass1, setPass1] = useState(false);
 
     const numberExist = 888
+    let phoneValue;
 
     // Validate if Number account exist
     const onChangeNumber = (number) => {
+
+        // Set number
+        setInitNumber(number);
+
         if (number.length === constants.MAX_NUMBER_LENGTH) {
             if (number.toString().indexOf(numberExist) != -1) {
-                setDisabledBtn(false)
-                setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
-                setErrorMsg('')
+                setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
+                setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
+                setPass1(true);
             } else {
-                setDisplayColor('red')
+                setDisplayColor1('red')
                 setDisabledBtn(true)
-                setErrorMsg('Este número aún no tiene una cuenta registrada.')
+                setErrorMsg(<WarningAdvice type={2} warningText='El número no es Jr' />)
+                setPass1(false);
             }
 
         }
         else {
             setDisabledBtn(true)
-            setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
+            setDisplayColor1(styleConst.MAINCOLORSLIGHT[2])
             setErrorMsg('')
+            setPass1(false);
         }
 
     }
+
+    // Validate if Number account exist
+    const onChangeNewNumber = (number) => {
+        if (number.length === constants.MAX_NUMBER_LENGTH && pass1) {
+            if (number === initNumber) {
+                setDisabledBtn(false)
+                setDisplayColor2(styleConst.MAINCOLORSLIGHT[1])
+                setErrorMsg2(<WarningAdvice type={3} warningText='El número coincide' />)
+            } else {
+                setDisplayColor2('red')
+                setDisabledBtn(true)
+                setErrorMsg2(<WarningAdvice type={2} warningText='El número no coincide' />)
+            }
+
+        }
+        else {
+            setDisabledBtn(true)
+            setDisplayColor2(styleConst.MAINCOLORSLIGHT[2])
+            setErrorMsg2('')
+        }
+
+    }
+
+    // IsRegister
+    if ( isJr ) {
+        // Set input value
+        phoneValue = initNumber
+    }
+        
+
+    console.log("Recharge > idSubscriber : "+ idSubscriber)
+
 
     return (
 
@@ -70,27 +113,30 @@ export const RechargeOneCard = ({ title, subtitle, subtitleColor }) => {
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
-                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor }}
+                    value={phoneValue}
+                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor1 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
-                    style={{ borderBottomColor: displayColor, color: displayColor }}
                     onChangeText={number => onChangeNumber(number)}
                 />
                 <Input
                     placeholder="Introduce de nuevo tu número"
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
-                    errorMessage={errorMsg}
-                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor }}
+                    errorMessage={errorMsg2}
+                    leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor2 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
-                    style={{ borderBottomColor: displayColor, color: displayColor }}
-                    onChangeText={number => onChangeNumber(number)}
+                    onChangeText={number => onChangeNewNumber(number)}
                 />
             </View>
-            <OverlayModal />
+            <OverlayModal setGbProduct={setGbProduct} />
             <View style={{ marginBottom: 30, width: '80%' }}>
                 <IntentBtn
                     isDisabled={disabledBtn}
-                    intent='goToEnterCode'
+                    intent={['Recharge_2', {
+                        sendPayload: payload,
+                        idSubscriber: initNumber,
+                    }]}
+                    navigation={navigation}
                     btnText='Continuar' />
             </View>
         </View>
@@ -143,73 +189,77 @@ const stylesMainCard = StyleSheet.create({
 // END MainCard
 
 // Money List
-export const MoneyCard = () => {
-    const [gbProduct, setGbProduct] = useState()
+export const MoneyCard = ({ setGbProduct, togglePrices }) => {
 
-    // 999 seguro aquí se va a neceistar un ref
-    console.log(gbProduct)
+    // handle money bby
+    const moneyHandler = (payloadCode) => {
+        // set pay charge
+        setGbProduct(payloadCode)
+        // Close modal
+        togglePrices()
+    }
 
     return (
         <View style={stylesMoneyCard.boxShadow} >
             <View style={stylesMoneyCard.horizontalCard}>
-                <TouchableHighlight
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(20)}
                 >
                     <Text>$20</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(30)}
                 >
                     <Text>$30</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(50)}
                 >
                     <Text>$50</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
             <View style={stylesMoneyCard.horizontalCard}>
-                <TouchableHighlight
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(100)}
                 >
                     <Text>$100</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(150)}
                 >
                     <Text>$150</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(200)}
                 >
                     <Text>$200</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
             <View style={stylesMoneyCard.horizontalCard}>
-                <TouchableHighlight
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(300)}
                 >
-                    <Text style={{alignItems:'center'}}>$300</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
+                    <Text style={{ alignItems: 'center' }}>$300</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(400)}
                 >
                     <Text>$400</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={stylesMoneyCard.box}
-                    onPress={() => setGbProduct(5)}
+                    onPress={() => moneyHandler(500)}
                 >
                     <Text>$500</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -227,10 +277,10 @@ const stylesMoneyCard = StyleSheet.create({
         borderColor: styleConst.MAINCOLORSLIGHT[3],
         padding: 5,
         borderWidth: .8,
-        width:70,
-        height:70,
-        alignItems:'center',
-        backgroundColor:styleConst.MAINCOLORSLIGHT[0],
+        width: 70,
+        height: 70,
+        alignItems: 'center',
+        backgroundColor: styleConst.MAINCOLORSLIGHT[0],
         justifyContent: 'center',
 
     },
@@ -247,21 +297,26 @@ const stylesMoneyCard = StyleSheet.create({
         shadowRadius: 4.65,
 
         elevation: 6,
-        alignItems:'center'
+        alignItems: 'center'
     }
 });
 
 // Products List
-export const ProductCard = () => {
-    const [gbProduct, setGbProduct] = useState()
+export const ProductCard = ({ setGbProduct, togglePlans }) => {
+
 
     // 999 seguro aquí se va a neceistar un ref
-    console.log(gbProduct)
+    const productHandler = (payload) => {
+        // Set charge
+        setGbProduct(payload)
+        // Close Modal
+        togglePlans()
+    }
 
     return (
         <ScrollView horizontal >
             <TouchableHighlight
-                onPress={() => setGbProduct(5)}
+                onPress={() => productHandler('A')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
@@ -269,7 +324,7 @@ export const ProductCard = () => {
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => setGbProduct(10)}
+                onPress={() => productHandler('B')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
@@ -277,7 +332,7 @@ export const ProductCard = () => {
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => setGbProduct(20)}
+                onPress={() => productHandler('C')}
                 style={stylesProductCard.boxShadow}
             >
                 <Image
@@ -286,7 +341,7 @@ export const ProductCard = () => {
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => setGbProduct(50)}
+                onPress={() => productHandler('D')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
@@ -327,9 +382,10 @@ const stylesProductCard = StyleSheet.create({
 
 
 // Modal
-const OverlayModal = () => {
+export const OverlayModal = ({ setGbProduct, main }) => {
     const [visible1, setVisible1] = useState(false);
     const [visible2, setVisible2] = useState(false);
+    let [backgroundIconColor, iconColor] = ['white', styleConst.MAINCOLORSLIGHT[1]]
 
     const togglePlans = () => {
         setVisible1(!visible1);
@@ -338,6 +394,12 @@ const OverlayModal = () => {
     const togglePrices = () => {
         setVisible2(!visible2);
     };
+
+    // If we are in main
+    if (main) {
+        backgroundIconColor = styleConst.MAINCOLORS[0];
+        iconColor = styleConst.MAINCOLORS[0];
+    }
 
     return (
         <View>
@@ -348,7 +410,7 @@ const OverlayModal = () => {
                             raised
                             name='dropbox'
                             type='font-awesome'
-                            color={styleConst.MAINCOLORSLIGHT[1]}
+                            color={iconColor}
                             onPress={togglePlans} />
                         <Text>Planes JR</Text>
                     </View>
@@ -357,7 +419,7 @@ const OverlayModal = () => {
                             raised
                             name='dollar'
                             type='font-awesome'
-                            color={styleConst.MAINCOLORSLIGHT[1]}
+                            color={iconColor}
                             onPress={togglePrices} />
                         <Text>Cargar saldo</Text>
                     </View>
@@ -371,28 +433,32 @@ const OverlayModal = () => {
 
                 <View style={modalStyle.bodyContainer}>
                     <Text style={{ margin: 15 }}>Slecciona una compra</Text>
-                    <ProductCard />
+                    <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
                 </View>
 
                 <View style={modalStyle.footer}>
-                    <IntentBtn
-                        intent='goToEnterCode'
-                        btnText='Cerrar'
-                        color={1} />
+                    <Button
+                        //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                        onPress={togglePlans}
+                        color={styleConst.MAINCOLORS[0]}
+                        title='Cerrar'
+                    />
                 </View>
             </Overlay>
             <Overlay isVisible={visible2} onBackdropPress={togglePrices}>
                 <View style={modalStyle.headContainer}>
                     <Text style={modalStyle.headTxt}>Recarga Saldo</Text>
-                    <View style={[modalStyle.bodyContainer, {width:'100%', marginTop:20}]}>
-                        <Text style={{ margin: 15, width:'100%' }}>Slecciona una compra</Text>
-                        <MoneyCard />
+                    <View style={[modalStyle.bodyContainer, { width: '100%', marginTop: 20 }]}>
+                        <Text style={{ margin: 15, width: '100%' }}>Selecciona una compra</Text>
+                        <MoneyCard setGbProduct={setGbProduct} togglePrices={togglePrices} />
                     </View>
-                    <View style={modalStyle.footer}>
-                        <IntentBtn
-                            intent='goToEnterCode'
-                            btnText='Cerrar'
-                            color={1} />
+                    <View style={[modalStyle.footer, { width: '100%' }]}>
+                        <Button
+                            //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                            onPress={togglePrices}
+                            color={styleConst.MAINCOLORS[0]}
+                            title='Cerrar'
+                        />
                     </View>
                 </View>
             </Overlay>
@@ -402,14 +468,14 @@ const OverlayModal = () => {
 const modalStyle = StyleSheet.create({
     headContainer: {
         margin: 20,
-        alignItems:'center',
-        justifyContent:'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     bodyContainer: {
         width: '80%',
-        alignItems:'center',
-        justifyContent:'center'
-        
+        alignItems: 'center',
+        justifyContent: 'center'
+
 
     },
     footer: {
@@ -423,7 +489,7 @@ const modalStyle = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        marginBottom:20
+        marginBottom: 20
     },
     icon: {
         alignItems: 'center',
@@ -431,13 +497,23 @@ const modalStyle = StyleSheet.create({
     },
 });
 
-const Recharge = (chargeResume) => {
-    // header, text, icon
-    chargeResume = 'Plan JR 50'
+const Recharge = ({ navigation, chargeResume, route }) => {
+
+    const [gbProduct, setGbProduct] = useState()
+    const { idSubscriber, isRegister, isJr, sendPayload } = route.params;
+
+    // Set the prodcut type
+    console.log("Recharge - sendPayload : " + sendPayload)
+    if ( sendPayload )
+        payload = setProductType(sendPayload)
+    else
+        payload = setProductType(gbProduct)
+
     return (
         <>
+        <ReturnHeader title='Recarga de saldo' navigation={navigation} />
             <ScrollView style={styles.container} >
-                <ReturnHeader title='Recarga de saldo' />
+                
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
@@ -448,11 +524,15 @@ const Recharge = (chargeResume) => {
                             <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
                         </View>
                     </View>
-                    <RechargeOneCard />
+                    <RechargeOneCard 
+                    idSubscriber={idSubscriber}
+                    isRegister={isRegister}
+                    isJr={isJr}
+                    navigation={navigation} setGbProduct={setGbProduct} />
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
-                            <Text style={{ color: styleConst.MAINCOLORS[0] }}>{chargeResume}</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>
 
 
@@ -467,26 +547,26 @@ const Recharge = (chargeResume) => {
                     </View>
                     <View style={styles.cardsContainer}>
                         <View style={styles.cardsLogo}>
-                        <Image
-                            style={{ height: 50,width:50}}
-                            source={require('../../res/drawable/logo/cards/mc.jpg')}
-                        />
+                            <Image
+                                style={{ height: 50, width: 50 }}
+                                source={require('../../res/drawable/logo/cards/mc.jpg')}
+                            />
                         </View>
-                        <View style={[styles.cardsLogo, {height:40}]}>
-                        <Image
-                            style={{ height: 20,width:60}}
-                            source={require('../../res/drawable/logo/cards/visa.png')}
-                        />
+                        <View style={[styles.cardsLogo, { height: 40 }]}>
+                            <Image
+                                style={{ height: 20, width: 60 }}
+                                source={require('../../res/drawable/logo/cards/visa.png')}
+                            />
                         </View>
                         <View style={styles.cardsLogo}>
-                        <Image
-                            style={{ height: 30,width:50, marginLeft:15}}
-                            source={require('../../res/drawable/logo/cards/ae.jpg')}
-                        />
+                            <Image
+                                style={{ height: 30, width: 50, marginLeft: 15 }}
+                                source={require('../../res/drawable/logo/cards/ae.jpg')}
+                            />
                         </View>
-                        
-                
-                        
+
+
+
                         <Text></Text>
                     </View>
                 </View>
@@ -526,7 +606,7 @@ const styles = StyleSheet.create({
         flex: 2,
         alignItems: 'center'
     },
-    
+
     cardsContainer: {
         marginTop: 0,
         marginLeft: 40,
@@ -536,8 +616,8 @@ const styles = StyleSheet.create({
     },
     cardsLogo: {
         width: 50,
-        height:50,
-        margin:5,
+        height: 50,
+        margin: 5,
         justifyContent: 'center',
         alignItems: 'center'
     },

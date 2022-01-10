@@ -129,12 +129,12 @@ const stylesMainCard = StyleSheet.create({
 });
 // END MainCard
 
-const ForgottenPwd = () => {
+const ForgottenPwd = ({navigation}) => {
     // header, text, icon
     return (
         <>
             <View style={styles.container} >
-                <ReturnHeader title='Recuperar contraseña' />
+                <ReturnHeader title='Recuperar contraseña' navigation={navigation}/>
                 <View style={{ flex: 1 }}>
                     <PwdRecoveryCard />
                     <View style={styles.registerContainer}>

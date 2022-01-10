@@ -3,7 +3,7 @@ import { View, TouchableHighlight, Text, StyleSheet, Button, TouchableOpacity } 
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as string from '../../res/values/strings/Strings'
 
-const Help = () => {
+const Help = ({navigation}) => {
 
     const onPress = () => {
         alert('go to ayudaaa')
@@ -11,7 +11,7 @@ const Help = () => {
 
     return (
         <>
-        <TouchableOpacity style={styles.helpContainer} onPress={onPress}>
+        <TouchableOpacity style={styles.helpContainer} onPress={() => navigation.navigate('Asistance')}>
             <Text style={{color: styleConst.MAINCOLORS[0], fontWeight:'bold'}}>{string.HELP}</Text>
         </TouchableOpacity>
         </>
