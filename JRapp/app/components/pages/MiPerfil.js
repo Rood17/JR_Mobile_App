@@ -170,11 +170,11 @@ const stylesCardPerfil = StyleSheet.create({
 });
 // END Card
 
-const MiPerfil = () => {
+const MiPerfil = ({navigation}) => {
     // header, text, icon
     return (
         <View style={styles.container} >
-            <ReturnHeader title='Mi perfil' />
+            <ReturnHeader title='Mi perfil' navigation={navigation} />
             <View style={{ paddingLeft: 15, marginTop: 35 }}>
                 <Text>Aquí puedes modificar tus datos personales registrados en "JR Movil" y tu contraseña.</Text>
             </View>

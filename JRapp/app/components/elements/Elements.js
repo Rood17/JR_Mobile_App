@@ -28,6 +28,32 @@ const Line = ({ color }) => {
 export default Line;
 // END Line
 
+// Review User Data card
+export const UserDataCard = ({ header, text, icon, actionBtnTxt }) => {
+    return (
+
+        <View style={stylesCard.boxShadow}>
+            <View style={stylesCard.infoContainer}>
+                <View style={stylesCard.iconContainer}>
+                    <Icon
+                        name={icon}
+                        type='font-awesome'
+                        color={styleConst.WARNINGS[0]}
+                    />
+                    <View style={stylesCard.headContainer}>
+                    
+                    <Text>{text}</Text>
+                    <Text style={stylesCard.cardHeadTxt}>{header}</Text>
+                </View>
+                </View>
+                
+            </View>
+                
+        </View>
+
+    );
+}
+
 // Card
 export const Card = ({ header, text, icon, actionBtnTxt }) => {
     return (
@@ -104,7 +130,7 @@ const stylesCard = StyleSheet.create({
 
 // MainCard
 export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
-    bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles }) => {
+    bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
     return (
 
         <View style={stylesMainCard.boxShadow}>
@@ -144,7 +170,12 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
 
             {showDetalles ?
                 <View style={stylesMainCard.detalles}>
-                    <TouchableOpacity onPress={() => alert('holaa')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Details',{
+                        idSubscriber:idSubscriber,
+                        isRegister:true,
+                        isJr:true
+                    })}
+                    >
                         <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Ver más detalles</Text>
                     </TouchableOpacity>
                 </View>
@@ -299,26 +330,52 @@ const SocialSimpleCard = StyleSheet.create({
 // END Card
 
 // Retorn Header
-export const ReturnHeader = ({ title }) => {
+export const ReturnHeader = ({ title, navigation, clear, isRegister, idSubscriber }) => {
 
-    const onPress = () => {
-        alert("Go to Back")
+    const handleIntent = () => {
+        if ( isRegister )
+            navigation.reset({
+                index: 0,
+                routes: [
+                {
+                    name: 'Main', 
+                    params: { idSubscriber:idSubscriber, isRegister: isRegister },
+                },
+                ],
+            })
+        else
+            navigation.popToTop()
     }
-
     return (
         <>
-            <TouchableOpacity style={stylesReturn.container} onPress={onPress}>
-                <View style={stylesReturn.returnElement}>
-                    <Icon
-                        name='arrow-left'
-                        type='font-awesome'
-                        color={styleConst.MAINCOLORS[0]}
-                    />
-                </View>
-                <View style={stylesReturn.returnElement}>
-                    <Text style={stylesReturn.returnHeadTxt}>{title}</Text>
-                </View>
-            </TouchableOpacity>
+            {clear ?
+                <TouchableOpacity style={stylesReturn.container} onPress={() => handleIntent()}>
+                    <View style={stylesReturn.returnElement}>
+                        <Icon
+                            name='home'
+                            type='font-awesome'
+                            color={styleConst.MAINCOLORS[0]}
+                        />
+                    </View>
+                    <View style={stylesReturn.returnElement}>
+                        <Text style={stylesReturn.returnHeadTxt}>{title}</Text>
+                    </View>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity style={stylesReturn.container} onPress={() => navigation.goBack()}>
+                    <View style={stylesReturn.returnElement}>
+                        <Icon
+                            name='arrow-left'
+                            type='font-awesome'
+                            color={styleConst.MAINCOLORS[0]}
+                        />
+                    </View>
+                    <View style={stylesReturn.returnElement}>
+                        <Text style={stylesReturn.returnHeadTxt}>{title}</Text>
+                    </View>
+                </TouchableOpacity>
+            }
+
         </>
     );
 }
@@ -418,7 +475,7 @@ const styleHeadMain = StyleSheet.create({
         height: 65,
         backgroundColor: styleConst.MAINCOLORS[0],
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     returnHeadTxt: {
         color: 'white',
@@ -428,7 +485,7 @@ const styleHeadMain = StyleSheet.create({
     },
     iconContainer: {
         marginLeft: 20,
-        flex: 0
+        flex: 0,
     },
     nameContainer: {
         margin: 10,
@@ -445,7 +502,7 @@ const styleHeadMain = StyleSheet.create({
 // END MainHeader
 
 // MainFooter
-export const MainFooter = ({ name }) => {
+export const MainFooter = ({ name, navigation, idSubscriber }) => {
 
     const onPress = () => {
         //  console.log("goToAyuda")
@@ -459,34 +516,44 @@ export const MainFooter = ({ name }) => {
                         name='home'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[1]}
-                        onPress={() => alert('ok..')}
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                    onPress={() => navigation.navigate('Recharge',{
+                        idSubscriber:idSubscriber,
+                        isRegister:true,
+                        isJr:true
+                        })}>
                     <Icon
                         name='mobile'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        onPress={() => alert('ok..')}
+
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                    onPress={() => navigation.navigate('Details',{
+                        idSubscriber:idSubscriber,
+                        isRegister:true,
+                        isJr:true
+                        })}>
                     <Icon
                         name='file'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        onPress={() => alert('ok..')}
+
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Saldo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styleFooterMain.iconContainer}>
+                <TouchableOpacity style={styleFooterMain.iconContainer}
+                    onPress={() => navigation.navigate('Asistance')}>
                     <Icon
                         name='question'
                         type='font-awesome'
                         color={styleConst.MAINCOLORSLIGHT[2]}
-                        onPress={() => alert('ok..')}
+
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Ayuda</Text>
                 </TouchableOpacity>
@@ -518,9 +585,9 @@ const styleFooterMain = StyleSheet.create({
 
 
 // CIRCLE
-export const LetterCircle = ({insightData, color}) => {
+export const LetterCircle = ({ insightData, color }) => {
     let letterColor;
-    if ( color === 1 ){
+    if (color === 1) {
         color = styleConst.MAINCOLORSLIGHT[3]
         letterColor = 'white'
     } else {
@@ -541,7 +608,7 @@ export const LetterCircle = ({insightData, color}) => {
                 underlayColor='#ccc'
                 onPress={() => alert('Yaay!')}
             >
-                <Text style={stylesCircle.textAvatar, {color:letterColor}}> {insightData} </Text>
+                <Text style={stylesCircle.textAvatar, { color: letterColor }}> {insightData} </Text>
 
             </TouchableHighlight>
         </>
@@ -552,5 +619,82 @@ const stylesCircle = StyleSheet.create({
     circle: { height: 30, width: 30, borderRadius: 30, },
     textAvatar: {
         fontSize: 20
+    }
+});
+
+
+// Warning Advice  1
+export const WarningAdvice = ({ type, warningText, size }) => {
+
+    let icon;
+    let iconColor;
+    let iconSize;
+    let warningTextColor = '';
+    let warningColor = '';
+    let borderWidth = 3;
+    let margin = 10;
+    let padding = 15;
+
+    warningColor = '#f8d7da'
+    icon = 'exclamation-triangle'
+    iconColor = 'red'
+    warningTextColor = 'red'
+
+
+    if (type === 2) {
+        warningColor = 'transparent';
+        icon = 'exclamation-circle';
+        iconColor = 'red';
+        warningTextColor = 'red';
+        borderWidth = 0;
+        iconSize = 20
+        margin = 0;
+        padding = 5;
+    }
+
+    if (type === 3) {
+        warningColor = 'transparent';
+        icon = 'check-circle';
+        iconColor = styleConst.MAINCOLORSLIGHT[1]
+        warningTextColor = styleConst.MAINCOLORSLIGHT[1]
+        borderWidth = 0;
+        iconSize = 20
+        margin = 0;
+        padding = 5;
+    }
+
+    if (size) {
+        iconSize = size
+    }
+
+    return (
+        <>
+            <View style={[warningStyles.container, {
+                backgroundColor: warningColor,
+                borderLeftWidth: borderWidth,
+                borderLeftColor: 'red',
+                margin: margin,
+                padding: padding,
+            }]}>
+                <Icon
+                    name={icon}
+                    type='font-awesome'
+                    color={warningTextColor}
+                    size={15}
+                />
+                <Text style={[warningStyles.text, { color: warningTextColor }]}>{warningText}</Text>
+            </View>
+        </>
+    );
+}
+
+const warningStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    text: {
+        paddingLeft: 10
     }
 });

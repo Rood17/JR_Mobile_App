@@ -1,0 +1,173 @@
+{
+    "responseSubscriber": {
+      "information": {
+        "idSubscriber": "1010003125583",
+        "IMSI": "334140000028336",
+        "ICCID": "8952140061707231400",
+        "IMEI": "35931010485343",
+        "coordinates": ""
+      },
+      "status": {
+        "subStatus": "Active"
+      },
+      "primaryOffering": {
+        "offeringId": "1789900002",
+        "excessiveProductSpeed": "Best Effort"
+      },
+      "freeUnits": [
+        {
+          "name": "FU_Tethering",
+          "freeUnit": {
+            "totalAmt": "0.0009765625",
+            "unusedAmt": "0.0009765625"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1820000002",
+              "purchaseSecuence": "520013634688",
+              "initialAmt": "0.0009765625",
+              "unusedAmt": "0.0009765625",
+              "effectiveDate": "20200608153148",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "FreeData_Altan-RN",
+          "freeUnit": {
+            "totalAmt": "3765",
+            "unusedAmt": "3765"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "3765",
+              "unusedAmt": "3765",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "FU_SMS_Altan-NR-IR-LDI_NA",
+          "freeUnit": {
+            "totalAmt": "125",
+            "unusedAmt": "125"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "125",
+              "unusedAmt": "125",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "FU_SMS_Altan-NR-LDI_NA",
+          "freeUnit": {
+            "totalAmt": "125",
+            "unusedAmt": "125"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "125",
+              "unusedAmt": "125",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "FU_Min_Altan-NR-IR-LDI_NA",
+          "freeUnit": {
+            "totalAmt": "250",
+            "unusedAmt": "250"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "250",
+              "unusedAmt": "250",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "FU_Min_Altan-NR-LDI_NA",
+          "freeUnit": {
+            "totalAmt": "250",
+            "unusedAmt": "250"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "250",
+              "unusedAmt": "250",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "Free Redirect",
+          "freeUnit": {
+            "totalAmt": "150",
+            "unusedAmt": "150"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1789900002",
+              "purchaseSecuence": "520013634586",
+              "initialAmt": "150",
+              "unusedAmt": "150",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200701000000"
+            }
+          ]
+        },
+        {
+          "name": "FU_ThrMBB_Altan-RN_512kbps",
+          "freeUnit": {
+            "totalAmt": "5015",
+            "unusedAmt": "5015"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "5015",
+              "unusedAmt": "5015",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        },
+        {
+          "name": "FU_Data_Altan-NR-IR_NA",
+          "freeUnit": {
+            "totalAmt": "1265",
+            "unusedAmt": "1265"
+          },
+          "detailOfferings": [
+            {
+              "offeringId": "1889900002",
+              "purchaseSecuence": "520013634587",
+              "initialAmt": "1265",
+              "unusedAmt": "1265",
+              "effectiveDate": "20200608152707",
+              "expireDate": "20200608235959"
+            }
+          ]
+        }
+      ]
+    }
+  }
