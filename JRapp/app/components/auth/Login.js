@@ -42,20 +42,23 @@ import {
     LearnMoreLinks,
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { WarningAdvice } from '../elements/Elements';
 
 
 // Global Vars
-let isNumberJr = false;
+let isNumberRegister = false;
 
-const PwdInput = () => {
+const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [pwdFail, setPwdFail] = useState(false)
     const [disabledBtn, setDisabledBtn] = useState(true)
 
     const onChangeText = (pwd) => {
         if (pwd.length > 0)
-            setDisabledBtn(false)
+            {setDisabledBtn(false);
+            setIsPwdOk(true)}
         else
-            setDisabledBtn(true)
+            {setDisabledBtn(true)
+            setIsPwdOk(false)}
     }
     return (
         <>
@@ -74,7 +77,9 @@ const PwdInput = () => {
                 null}
             <IntentBtn
                 isDisabled={disabledBtn}
-                intent='goToMain'
+                navigation={nav}
+                intent='Main'
+                btnParams={{idSubscriber: idSubscriber, isRegister: true}}
                 btnText='Ingresar' />
             <View style={{ alignItems: 'center' }}>
                 <Text style={styles.phoneTxt}>¿Olvidaste tu contraseña?</Text>
@@ -85,13 +90,17 @@ const PwdInput = () => {
 
 }
 
-const PassOrRegister = ({ numberFlag }) => {
+const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) => {
     return (
         <>
             {numberFlag ?
-                <PwdInput />
+                <PwdInput
+                setIsPwdOk={setIsPwdOk}
+                nav={navigation} 
+                idSubscriber={idSubscriber} 
+                />
                 :
-                <View style={{ marginBottom: 40, }}>
+                <View style={{ marginBottom: 0, }}>
                     <Text style={{ textAlign: 'center', }}>
                         Hemos detectado que aún no tienes una cuenta,
                         si gustas puedes registrarte para aglizar tus consultas
@@ -99,7 +108,9 @@ const PassOrRegister = ({ numberFlag }) => {
                     </Text>
                     <Text style={{ textAlign: 'center', }}>¡Es totalmente gratuito!</Text>
                     <IntentBtn
-                        intent='goToRegister'
+                        intent='Register'
+                        btnParams={{idSubscriber:idSubscriber, isRegister:true}}
+                        navigation={navigation}
                         btnText='Registrarse' />
                 </View>
             }
@@ -107,11 +118,71 @@ const PassOrRegister = ({ numberFlag }) => {
     );
 }
 
-const LoginBody = () => {
+const PhoneIsNotJr = ({ flag, errorText }) => {
+    return (
+        <>
+            {flag ?
+                <WarningAdvice warningText={errorText} />
+                :
+                null
+            }
+        </>
+    );
+}
+
+const LoginBody = ({ nav }) => {
     const [phoneIsCorrect, setPhoneIsCorrect] = useState(false);
+    const [jrAlert, setJrAlert] = useState(false);
     const [keyboardIsOpen, setKeyBoardIsOpen] = useState(false);
+    const [iconFlex, setIconFlex] = useState(1.5)
+    const [errorStr, setErrorStr] = useState('')
+    const [idSubscriber, setIdSubscriber] = useState(0)
+    const [isPwdOk, setIsPwdOk] = useState(false)
+    const [dinamicColor, setDinamicColor] = useState(styleConst.MAINCOLORSLIGHT[1])
 
     const isJR = '888'
+    const isRegister = '56'
+
+    // Auth handler
+    const onChangeNumber = (number) => {
+        setIdSubscriber(number)
+
+        // Validate if is Jr Movil
+        if (number.length == constants.MAX_NUMBER_LENGTH) {
+
+            // Clear input error
+            setErrorStr('')
+            
+            // Validate if es JR
+            if (number.toString().indexOf(isJR) != -1) {
+                setJrAlert(false)
+                setPhoneIsCorrect(true)
+                setIconFlex(4)
+                // Is register??
+                if (number.toString().indexOf(isRegister) != -1) {
+                    isNumberRegister = true
+                    setIconFlex(5)
+                }
+                else {
+                    isNumberRegister = false
+                }
+            } else {
+                setJrAlert(true)
+                setErrorStr('Este no es un número JR Móvil.')
+                setIconFlex(1.5)
+            }
+
+
+        }
+        // Clear
+        if (number.length < constants.MAX_NUMBER_LENGTH) {
+            setPhoneIsCorrect(false)
+            setJrAlert(false)
+            setIconFlex(1.5)
+            setErrorStr('')
+            setIsPwdOk(false)
+        }
+    }
 
     // Keyboard Listener for disapear icons
     Keyboard.addListener('keyboardDidShow',
@@ -126,50 +197,73 @@ const LoginBody = () => {
         },
     );
 
+    // Consulta handler
+    const iconActionHandler = (intent) => {
+        // If is JR Movil
+        console.log("Login > isRegister : " + isPwdOk)
+        if ( intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH )
+        {
+            
+            nav.navigate(intent, {
+                idSubscriber: idSubscriber,
+                isRegister : isPwdOk,
+                isJr: phoneIsCorrect
+            })
+            setErrorStr('')
+            
+        } else if ( intent === 'Recharge') {
+            console.log("Login > inside else if iconactionhandler idSubscriber : " + idSubscriber)
+            console.log(isPwdOk)
 
-    const onChangeNumber = (number) => {
+            nav.navigate(intent, {
+                idSubscriber: idSubscriber,
+                isRegister : isPwdOk,
+                isJr:phoneIsCorrect
+            })
+        } else {
+            setJrAlert(true);
+            setErrorStr('Favor de Ingresar un Número JR')
+        }
 
-        // Validate if is Jr Movil
-        if (number.length == constants.MAX_NUMBER_LENGTH) {
-            // Validate if es JR
-            if (number.toString().indexOf(isJR) != -1)
-                isNumberJr = true
-            else
-                isNumberJr = false
-            setPhoneIsCorrect(true)
-        }
-        if (number.length < constants.MAX_NUMBER_LENGTH) {
-            setPhoneIsCorrect(false)
-        }
     }
 
 
     return (
+        <View style={styles.container}>
+            <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
+                <ScrollView>
+                    <View style={styles.logoContainer}>
+                        <DisplayLogo stylesLogo={styles.logo} />
+                    </View>
+                    <View style={styles.btnActionContainer}>
+                        <Input
+                            placeholder="Número JRmovil (10 dígitos)"
+                            keyboardType='number-pad'
+                            textContentType='telephoneNumber'
+                            leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18 }}
+                            maxLength={constants.MAX_NUMBER_LENGTH}
+                            onChangeText={number => onChangeNumber(number)}
+                        />
+                        {phoneIsCorrect ?
+                            <PassOrRegister 
+                                setIsPwdOk={setIsPwdOk}
+                                idSubscriber={idSubscriber} 
+                                numberFlag={isNumberRegister} 
+                                navigation={nav} />
+                            :
+                            <PhoneIsNotJr flag={jrAlert} errorText={errorStr} />
+                        }
 
-        <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
-            <View style={styles.container}>
-                <View style={styles.logoContainer}>
-                    <DisplayLogo stylesLogo={styles.logo} />
-                </View>
-                <View style={styles.btnActionContainer}>
-                    <Input
-                        placeholder="Número JRmovil (10 dígitos)"
-                        keyboardType='number-pad'
-                        textContentType='telephoneNumber'
-                        leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18 }}
-                        maxLength={constants.MAX_NUMBER_LENGTH}
-                        onChangeText={number => onChangeNumber(number)}
-                    />
-                    {phoneIsCorrect ?
-                        <PassOrRegister numberFlag={isNumberJr} />
-                        :
-                        null
-                    }
+                    </View>
+                        
 
-                </View>
-                {!keyboardIsOpen ?
-                    <>
-                        <View style={styles.lineContainer}>
+
+                </ScrollView>
+            </ TouchableWithoutFeedback>
+            {keyboardIsOpen ?
+                null :
+                <>
+                <View style={[styles.lineIconContainer, {flex:iconFlex}]}>
                             <Line color='grey' />
                             <View style={styles.iconContainer}>
                                 <View style={styles.icon}>
@@ -177,40 +271,35 @@ const LoginBody = () => {
                                         raised
                                         name='mobile'
                                         type='font-awesome'
-                                        color={styleConst.MAINCOLORSLIGHT[1]}
-                                        onPress={() => alert("Agrega saldo bro")} />
-                                    <Text>Recarga</Text>
+                                        color={dinamicColor}
+                                        onPress={() => iconActionHandler('Recharge')} />
+                                    <Text style={styles.icon_text}>Recarga</Text>
                                 </View>
                                 <View style={styles.icon}>
                                     <Icon
                                         raised
                                         name='file'
                                         type='font-awesome'
-                                        color={styleConst.MAINCOLORSLIGHT[1]}
-                                        onPress={() => alert("Consulta saldo bro")} />
-                                    <Text>Consulta</Text>
+                                        color={dinamicColor}
+                                        onPress={() => iconActionHandler('Main')} />
+                                    <Text style={styles.icon_text}>Consulta</Text>
                                 </View>
-
-
                             </View>
                         </View>
-                        <View>
-                            <Help />
-                        </View>
-                    </>
-                    : null}
-            </View>
-        </ TouchableWithoutFeedback>
+                <Help navigation={nav} />
+                </>
+            }
+        </View>
 
     );
 
 }
 
-const Login: () => Node = () => {
+const Login = ({ navigation }) => {
 
     return (
         <>
-            <LoginBody />
+            <LoginBody nav={navigation} />
         </>
     );
 };
@@ -232,7 +321,8 @@ const styles = StyleSheet.create({
 
     },
     btnActionContainer: {
-        padding: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
         flex: 1
     },
     phoneTxt: {
@@ -241,20 +331,24 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 1
     },
-    lineContainer: {
-        flex: 1,
+    lineIconContainer: {
+        //Flex dinámico
         padding: 35,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     iconContainer: {
         flexDirection: 'row',
         padding: 35,
         flexWrap: 'wrap',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flex: 1
     },
     icon: {
         alignItems: 'center',
         flexBasis: '35%',
+    },
+    icon_text: {
+        color: styleConst.P_LIGHT_THEME[3]
     },
     txtError: {
         margin: 10,
