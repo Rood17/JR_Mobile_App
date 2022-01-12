@@ -8,19 +8,26 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import type { Node } from 'react';
 
 import DisplayLogo from './elements/DisplayLogo';
 import IntentBtn from './elements/IntentBtn';
-import { Icon, Input, } from 'react-native-elements'
+import { Icon, Input } from 'react-native-elements'
 import { WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
 import * as styleConst from '../res/values/styles/StylesConstants'
 import * as constants from '../utils/constants/Constants'
 import { formatApiDate, setProductType } from '../utils/Utils'
 import { OverlayModal } from '../components/Payments/Recharge'
+import MiPerfil from './pages/MiPerfil';
+import Asistance from './pages/Asistance';
 // Services
 import * as data from '../utils/services/perfil_uf.json'
 
+import {
+    createDrawerNavigator,
+    DrawerContentScrollView,
+    DrawerItemList,
+    DrawerItem,
+} from '@react-navigation/drawer';
 
 import {
     Button,
@@ -36,6 +43,137 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+let globalRoute
+
+
+// Drawer
+function CustomDrawerContent(props) {
+
+    const goToIntent = (intent) => {
+
+        if ( intent === 'Recharge')
+            props.navigation.navigate(intent, {
+                idSubscriber: globalRoute.params.idSubscriber,
+                isRegister: true,
+                isJr: true,
+
+            })
+        else if (intent === 'Cerrar')
+            props.navigation.popToTop()
+        else
+            props.navigation.navigate(intent)
+
+        props.navigation.closeDrawer();
+    }
+    return (
+        <>
+            <View >
+                <View style={{ height: '28%', margin: 20, alignItems: 'center', alignContent: 'center' }}>
+                    <DisplayLogo stylesLogo={{ height: '55%', width: '55%', margin: 10 }} mini />
+                    <Text>Hola [Nombre]</Text>
+                    <Text>{globalRoute.params.idSubscriber}</Text>
+                </View>
+                <View style={stylesNav.line}></View>
+                <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('MiPerfil')}>
+                    <Icon
+                        name='user'
+                        type='font-awesome'
+                        size={20}
+                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    />
+                    <Text style={stylesNav.txtIcon}>Mi Perfil</Text>
+                </TouchableOpacity>
+
+
+                <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('Recharge')}>
+                    <Icon
+                        name='mobile'
+                        type='font-awesome'
+                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    />
+                    <Text style={stylesNav.txtIcon}>Recargas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('Asistance')}>
+                    <Icon
+                        name='question'
+                        type='font-awesome'
+                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    />
+                    <Text style={stylesNav.txtIcon}>Ayuda</Text>
+                </TouchableOpacity>
+                <View style={stylesNav.line}></View>
+                <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('Cerrar')}>
+                    <Icon
+                        name='sign-out'
+                        type='font-awesome'
+                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    />
+                    <Text style={stylesNav.txtIcon}>Cerrar Sesión</Text>
+                </TouchableOpacity>
+                <View style={stylesNav.line}></View>
+                <View style={{ marginTop: 100 }}>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Terminos')}>
+                        <Text style={stylesNav.txtA}>Terminos y Condiciones</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Privacidad')}>
+                        <Text style={stylesNav.txtA}>Aviso de Privacidad</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Contacto')}>
+                        <Text style={stylesNav.txtA}>Contacto</Text>
+                    </TouchableOpacity>
+
+                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize:12 }}>@2022 JR Movil S.A. de C.V.</Text>
+                </View>
+
+
+            </View>
+
+        </>
+    );
+}
+const Drawer = createDrawerNavigator();
+const stylesNav = StyleSheet.create({
+    navBtn: {
+        margin: 20,
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+    },
+    navBtn2: {
+        margin: 5,
+        marginLeft: 20,
+    },
+    line: {
+        backgroundColor: styleConst.MAINCOLORSLIGHT[1],
+        height: 1
+    },
+    txtA: {
+        color:styleConst.COLOR_LINK[0]
+    },
+    txtIcon: {
+        marginLeft:15
+    }
+})
+function MyDrawer() {
+    return (
+        <Drawer.Navigator
+            screenOptions={{ drawerPosition: 'right', width: 200 }}
+            drawerContent={(props) => <CustomDrawerContent {...props}
+            />}
+
+        >
+            <Drawer.Screen name="MainContent" component={MainContent}
+                options={{
+                    headerShown: false,
+                    drawerLabel: 'Main',
+                    // Section/Group Name
+                    groupName: 'Section 1',
+                    activeTintColor: '#e91e63',
+                }}
+            />
+        </Drawer.Navigator>
+    );
+}
 
 // Card
 export const ProductCard = ({ navigation, idSubscriber, isRegister }) => {
@@ -126,10 +264,10 @@ const stylesProductCard = StyleSheet.create({
     }
 });
 
-const Main = ({ navigation, route }) => {
+const MainContent = ({ navigation, route }) => {
     //data.responseSubscriber.status.subStatus
     const userIsActive = false;
-    const { idSubscriber, isRegister } = route.params;
+    const { idSubscriber, isRegister } = globalRoute.params;
     const [payload, setPayload] = useState('Carga - $50');
     const [gbProduct, setGbProduct] = useState()
 
@@ -157,7 +295,7 @@ const Main = ({ navigation, route }) => {
 
             // Get Expirtaion Date
             item.detailOfferings.map((subItem) => {
-                console.log(subItem.expireDate)
+                //console.log(subItem.expireDate)
                 expireMBData = subItem.expireDate;
             })
         }
@@ -175,7 +313,7 @@ const Main = ({ navigation, route }) => {
 
             // Get Expirtaion Date
             item.detailOfferings.map((subItem) => {
-                console.log(subItem.expireDate)
+                //console.log(subItem.expireDate)
                 expireSMSData = subItem.expireDate;
             })
         }
@@ -191,7 +329,7 @@ const Main = ({ navigation, route }) => {
 
             // Get Expirtaion Date
             item.detailOfferings.map((subItem) => {
-                console.log(subItem.expireDate)
+                //console.log(subItem.expireDate)
                 expireMINData = subItem.expireDate;
             })
         }
@@ -248,10 +386,9 @@ const Main = ({ navigation, route }) => {
 
     return (
         <>
-
             <View style={styles.container}>
                 {isRegister ?
-                    <MainHeader name='Hola [Usuario]' />
+                    <MainHeader name='Hola [Usuario]' navigation={navigation} />
                     :
                     <ReturnHeader title='Detalles de tu Saldo' navigation={navigation} />
                 }
@@ -419,5 +556,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
+const Main = ({ navigation, route }) => {
+    globalRoute = route;
+    return (
+        <>
+            <MyDrawer route={route} />
+        </>
+    );
+}
 
 export default Main;

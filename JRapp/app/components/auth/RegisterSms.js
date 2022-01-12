@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import type { Node } from 'react';
+
 
 import DisplayLogo from '../elements/DisplayLogo';
 import IntentBtn from '../elements/IntentBtn';

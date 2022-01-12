@@ -128,6 +128,57 @@ const stylesCard = StyleSheet.create({
 });
 // END Card
 
+// Detail Card
+export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
+
+    console.log(data)
+    if( data != undefined)
+        data.map((item) => {
+            console.log(item.campo)
+        })
+    return (
+
+        <View style={stylesCard.boxShadow}>
+            <View style={stylesCard.infoContainer}>
+                <View style={stylesCard.iconContainer}>
+                    <Icon
+                        name={icon}
+                        type='font-awesome'
+                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    />
+                </View>
+                <View style={stylesCard.headContainer}>
+                    <Text style={stylesCard.cardHeadTxt}>{header}</Text>
+                    <View style={{margin:10}}>
+                        { data.map((item) => (
+                            <>
+                                <Text style={stylesdeatilCard.campo}>{item.campo}: </Text>
+                                <Text style={stylesdeatilCard.txtDin}>{item.campoD}</Text>
+                            </>
+                        ))}
+                        
+                        
+                        
+                    </View>
+                </View>
+                
+            </View>
+        </View>
+
+    );
+}
+const stylesdeatilCard = StyleSheet.create({
+    campo:{
+
+    },
+    txtDin:{
+        color:'black',
+        marginBottom:10
+    }
+})
+// End Detail Card
+
+
 // MainCard
 export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
     bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
@@ -430,15 +481,16 @@ export const UserImg = ({ backColor, colorTxt, small, medium, large }) => {
     );
 }
 // MainHeader
-export const MainHeader = ({ name }) => {
+export const MainHeader = ({ name, navigation}) => {
 
-    const onPress = () => {
+    const handleNav = () => {
         //  console.log("goToAyuda")
+        navigation.openDrawer( )
     }
 
     return (
         <>
-            <View style={styleHeadMain.container} onPress={onPress}>
+            <View style={styleHeadMain.container} >
                 <View style={styleHeadMain.iconContainer}>
                     <Icon
                         name='user'
@@ -460,7 +512,7 @@ export const MainHeader = ({ name }) => {
                             alignItems: 'center'
                         }}
                         underlayColor='#ccc'
-                        onPress={() => alert('Yaay!')}
+                        onPress={() => handleNav()}
                     >
                         <Text style={styleHeadMain.textAvatar}> R </Text>
 
@@ -472,7 +524,7 @@ export const MainHeader = ({ name }) => {
 }
 const styleHeadMain = StyleSheet.create({
     container: {
-        height: 65,
+        height: 55,
         backgroundColor: styleConst.MAINCOLORS[0],
         flexDirection: 'row',
         alignItems: 'center',
