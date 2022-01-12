@@ -430,15 +430,16 @@ export const UserImg = ({ backColor, colorTxt, small, medium, large }) => {
     );
 }
 // MainHeader
-export const MainHeader = ({ name }) => {
+export const MainHeader = ({ name, navigation}) => {
 
-    const onPress = () => {
+    const handleNav = () => {
         //  console.log("goToAyuda")
+        navigation.openDrawer( )
     }
 
     return (
         <>
-            <View style={styleHeadMain.container} onPress={onPress}>
+            <View style={styleHeadMain.container} >
                 <View style={styleHeadMain.iconContainer}>
                     <Icon
                         name='user'
@@ -460,7 +461,7 @@ export const MainHeader = ({ name }) => {
                             alignItems: 'center'
                         }}
                         underlayColor='#ccc'
-                        onPress={() => alert('Yaay!')}
+                        onPress={() => handleNav()}
                     >
                         <Text style={styleHeadMain.textAvatar}> R </Text>
 
