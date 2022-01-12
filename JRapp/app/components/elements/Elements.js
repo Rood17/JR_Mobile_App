@@ -473,7 +473,7 @@ export const MainHeader = ({ name, navigation}) => {
 }
 const styleHeadMain = StyleSheet.create({
     container: {
-        height: 65,
+        height: 55,
         backgroundColor: styleConst.MAINCOLORS[0],
         flexDirection: 'row',
         alignItems: 'center',

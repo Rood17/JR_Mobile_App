@@ -112,14 +112,14 @@ function CustomDrawerContent(props) {
                 </TouchableOpacity>
                 <View style={stylesNav.line}></View>
                 <View style={{ marginTop: 100 }}>
-                    <TouchableOpacity style={stylesNav.navBtn2}>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Terminos')}>
                         <Text style={stylesNav.txtA}>Terminos y Condiciones</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={stylesNav.navBtn2}>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Privacidad')}>
                         <Text style={stylesNav.txtA}>Aviso de Privacidad</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={stylesNav.navBtn2}>
-                        <Text style={stylesNav.txtA}>Política de Uso de Datos</Text>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Contacto')}>
+                        <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
                     <Text style={{ margin: 10, marginTop: 20, color: 'black' }}>@2022 JR Movil S.A. de C.V.</Text>
