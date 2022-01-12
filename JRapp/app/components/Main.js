@@ -122,7 +122,7 @@ function CustomDrawerContent(props) {
                         <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
-                    <Text style={{ margin: 10, marginTop: 20, color: 'black' }}>@2022 JR Movil S.A. de C.V.</Text>
+                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize:12 }}>@2022 JR Movil S.A. de C.V.</Text>
                 </View>
 
 
