@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input } from 'react-native-elements'
 import IntentBtn from '../elements/IntentBtn'
@@ -12,7 +12,6 @@ const Line = ({ color }) => {
     if (color != null)
         colorMain = color;
 
-    console.log('fdfdf : ' + colorMain)
     return (
         <>
             <View style={{
@@ -451,10 +450,12 @@ const stylesReturn = StyleSheet.create({
 
 
 // User Image
-export const UserImg = ({ backColor, colorTxt, small, medium, large }) => {
+export const UserImg = ({ backColor, colorTxt, small, medium, large, txt }) => {
     let size = 0.09
     let txtSize = 20
 
+    txt != undefined ? txt = txt.toUpperCase() : null
+    
     if (small) { size = 0.09; txtSize = 20 }
     if (medium) { size = 0.20; txtSize = 40 }
     if (large) { size = 0.50; txtSize = 40 }
@@ -474,7 +475,7 @@ export const UserImg = ({ backColor, colorTxt, small, medium, large }) => {
                 underlayColor='#ccc'
                 onPress={() => alert('Yaay!')}
             >
-                <Text style={colorTxt ? { color: colorTxt, fontSize: txtSize } : styleHeadMain.textAvatar}> R </Text>
+                <Text style={colorTxt ? { color: colorTxt, fontSize: txtSize } : styleHeadMain.textAvatar}> {txt} </Text>
 
             </TouchableHighlight>
         </>
@@ -748,5 +749,31 @@ const warningStyles = StyleSheet.create({
     },
     text: {
         paddingLeft: 10
+    }
+});
+
+// Loader
+export const Loader = (color) => {
+
+    if( !color ) color = styleConst.MAINCOLORS[0]
+
+    return (
+        <>
+            <View style={loaderStyles.container}>
+                <ActivityIndicator size="large" color={color} />
+                <Text style={loaderStyles.text}>Cargando...</Text>
+            </View>
+        </>
+    );
+}
+const loaderStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        alignContent:'center',
+        marginTop:'50%'
+    },
+    text: {
+        paddingTop: 10
     }
 });

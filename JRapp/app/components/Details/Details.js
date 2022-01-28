@@ -11,6 +11,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, ReturnHeader, UserDataCard, DetailCard } from "../elements/Elements";
 import { getPerfilUf } from '../../utils/services/get_services'
 import * as data from '../../utils/services/perfil_uf.json';
+import * as styleConst from '../../res/values/styles/StylesConstants'
+import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
 import axios from 'axios';
 import {
     Button,
@@ -73,7 +75,7 @@ const Details = ({ navigation, route }) => {
                     <>
                         <ScrollView style={{ flexDirection: 'column' }}>
 
-                            <TouchableOpacity onPress={() => alert("hola")}>
+                            <TouchableOpacity >
                                 <DetailCard 
                                     header='Detalles del Usuario'
                                     icon='user'
@@ -84,13 +86,24 @@ const Details = ({ navigation, route }) => {
                                         },
                                         {
                                             campo : 'Nombre Vinculado a la cuenta',
-                                            campoD : '[Nombre]'
+                                            campoD : getUserName() + ' ' + getUserLastName()
+                                        },
+                                        {
+                                            campo : 'Email Vinculado a la cuenta',
+                                            campoD : getUserEmail()
+                                        },
+                                        {
+                                            campo : '',
+                                            campoD : 
+                                            <TouchableOpacity>
+                                                <Text style={{color:styleConst.COLOR_LINK[0]}}>Editar</Text>
+                                            </TouchableOpacity >,
                                         },
                                     ]}
                                 />
                             </TouchableOpacity >
 
-                            <TouchableOpacity onPress={() => alert("hola")}>
+                            <TouchableOpacity>
                             <DetailCard header='Detalles de la Línea'
                                     icon='mobile'
                                     data={[
@@ -125,7 +138,7 @@ const Details = ({ navigation, route }) => {
                                     ]} 
                             />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => alert("hola")}>
+                            <TouchableOpacity >
                                 <DetailCard 
                                     header='Servicios Complementarios'
                                     icon='file'
@@ -146,14 +159,14 @@ const Details = ({ navigation, route }) => {
                     </>
                     :
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity onPress={() => alert("hola")}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Asistance')}>
                             <UserDataCard header='Contáctanos para mayor Información'
                                 text='¡Vaya, Este númeo se encuentra desactivado!'
                                 icon='alert' />
                         </TouchableOpacity>
 
                     </View>
-                }
+                } 
 
 
             </View>
