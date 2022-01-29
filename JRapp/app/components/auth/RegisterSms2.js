@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, TextInput, Text } from 'react-native';
-import auth, {getAuth, RecaptchaVerifier }from '@react-native-firebase/auth';
 
 function RegisterSms2() {
   // If null, no SMS has been sent

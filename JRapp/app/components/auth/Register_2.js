@@ -18,7 +18,6 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
-import auth, {getAuth } from '@react-native-firebase/auth';
 import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
 import { createUser } from '../../context/AuthProvider';
 
@@ -110,7 +109,7 @@ export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigat
     }
 
     const registerHandler = () => {
-        register()
+        //register()
 
         registerSuccess ? navigation.navigate('Main') : null;
     }

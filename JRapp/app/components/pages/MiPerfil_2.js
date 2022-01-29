@@ -16,7 +16,6 @@ import IntentBtn from '../elements/IntentBtn'
 import {updateEmail} from '../../context/AuthProvider'; '../../context/AuthProvider';
 import * as constants from '../../utils/constants/Constants'
 import { NewPwd } from '../auth/Register_2';
-import auth, {getAuth } from '@react-native-firebase/auth';
 import { clearStorage, getUserName,  storeUserData, storeUserString,
     getUserEmail, getUserId, getUserLastName, getSecret } from '../../utils/Storage'
 import {
@@ -89,11 +88,11 @@ export const CardPerfil = () => {
     const updateHandler = () => {
         console.log("XXXXXXXX*** email : " + email)
         console.log("XXXXXXXX*** oldMail : " + oldEmail)
-        if ( email.toString() != oldEmail)
-            updateEmail()
+        if ( email.toString() != oldEmail){}
+            //updateEmail()
 
         //if ( pwd != oldPwd )
-        updatePwd()
+        //updatePwd()
     }
 
     const reauthenticate = (currentPassword) => {

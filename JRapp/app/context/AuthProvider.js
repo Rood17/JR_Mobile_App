@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import auth, {getAuth, RecaptchaVerifier  } from '@react-native-firebase/auth';
 
 
 export const updateEmail = (email) => {

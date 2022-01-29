@@ -2,8 +2,6 @@ import React, {useReducer} from "react";
 
 import AuthReducer from "./AuthReducer";
 import AuthContext from "./AuthContext";
-//import firebaseExt from "../firebase/firebase";
-import auth from '@react-native-firebase/auth';
 
 
 const AuthState = props => {

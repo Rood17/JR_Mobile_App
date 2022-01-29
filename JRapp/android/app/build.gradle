@@ -1,7 +1,5 @@
 apply plugin: "com.android.application"
 
-// Firebase
-apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -219,9 +217,7 @@ dependencies {
         implementation jscFlavor
     }
 
-    // Firebase and Analytics
-    implementation platform('com.google.firebase:firebase-bom:29.0.3')
-    implementation 'com.google.firebase:firebase-analytics'
+
 }
 
 // Run this once to be able to run the application with BUCK
