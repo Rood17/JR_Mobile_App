@@ -3,7 +3,8 @@ import Auth, {
     getAuth, createUserWithEmailAndPassword,
     reauthenticateWithCredential, signInWithEmailAndPassword,
     updateEmail,
-    EmailAuthProvider
+    EmailAuthProvider,
+    updatePassword
 } from "firebase/auth";
 import * as firebase from 'firebase/app'
 import {getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
@@ -184,22 +185,25 @@ export function updateUserEmail(navigation, newEmail, currentPassword, newSecret
     return result; 
 }
 
-const updateUserPwd = (newEmail, currentPassword, newSecret, oldEmail, setRegisterResponse) => {
-
+export const updateUserPwd = (newSecret) => {
+        console.log("Auth - UpdateingSecret")
+        console.log("Auth - getUserEmail : " + getUserEmail())
+        console.log("Auth - getSecret : " + getSecret())
         try {
-            reauthenticate(currentPassword, oldEmail).then(() => {
-                updatePassword(user, newSecret).then(() => {
-                    console.log("Pwd updated!");
-                    setRegisterResponse('success')
-                }).catch(error => {
-                    console.error(error);
-                    setRegisterResponse(error)
-                });
-            }).catch(error => {
-                console.log(error)
-                setRegisterResponse(error)
-            })
-        } catch {
+            signInWithEmailAndPassword(auth, getUserEmail(), getSecret())
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    // ...
+                    updatePassword(user, newSecret).then(() => {
+                        console.log("Pwd updated!");
+                        //navigation.popToTop()
+                    }).catch(error => {
+                        console.error("AuthProvider - UpdatePwd: " + error);
+                        //setRegisterResponse(error.code)
+                    });
+                })
+        }  catch {
             alert('Error al actualizar la información - Compruebe el estado de su conexión.')
         }
 

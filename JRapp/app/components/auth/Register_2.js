@@ -19,7 +19,7 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
-import { createUser, registerUser } from '../../context/AuthProvider';
+import { createUser, registerUser, updateUserPwd } from '../../context/AuthProvider';
 
 import {
     Button,
@@ -47,7 +47,7 @@ import {
 let pass1, pass2, pass3, i;
 let { isBold1, isBold2, isBold3 } = 'normal'
 
-export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
+export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
 
     const [chackColor, setChackColor] = useState('grey');
     const [chackColor2, setChackColor2] = useState('grey');
@@ -130,10 +130,19 @@ export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigat
         console.log("*** lastName : " + dataArray[0].lastName)
 
         email = email.toLowerCase();
+        let newSecret = pwd
 
-        registerUser(email, pwd, setRegisterResponse);
+        // Handle type of action
+        if ( !update){
+            registerUser(email, pwd, setRegisterResponse);
+        } else {
+            updateUserPwd(newSecret, setRegisterResponse)
+            setNewPwd(newSecret)
+        }
+
         console.log("ERRORR -  " + registerResponse)
         if (registerResponse === 'success') {
+            setRegisterResponsePerfil('success')
             // Finalizar
             // Clear Storage
             clearStorage();
