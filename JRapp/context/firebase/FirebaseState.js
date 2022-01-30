@@ -9,7 +9,8 @@ const FirebaseState = props => {
 
     // Crear state inicial
     const initialState = {
-        usuarios: []
+        usuarios: [],
+        firebase
     }
 
     // useReducer con dispatch  para ejecutar las funciones

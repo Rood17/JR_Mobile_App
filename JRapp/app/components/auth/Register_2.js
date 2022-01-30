@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 import type { Node } from 'react';
 
 import DisplayLogo from '../elements/DisplayLogo';
-import {WarningAdvice} from '../elements/Elements'
+import { WarningAdvice } from '../elements/Elements'
 import Help from '../elements/Help';
 import * as constants from '../../utils/constants/Constants';
 import * as styleConst from '../../res/values/styles/StylesConstants'
@@ -19,7 +19,7 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
-import { createUser } from '../../context/AuthProvider';
+import { createUser, registerUser } from '../../context/AuthProvider';
 
 import {
     Button,
@@ -44,8 +44,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 // Btn Disabled Flaf Team
-let pass1, pass2, pass3,  i;
-let {isBold1, isBold2, isBold3} = 'normal'
+let pass1, pass2, pass3, i;
+let { isBold1, isBold2, isBold3 } = 'normal'
 
 export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
 
@@ -53,7 +53,7 @@ export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigat
     const [chackColor2, setChackColor2] = useState('grey');
     const [chackColor3, setChackColor3] = useState('grey');
     const [btnDisabled, setbtnDisabled] = useState(true);
-    const [registerSuccess, setRegisterSuccess] = useState(false);
+    const [registerResponse, setRegisterResponse] = useState(false);
 
     const onChangeText = (text) => {
 
@@ -102,6 +102,7 @@ export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigat
         // Open the portal
         if (pass1 != undefined && pass2 != undefined && pass3 != undefined && emailPass) {
             setbtnDisabled(false)
+
             // set pwd
             dataArray[0].pwd = text
         }
@@ -109,65 +110,61 @@ export const NewPwd = ({ setError, emailPass, goToIntent, btnTxt, label, navigat
     }
 
     const registerHandler = () => {
-        //register()
-
-        registerSuccess ? navigation.navigate('Main') : null;
+        register()
     }
 
     // Register
     // User Register??
     function register() {
-        let email =  dataArray[0].email
+        let email = dataArray[0].email
         let pwd = dataArray[0].pwd
-        
-
-        if ( !registerSuccess ){
 
 
-            console.log("****************  ")
-            console.log("*** pwd : " + pwd)
-            console.log("*** email : " + email)
-            console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-            console.log("*** name : " + dataArray[0].name)
-            console.log("*** lastName : " + dataArray[0].lastName)
 
-            email = email.toLowerCase();
 
-            try {
-                auth().createUserWithEmailAndPassword(email , 'Prueba123').then(() => {
-                    console.log('User account created & signed in!');
-                    // Finalizar
-                    // Clear Storage
-                    clearStorage();
-                    // Open Modal
-                    setRegisterSuccess(true);
-                    // Store New Data
-                    storeUserData(dataArray);
-                    // User Just Register
-                    storeUserString('lastView', 'register')             
+        console.log("****************  ")
+        console.log("*** pwd : " + pwd)
+        console.log("*** email : " + email)
+        console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
+        console.log("*** name : " + dataArray[0].name)
+        console.log("*** lastName : " + dataArray[0].lastName)
 
-                }).catch(error => {
-                    if (error.code === 'auth/email-already-in-use') {
-                    console.log('That email address is already in use!');
-                    setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
-                    setIsBtnDisable(true);
-                    }
-                
-                    if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
-                    setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
-                    setIsBtnDisable(true);
-                    }
-                
-                    console.error(error);
-                });
-            } catch {
-                alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
-                
-            }
-        }            
+        email = email.toLowerCase();
+
+        registerUser(email, pwd, setRegisterResponse);
+        console.log("ERRORR -  " + registerResponse)
+        if (registerResponse === 'success') {
+            // Finalizar
+            // Clear Storage
+            clearStorage();
+            // Open Modal            // Store New Data
+            storeUserData(dataArray);
+            // User Just Register
+            storeUserString('lastView', 'register')
+
+            // Handled by Auth
+            //navigation.navigate('Main')
+
+        }
+
+        if (registerResponse.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+            setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
+        }
+
+        if (registerResponse.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+        }
+
+
+
+
+
+
     }
 
+    console.log("btn : " + btnDisabled)
 
     return (
         <>
@@ -263,9 +260,11 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
         if (inputEmail.indexOf('@') != -1 && inputEmail.indexOf('.') != -1) {
             setEmailIsCorrect(true)
             setEmail(inputEmail)
-            
+            setError('')
+
         } else {
             setEmailIsCorrect(false)
+            setError(<WarningAdvice type={2} warningText='Introduzca un email válido.' />)
         }
     }
     // Set email
@@ -284,7 +283,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
             setKeyBoardIsOpen(false);
         },
     );
-    
+
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
@@ -310,7 +309,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                                         leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: 'grey' }}
                                         onChangeText={email => onChangeEmail(email)}
                                     />
-                                    
+
                                 </View>
                             </>
                             :
@@ -336,7 +335,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
 
                 </ScrollView>
             </TouchableWithoutFeedback>
-            { !keyBoardIsOpen ? <Help navigation={navigation} /> : null}
+            {!keyBoardIsOpen ? <Help navigation={navigation} /> : null}
         </View>
     );
 };

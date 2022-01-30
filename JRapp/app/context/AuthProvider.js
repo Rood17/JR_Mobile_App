@@ -1,9 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
+import Auth, {
+    getAuth, createUserWithEmailAndPassword,
+    reauthenticateWithCredential, signInWithEmailAndPassword,
+    updateEmail,
+    EmailAuthProvider
+} from "firebase/auth";
+import * as firebase from 'firebase/app'
+import {getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
 
 
-export const updateEmail = (email) => {
-    return auth().updateEmail(email);
-};
+
+const auth = getAuth();
 
 function AuthProvider() {
     const [loading, setLoading] = useState(true);
@@ -25,10 +32,6 @@ function AuthProvider() {
         return auth.sendPasswordResetEmail(email);
     };
 
-    const updateEmail = (email) => {
-        return auth.updateEmail(email);
-    };
-
     const updatePassword = (password) => {
         return currentUser.updatePassword(password);
     };
@@ -40,22 +43,22 @@ export const createUser = (email, phoneNumber, name, lastName, pwd, setRegisterS
 
     const completeName = name + ' ' + lastName;
 
-    auth().createUser({
-            email: email,
-            emailVerified: false,
-            phoneNumber: phoneNumber,
-            password: pwd,
-            displayName: completeName,
-            photoURL: 'http://www.example.com/12345678/photo.png',
-            disabled: false,
-        }).then((userRecord) => {
-            // See the UserRecord reference doc for the contents of userRecord.
-            console.log('Successfully created new user:', userRecord.uid);
-            setRegisterSuccess(true)
-        }).catch((error) => {
-            console.log('Error creating new user:', error);
-            setError(error)
-        });
+    getAuth().createUser({
+        email: email,
+        emailVerified: false,
+        phoneNumber: phoneNumber,
+        password: pwd,
+        displayName: completeName,
+        photoURL: 'http://www.example.com/12345678/photo.png',
+        disabled: false,
+    }).then((userRecord) => {
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log('Successfully created new user:', userRecord.uid);
+        setRegisterSuccess(true)
+    }).catch((error) => {
+        console.log('Error creating new user:', error);
+        setError(error)
+    });
 }
 
 export const isUserLog = () => {
@@ -68,7 +71,7 @@ export const isUserLog = () => {
         if (initializing) setInitializing(false);
     }
 
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    const subscriber = getAuth().onAuthStateChanged(onAuthStateChanged);
 
     //const auth = auth();
     //const userc = auth.currentUser;
@@ -88,40 +91,126 @@ export const isUserLog = () => {
 export const login = (email, pwd, setError, setLoginSuccess) => {
     // no one enters
     //setError(true)
-    try {
-        auth().signInWithEmailAndPassword(email, 'Prueba123').then(() => {
-            console.log('User is log in!');
-            // This one yes
-            setLoginSuccess(true)
-            //setSuccess(true)
-            // Finalizar
 
-        }).catch(error => {
-            if (error.code === 'auth/user-not-found') {
-                setError(500)
-                alert('El usuario no existe');
+    signInWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
+        console.log('User is log in!');
+        // This one yes
+        setLoginSuccess(true)
+        //setSuccess(true)
+        // Finalizar
 
-            }
+    }).catch(error => {
+        if (error.code === 'auth/user-not-found') {
+            setError(500)
+            alert('El usuario no existe');
 
-            if (error.code === 'auth/invalid-email') {
-                console.log('That email address is invalid!');
-                setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
-            }
+        }
 
-            console.error(error);
-        });
-    } catch {
-        alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
+        if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+        }
 
-    }
+        console.error(error);
+    }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+    });
 
 }
 
 export const logout = () => {
-    auth().signOut().then(() => {
+    getAuth().signOut().then(() => {
         console.log('User is log out!');
         return true;
     }).catch(error => {
         console.error(error);
     });
+}
+
+export const registerUser = (email, pwd, setRegisterResponse) => {
+
+    email = email.toLowerCase();
+
+    try {
+        createUserWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
+            console.log('User account created & signed in!');
+            // Response
+            setRegisterResponse('success')
+
+        }).catch(error => {
+            setRegisterResponse(error)
+            console.error("Register error - " + error);
+        });
+    } catch {
+        alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
+
+    }
+}
+
+export function updateUserEmail(navigation, newEmail, currentPassword, newSecret, oldEmail, setRegisterResponse ) {
+    console.log("Updating User")
+
+    let result = '';
+    newEmail = newEmail.toLowerCase();
+    try {
+        signInWithEmailAndPassword(auth, getUserEmail(), currentPassword)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                // ...
+                updateEmail(user, newEmail).then(() => {
+                    console.log("Email updated!");
+                    result = 'Success'
+                    //navigation.popToTop()
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                        {
+                            name: 'Main', 
+                        },
+                        ],
+                    })
+                }).catch(error => {
+                    console.error("AuthProvider - UpdateEmail : " + error);
+                    result = error.code
+                    //setRegisterResponse(error.code)
+                });
+            })
+    }  catch {
+        alert('Error al actualizar la información - Compruebe el estado de su conexión.')
+    }
+    
+    return result; 
+}
+
+const updateUserPwd = (newEmail, currentPassword, newSecret, oldEmail, setRegisterResponse) => {
+
+        try {
+            reauthenticate(currentPassword, oldEmail).then(() => {
+                updatePassword(user, newSecret).then(() => {
+                    console.log("Pwd updated!");
+                    setRegisterResponse('success')
+                }).catch(error => {
+                    console.error(error);
+                    setRegisterResponse(error)
+                });
+            }).catch(error => {
+                console.log(error)
+                setRegisterResponse(error)
+            })
+        } catch {
+            alert('Error al actualizar la información - Compruebe el estado de su conexión.')
+        }
+
+
+    }
+
+export const reauthenticate = (currentPassword, oldEmail) => {
+    var user = getAuth();
+    var cred = EmailAuthProvider.credential(
+        'carlos@zz.ss', 'Prueba123').catch(error => {
+            console.log("Error reauthenticate : " + error)
+        });
+    return reauthenticateWithCredential(user, cred);
 }

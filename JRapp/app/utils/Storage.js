@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 export const storeUserData = async (value) => {
 
-
-    console.log(" In storage id : " + value[0].idSubscriber.toString())
+    
+    console.log(" In storage id Array : " + value[0].idSubscriber.toString())
     try {
         await AsyncStorage.setItem('userData', JSON.stringify(value))
     } catch (e) {
@@ -66,6 +66,7 @@ export const getUserString = async (key) => {
 
 export const clearStorage = async () => {
     try {
+        console.log("STORAGE >>> Clearing")
         await AsyncStorage.clear()
     } catch (e) {
         // error reading value

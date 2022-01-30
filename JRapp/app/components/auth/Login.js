@@ -73,7 +73,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
 
     const loginHandler = () => {
         // Let´s see
-        //login('carlos@zz.ss', 'Prueba123', setError, setLoginSuccess)
+        login('roboto@gmail.com', 'Prueba123', setError, setLoginSuccess)
     }
 
 

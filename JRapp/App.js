@@ -69,7 +69,6 @@ const UserLogged = () => {
 const App: () => Node = () => {
 
   const [showIntro, setShowIntro] = useState(true);
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
 
   setTimeout(() => {
     setShowIntro(false)
@@ -99,7 +98,7 @@ const App: () => Node = () => {
 
   // Details
   // Is User logeIn
-  const userLogged = true
+  const userLogged = isUserLog()
   console.log('userLogged : ' + userLogged)
 
   return (

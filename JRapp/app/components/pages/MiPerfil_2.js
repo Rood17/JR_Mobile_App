@@ -13,7 +13,7 @@ import { UserImg, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import { Icon, Input } from 'react-native-elements'
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import IntentBtn from '../elements/IntentBtn'
-import {updateEmail} from '../../context/AuthProvider'; '../../context/AuthProvider';
+import {updateUserEmail, updateUserPwd} from '../../context/AuthProvider'; '../../context/AuthProvider';
 import * as constants from '../../utils/constants/Constants'
 import { NewPwd } from '../auth/Register_2';
 import { clearStorage, getUserName,  storeUserData, storeUserString,
@@ -32,197 +32,125 @@ import {
 } from 'react-native';
 
 // Card
-export const CardPerfil = () => {
-    const [name, setName] = useState(getUserName());
-    const [lastName, setLastName] = useState(getUserLastName());
-    const [email, setEmail] = useState(getUserEmail());
-    const [pwd, setPwd] = useState(getSecret());
-    const [idPass, setIdPass] = useState(true);
-    const [error, setError] = useState('')
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+export const CardPerfil = ({navigation}) => {
+    // User Combo
+    const [newName, setNewName] = useState(getUserName());
+    const [newLastName, setNewLastName] = useState(getUserLastName());
+    const [newEmail, setNewEmail] = useState(getUserEmail());
+    const [newPwd, setNewPwd] = useState(getSecret());
 
-    let dataArray = [{idSubscriber:getUserId() ,name:name, email:email, lastName: lastName, pwd:pwd}]
-    const letter = name.slice(0,1 - name.length);
-    const oldEmail = getUserEmail();
+    const [error, setError] = useState('');
+    const [registerResponse, setRegisterResponse] = useState();
+
+    // Switch
+    const [newPwdOn, setnewPwdOn] = useState(false);
+    const toggleSwitch = () => setnewPwdOn(previousState => !previousState);
+
+    // Current Data
+    const letter = newName.slice(0,1 - newName.length);
+    const oldName = getUserName();
+    const oldLastName = getUserLastName();
+    const oldEmail = getUserEmail().toString();
     const oldPwd = 'Prueba123';
 
+    let dataArray = [{idSubscriber:getUserId() ,name:newName, email:newEmail, lastName: newLastName, pwd:newPwd}]
 
-    function onChangeName(inputname) {
-        //nameInput.clear()
-        setName(inputname);
-        setIdPass(false)
-        //uthProvider.call()
+    let currentPassword;
+
+    console.log('oldEmail ?? ' + oldName)
+    console.log('email ?? ' + newName)
+    console.log(oldName == newName)
+
+    let disabledBtn = true;
+
+    // Name Validations
+    if ( (newName.length > 3 && (oldName !== newName)) || 
+    (newLastName.length > 3 && oldLastName !==  newLastName)||
+    ( newEmail.length > 3 && oldEmail !== newEmail)){
+        disabledBtn = false
+        //setdisabledBtn(false)
+    } else {
+        //setdisabledBtn(true)
+        disabledBtn = true
     }
 
-    const onChangeLastName = (lastname) => {
-        //nameInput.clear()
-        setLastName(lastname)
-        setIdPass(false)
-        dataArray[0].lastName = lastname
-    }
 
-    const onChangeEmail = (email) => {
-        //nameInput.clear()
-        setEmail(email)
-        setIdPass(false)
-        dataArray[0].email = email
-    }
 
-    const onChangeNumber = (pwd) => {
-        //nameInput.clear()
-        setIdPass(false)
-        if (pwd.length == 8 )
-            if ( pwd == getSecret() ){
-                setError('')
-                setIdPass(true)
-                dataArray[0].pwd = pwd
-            }
-            else {
-                setError(<WarningAdvice type={2} warningText='El número o contraseña es incorrecto.' />)
-            }
-        else
-            setError('')
-    }
 
     const updateHandler = () => {
-        console.log("XXXXXXXX*** email : " + email)
-        console.log("XXXXXXXX*** oldMail : " + oldEmail)
-        if ( email.toString() != oldEmail){}
-            //updateEmail()
 
-        //if ( pwd != oldPwd )
-        //updatePwd()
+        // Ash
+        currentPassword = oldPwd 
+
+        if ( !newPwdOn && !disabledBtn ){
+        if ( oldName !== newName  || oldLastName !== newLastName ){
+            console.log("Names updated!");
+        }
+        console.log(oldEmail == email)
+        if ( oldEmail != newEmail ) {
+            updateUserEmail(navigation, newEmail, 
+                currentPassword, oldEmail, setRegisterResponse)
+        }
+
+        if ( oldEmail != email && oldPwd != newPwd) {
+            updateEmail()
+            //updatePwd()
+        }
+
+        if ( oldPwd != newPwd   ){
+            updatePwd()
+        }
+
+        // Always Storage
+        storgaeUpdate()
+        //navigation.popToTop()
+        navigation.reset({
+            index: 0,
+            routes: [
+            {
+                name: 'Main', 
+            },
+            ],
+        })
     }
 
-    const reauthenticate = (currentPassword) => {
-        var user = auth().currentUser;
-        var cred = auth.EmailAuthProvider.credential(
-            oldEmail, 'Prueba123');
-        return user.reauthenticateWithCredential(cred);
-      }
-
-    function updateEmail() {
-        let email =  dataArray[0].email
-        let pwd = 'Prueba123'
-        
-
-        if ( !isEnabled ){
-            console.log("****************  ")
-            console.log("*** pwd : " + pwd)
-            console.log("*** oldPwd : " + oldPwd)
-            console.log("*** email : " + email)
-            console.log("*** oldMail : " + oldEmail)
-            console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-            console.log("*** name : " + dataArray[0].name)
-            console.log("*** lastName : " + dataArray[0].lastName)
-
-            email = email.toLowerCase();
-            console.log("array : " + auth().authCurrentUser)  
-
-            try {
-
-                reauthenticate().then(() => {
-                    var user = auth().currentUser;
-                    user.updateEmail(email).then(() => {
-                    console.log("Email updated!");
-                    // Clear Storage
-                    clearStorage();
-                    // Open Modal
-                    // Store New Data
-                    storeUserData(dataArray);
-                    // User Just Register
-                    storeUserString('lastView', 'Main') 
-    
-
-                }).catch(error => {
-                    if (error.code === 'auth/user-not-found') {
-                    console.log('No existe el usuario!');
-                    setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
-                    setIsBtnDisable(true);
-                    }
-                
-                    if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
-                    setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
-                    setIsBtnDisable(true);
-                    }
-                
-                    console.error(error);
-                });
-            }).catch(error => {
-                console.log(error)
-            })
-            } catch {
-                alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
-                
-            }
-        }            
     }
+
+ 
 
     function updatePwd() {
-        let email =  dataArray[0].email
-        let pwd = 'Prueba123'
-        
-
-        if ( !isEnabled ){
-
-            console.log("****************  ")
-            console.log("*** pwd : " + pwd)
-            console.log("*** oldPwd : " + oldPwd)
-            console.log("*** email : " + email)
-            console.log("*** oldMail : " + oldEmail)
-            console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-            console.log("*** name : " + dataArray[0].name)
-            console.log("*** lastName : " + dataArray[0].lastName)
-
-            email = email.toLowerCase();
-            console.log("array : " + auth().authCurrentUser)  
-
-            
-
-            try {
-
-                reauthenticate().then(() => {
-                    var user = auth().currentUser;
-                    user.updatePassword(pwd).then(() => {
-                    console.log("Pwd updated!");
-                }).catch(error => {
-                    if (error.code === 'auth/user-not-found') {
-                    console.log('No existe el usuario!');
-                    setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
-                    setIsBtnDisable(true);
-                    }
-                
-                    if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
-                    setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
-                    setIsBtnDisable(true);
-                    }
-                
-                    console.error(error);
-                });
-            }).catch(error => {
-                console.log(error)
-            })
-            } catch {
-                alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
-                
-            }
-        }            
-    }
+        updateUserPwdl(currentPassword, oldEmail, newPwd, setRegisterResponse)
+        if ( registerResponse !== 'success'){ 
+            // Error
+            errorHandler(registerResponse)
+        }
+        console.error(registerResponse);
+    } 
+    
 
     const storgaeUpdate = () => {
         // Clear Storage
         clearStorage();
-        // Open Modal
         // Store New Data
         storeUserData(dataArray);
         // User Just Register
         storeUserString('lastView', 'Main') 
     }
 
-    
+    const errorHandler = (errorMsg) => {
+        console.error("Errror !!! : " + errorMsg);
+        if (errorMsg === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+            setIsBtnDisable(true);
+            }
+        if (errorMsg === 'auth/user-not-found') {
+            console.log('No existe el usuario!');
+            setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
+            setIsBtnDisable(true);
+            }
+    }
+
     
     
     return (
@@ -243,40 +171,40 @@ export const CardPerfil = () => {
                     <Input
                         placeholder="Nombre del Titular"
                         autoComplete='name'
-                        value={name}
+                        value={newName}
                         secureTextEntry={false}
                         leftIcon={{ type: 'font-awesome', name: 'user', size:18, color:'grey' }}
-                        onChangeText={name => onChangeName(name)}
+                        onChangeText={name => setNewName(name)}
                     />
                     <Input
                         placeholder="Apellido(s)"
                         secureTextEntry={false}
-                        value={lastName}
+                        value={newLastName}
                         leftIcon={{ type: 'font-awesome', name: 'user', size:18, color:'grey'  }}
-                        onChangeText={lastname => onChangeLastName(lastname)}
+                        onChangeText={lastname => setNewLastName(lastname)}
                     />
                     <Input
                         placeholder="Email"
                         textContentType='emailAddress'
                         keyboardType='email-address'
-                        value={email}
+                        value={newEmail}
                         secureTextEntry={false}
                         autoComplete='email'
                         leftIcon={{ type: 'font-awesome', name: 'envelope', size:18, color:'grey'  }}
-                        onChangeText={email => onChangeEmail(email)}
+                        onChangeText={email => setNewEmail(email)}
                     />
                     <View style={stylesCardPerfil.pwdContainer}>
                         <Text>Cambio de Contraseña</Text>
                         <Switch
                         trackColor={{ false: "#767577", true: "#81b0ff" }}
-                        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                        thumbColor={newPwdOn ? "#f5dd4b" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={toggleSwitch}
-                        value={isEnabled}
+                        value={newPwdOn}
                     />
                     </View>
                     
-                {isEnabled ?
+                {newPwdOn ?
                 <NewPwd 
                     emailPass={true}
                     dataArray={dataArray}
@@ -289,7 +217,7 @@ export const CardPerfil = () => {
                     //style={stylesBtn == null ? btnNormal() : stylesBtn}
                     onPress={() => updateHandler()}
                     title='Continuar'
-                    disabled={idPass}
+                    disabled={disabledBtn}
                     color={styleConst.MAINCOLORS[0]}
                 />
                 }
@@ -378,7 +306,7 @@ const MiPerfil = ({navigation}) => {
     return (
         <ScrollView style={styles.container} >
             <ReturnHeader title='Administrar mi perfil' navigation={navigation}/>
-            <CardPerfil />
+            <CardPerfil navigation={navigation} />
         </ScrollView>
 
     );
