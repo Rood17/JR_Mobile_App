@@ -15,6 +15,7 @@
  export const TWITTER_COLOR = '#1d9bf0'
  export const INSTA_COLOR = '#e843a8'
  export const WARNINGS = ['red', 'yellow', 'green']
+ export const COLOR_LINK = ['#568be0']
  // Prepare Themes
  export const P_LIGHT_THEME = ['dark', '#444548']
  // Scheme Styles

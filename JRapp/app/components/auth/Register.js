@@ -30,6 +30,7 @@ import {
     View,
     TextInput,
     TouchableWithoutFeedback,
+    Keyboard
 } from 'react-native';
 
 import {
@@ -41,16 +42,19 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 // Btn Disabled Flaf Team
-const Register: () => Node = ({navigation}) => {
+const Register: () => Node = ({navigation, route}) => {
 
-    const [name, setName] = useState(false);
-    const [lastName, setLastName] = useState(false);
+    const  {idSubscriber} = route.params
+
+    const [name, setName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [btnDisabledFlag, setBtnDisabledFlag] = useState(true)
+    const [keyBoardIsOpen, setKeyBoardIsOpen] = useState(false);
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
 
 
     const onChangeName = (inputName) => {
-        if (inputName.length >= 4) {
+        if (inputName.length >= 3) {
             setName(inputName)
         } else {
             setName("")
@@ -58,7 +62,7 @@ const Register: () => Node = ({navigation}) => {
     }
 
     const onChangeLastName = (inputLastName) => {
-        if (inputLastName.length > 4 && name.length > 4) {
+        if (inputLastName.length >= 3 && name.length >= 3) {
             setLastName(inputLastName)
         } else {
             setLastName("")
@@ -66,13 +70,26 @@ const Register: () => Node = ({navigation}) => {
     }
 
     useEffect(() => {
-        /// dev 99999
-        if (true)
+        // Name super verification
+        if (name.length >= 3 && lastName.length >= 3)
             setBtnDisabledFlag(false)
         else
             setBtnDisabledFlag(true)
     });
  
+    // Keyboard Listener for disapear icons
+    Keyboard.addListener('keyboardDidShow',
+        () => {
+            setKeyBoardIsOpen(true);
+        },
+    );
+
+    Keyboard.addListener('keyboardDidHide',
+        () => {
+            setKeyBoardIsOpen(false);
+        },
+    );
+
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
@@ -102,8 +119,8 @@ const Register: () => Node = ({navigation}) => {
                         <IntentBtn
                             isDisabled={btnDisabledFlag}
                             navigation={navigation}
-                            intent='RegisterSms'
-                            btnParams={{name : name, lastName : lastName}}
+                            intent='Register_2'
+                            btnParams={{idSubscriber:idSubscriber, name : name, lastName : lastName}}
                             btnText='Ingresar' />
                     </View>
 
@@ -114,7 +131,9 @@ const Register: () => Node = ({navigation}) => {
                     
             </ScrollView>
         </TouchableWithoutFeedback>
-        <Help navigation={navigation}/>
+        { keyBoardIsOpen ? null  : <Help navigation={navigation}/>
+    }
+        
         </View>
     );
 };
@@ -146,7 +165,7 @@ const styles = StyleSheet.create({
     phoneTxt: {
         color: styleConst.MAINCOLORS[1],
         fontSize: 15,
-        fontWeight: 'bold',
+        fontWeight: '600',
         margin: 10
     }
 });

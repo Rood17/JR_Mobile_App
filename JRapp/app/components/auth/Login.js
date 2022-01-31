@@ -7,7 +7,7 @@
  * @flow strict-local
  */
 
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import type { Node } from 'react';
 
 import DisplayLogo from '../elements/DisplayLogo';
@@ -19,6 +19,9 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
+import { login, isUserLog } from '../../context/AuthProvider';
+import {  storeUserString } from '../../utils/Storage'
+
 
 import {
     Button,
@@ -47,25 +50,63 @@ import { WarningAdvice } from '../elements/Elements';
 
 // Global Vars
 let isNumberRegister = false;
+let numberInput = React.createRef();
 
 const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [pwdFail, setPwdFail] = useState(false)
     const [disabledBtn, setDisabledBtn] = useState(true)
+    const [error, setError] = useState()
+    const [loginSuccess, setLoginSuccess] = useState(false)
+
+    let pwdInput = React.createRef();
 
     const onChangeText = (pwd) => {
-        if (pwd.length > 0)
-            {setDisabledBtn(false);
-            setIsPwdOk(true)}
-        else
-            {setDisabledBtn(true)
-            setIsPwdOk(false)}
+        if (pwd.length > 0) {
+            setDisabledBtn(false);
+            setIsPwdOk(true)
+        }
+        else {
+            setDisabledBtn(true)
+            setIsPwdOk(false)
+        }
     }
+
+    const loginHandler = () => {
+        // Let´s see
+        storeUserString('lastView', 'login')
+        login('bameetr@gu.bhj', 'Prueba123', setError, setLoginSuccess)
+    }
+
+
+    useEffect(() => {
+
+        if (error === 500)
+            setError(<WarningAdvice type={2} warningText='El número o contraseña es incorrecto.' />)
+
+        if (loginSuccess) {
+            nav.navigate('Main',
+                { idSubscriber: idSubscriber, isRegister: true });
+
+            // Set LastView
+            storeUserString('lastView', 'login')
+
+            // Reset values
+            setDisabledBtn(true);
+            setLoginSuccess(false);
+            pwdInput.clear()
+            numberInput.clear()
+        }
+    })
+
+
     return (
         <>
             <Input
+                ref={input => { pwdInput = input }}
                 placeholder="Contraseña"
                 textContentType='password'
                 autocomplete='password'
+                errorMessage={error}
                 maxLength={constants.MAX_NUMBER_LENGTH}
                 secureTextEntry={true}
                 leftIcon={{ type: 'font-awesome', name: 'lock', size: 18 }}
@@ -75,12 +116,13 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
                 <Text style={styles.txtError}>*La contraseña o el número es incorrecto.</Text>
                 :
                 null}
-            <IntentBtn
-                isDisabled={disabledBtn}
-                navigation={nav}
-                intent='Main'
-                btnParams={{idSubscriber: idSubscriber, isRegister: true}}
-                btnText='Ingresar' />
+            <Button
+                //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                onPress={() => loginHandler()}
+                title='Ingresar'
+                disabled={disabledBtn}
+                color={styleConst.MAINCOLORS[0]}
+            />
             <View style={{ alignItems: 'center' }}>
                 <Text style={styles.phoneTxt}>¿Olvidaste tu contraseña?</Text>
             </View>
@@ -95,9 +137,9 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
         <>
             {numberFlag ?
                 <PwdInput
-                setIsPwdOk={setIsPwdOk}
-                nav={navigation} 
-                idSubscriber={idSubscriber} 
+                    setIsPwdOk={setIsPwdOk}
+                    nav={navigation}
+                    idSubscriber={idSubscriber}
                 />
                 :
                 <View style={{ marginBottom: 0, }}>
@@ -109,7 +151,7 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                     <Text style={{ textAlign: 'center', }}>¡Es totalmente gratuito!</Text>
                     <IntentBtn
                         intent='Register'
-                        btnParams={{idSubscriber:idSubscriber, isRegister:true}}
+                        btnParams={{ idSubscriber: idSubscriber, isRegister: true }}
                         navigation={navigation}
                         btnText='Registrarse' />
                 </View>
@@ -139,6 +181,8 @@ const LoginBody = ({ nav }) => {
     const [idSubscriber, setIdSubscriber] = useState(0)
     const [isPwdOk, setIsPwdOk] = useState(false)
     const [dinamicColor, setDinamicColor] = useState(styleConst.MAINCOLORSLIGHT[1])
+    const [clear, setClear] = useState(null)
+
 
     const isJR = '888'
     const isRegister = '56'
@@ -152,7 +196,7 @@ const LoginBody = ({ nav }) => {
 
             // Clear input error
             setErrorStr('')
-            
+
             // Validate if es JR
             if (number.toString().indexOf(isJR) != -1) {
                 setJrAlert(false)
@@ -201,24 +245,23 @@ const LoginBody = ({ nav }) => {
     const iconActionHandler = (intent) => {
         // If is JR Movil
         console.log("Login > isRegister : " + isPwdOk)
-        if ( intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH )
-        {
-            
+        if (intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH) {
+
             nav.navigate(intent, {
                 idSubscriber: idSubscriber,
-                isRegister : isPwdOk,
+                isRegister: isPwdOk,
                 isJr: phoneIsCorrect
             })
             setErrorStr('')
-            
-        } else if ( intent === 'Recharge') {
+
+        } else if (intent === 'Recharge') {
             console.log("Login > inside else if iconactionhandler idSubscriber : " + idSubscriber)
             console.log(isPwdOk)
 
             nav.navigate(intent, {
                 idSubscriber: idSubscriber,
-                isRegister : isPwdOk,
-                isJr:phoneIsCorrect
+                isRegister: isPwdOk,
+                isJr: phoneIsCorrect
             })
         } else {
             setJrAlert(true);
@@ -237,6 +280,7 @@ const LoginBody = ({ nav }) => {
                     </View>
                     <View style={styles.btnActionContainer}>
                         <Input
+                            ref={input => {numberInput = input}}
                             placeholder="Número JRmovil (10 dígitos)"
                             keyboardType='number-pad'
                             textContentType='telephoneNumber'
@@ -245,17 +289,18 @@ const LoginBody = ({ nav }) => {
                             onChangeText={number => onChangeNumber(number)}
                         />
                         {phoneIsCorrect ?
-                            <PassOrRegister 
+                            <PassOrRegister
                                 setIsPwdOk={setIsPwdOk}
-                                idSubscriber={idSubscriber} 
-                                numberFlag={isNumberRegister} 
-                                navigation={nav} />
+                                idSubscriber={idSubscriber}
+                                numberFlag={isNumberRegister}
+                                navigation={nav}
+                            />
                             :
                             <PhoneIsNotJr flag={jrAlert} errorText={errorStr} />
                         }
 
                     </View>
-                        
+
 
 
                 </ScrollView>
@@ -263,30 +308,30 @@ const LoginBody = ({ nav }) => {
             {keyboardIsOpen ?
                 null :
                 <>
-                <View style={[styles.lineIconContainer, {flex:iconFlex}]}>
-                            <Line color='grey' />
-                            <View style={styles.iconContainer}>
-                                <View style={styles.icon}>
-                                    <Icon
-                                        raised
-                                        name='mobile'
-                                        type='font-awesome'
-                                        color={dinamicColor}
-                                        onPress={() => iconActionHandler('Recharge')} />
-                                    <Text style={styles.icon_text}>Recarga</Text>
-                                </View>
-                                <View style={styles.icon}>
-                                    <Icon
-                                        raised
-                                        name='file'
-                                        type='font-awesome'
-                                        color={dinamicColor}
-                                        onPress={() => iconActionHandler('Main')} />
-                                    <Text style={styles.icon_text}>Consulta</Text>
-                                </View>
+                    <View style={[styles.lineIconContainer, { flex: iconFlex }]}>
+                        <Line color='grey' />
+                        <View style={styles.iconContainer}>
+                            <View style={styles.icon}>
+                                <Icon
+                                    raised
+                                    name='mobile'
+                                    type='font-awesome'
+                                    color={dinamicColor}
+                                    onPress={() => iconActionHandler('Recharge')} />
+                                <Text style={styles.icon_text}>Recarga</Text>
+                            </View>
+                            <View style={styles.icon}>
+                                <Icon
+                                    raised
+                                    name='file'
+                                    type='font-awesome'
+                                    color={dinamicColor}
+                                    onPress={() => iconActionHandler('DetailLogOut')} />
+                                <Text style={styles.icon_text}>Consulta</Text>
                             </View>
                         </View>
-                <Help navigation={nav} />
+                    </View>
+                    <Help navigation={nav} />
                 </>
             }
         </View>

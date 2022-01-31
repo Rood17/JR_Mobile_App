@@ -22,40 +22,39 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-const Asistance = ({navigation}) => {
+const Asistance = ({ navigation }) => {
     // header, text, icon
     return (
         <View style={styles.container} >
-            <ReturnHeader title='¿Te Podemos Ayudar?' navigation={navigation}/>
-            <View style={{paddingLeft:15, marginTop:35}}>
-                <Text>Estamos para atender cualquiera de tus dudas, 
+            <ReturnHeader title='¿Te Podemos Ayudar?' navigation={navigation} />
+            <View style={{ paddingLeft: 15, marginTop: 35 }}>
+                <Text>Estamos para atender cualquiera de tus dudas,
                     aclaraciones o comentarios.</Text>
             </View>
-            <TouchableOpacity onPress={ () => alert("hola")}>
-            <Card header='Contáctanos' 
-                text='Ponte en contacto, ¡estamos para ayudarte!'
-                icon='user' />
+            <TouchableOpacity onPress={() => navigation.navigate('Privacidad')}>
+                <Card header='Ayuda con la App'
+                    text='Ponte en contacto, ¡estamos para ayudarte!'
+                    icon='life-ring' />
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={() => navigation.navigate('Faqs')}>
+                <Card header='Faqs'
+                    text='Preguntas frecuentes que nuestros clientes hacen.'
+                    icon='question' />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Privacidad')}>
+                <Card header='Privacidad y Políticas de Uso de Datos'
+                    text='Ponte en contacto, ¡estamos para ayudarte!'
+                    icon='info-circle' />
             </TouchableOpacity >
-            <TouchableOpacity onPress={ () => alert("hola")}>
-            <Card header='Ayuda con la App' 
-                text='Ponte en contacto, ¡estamos para ayudarte!'
-                icon='life-ring' />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={ () => alert("hola")}>
-            <Card header='Preguntas Frecuentes' 
-                text='Ponte en contacto, ¡estamos para ayudarte!'
-                icon='question' />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={ () => alert("hola")}>
-            <Card header='Términos y Condiciones de Uso' 
-                text='Ponte en contacto, ¡estamos para ayudarte!'
-                icon='file' />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={ () => alert("hola")}>
-            <Card header='Avisos de Privacidad' 
-                text='Ponte en contacto, ¡estamos para ayudarte!'
-                icon='file' />
-                </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Terminos')}>
+                <Card header='Términos y Condiciones'
+                    text='Ponte en contacto, ¡estamos para ayudarte!'
+                    icon='info-circle' />
+            </TouchableOpacity>
+            
+            
+
         </View>
 
     );

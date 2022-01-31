@@ -13,6 +13,8 @@ import { UserImg, ReturnHeader } from "../elements/Elements";
 import { Icon, Input } from 'react-native-elements'
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import IntentBtn from '../elements/IntentBtn'
+import { getUserName,  getUserEmail, getUserId } from '../../utils/Storage'
+
 import {
     Button,
     SafeAreaView,
@@ -27,7 +29,7 @@ import {
 } from 'react-native';
 
 // Card
-export const CardPerfil = ({ }) => {
+export const CardPerfil = ({ navigation }) => {
     return (
 
         <View style={stylesCardPerfil.boxShadow}>
@@ -42,18 +44,19 @@ export const CardPerfil = ({ }) => {
                 </View>
                 <View style={stylesCardPerfil.headContainer}>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Titular de la línea</Text>
-                    <Text>'User'</Text>
+                    <Text>{getUserName()}</Text>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Número JR Movil</Text>
-                    <Text>55 89 74 56 23</Text>
+                    <Text>{getUserId()}</Text>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Email</Text>
-                    <Text>'User@hotmail.com'</Text>
+                    <Text>{getUserEmail()}</Text>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Contraseña</Text>
                     <Text>********</Text>
                 </View>
             </View>
             <View style={stylesCardPerfil.btnContainer}>
                 <IntentBtn
-                intent='Editar perfil'
+                    intent='MiPerfil_2'
+                    navigation={navigation} 
                     color={1}
                     btnText='Editar perfil'
                 />
@@ -178,7 +181,7 @@ const MiPerfil = ({navigation}) => {
             <View style={{ paddingLeft: 15, marginTop: 35 }}>
                 <Text>Aquí puedes modificar tus datos personales registrados en "JR Movil" y tu contraseña.</Text>
             </View>
-            <CardPerfil />
+            <CardPerfil navigation={navigation} />
             <CardPerfilInfo />
         </View>
 

@@ -7,7 +7,7 @@
  * @flow strict-local
  */
 
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import type { Node } from 'react';
 import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
@@ -15,6 +15,7 @@ import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
 import {setProductType} from '../../utils/Utils'
+import PaquetesContext from '../../../context/paquetes/PaquetesContext';
 
 import {
     Button,
@@ -304,6 +305,15 @@ const stylesMoneyCard = StyleSheet.create({
 // Products List
 export const ProductCard = ({ setGbProduct, togglePlans }) => {
 
+    // get Paquetes Context
+    const {paquetes, getPaquetes} = useContext(PaquetesContext);
+
+    useEffect(() => {
+        getPaquetes();
+        //console.log("paquetes : " + paquetes)
+    }, [])
+
+    //console.log("paquetes : " + paquetes)
 
     // 999 seguro aquí se va a neceistar un ref
     const productHandler = (payload) => {

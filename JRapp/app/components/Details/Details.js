@@ -8,9 +8,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card, ReturnHeader, UserDataCard } from "../elements/Elements";
+import { Card, ReturnHeader, UserDataCard, DetailCard } from "../elements/Elements";
 import { getPerfilUf } from '../../utils/services/get_services'
 import * as data from '../../utils/services/perfil_uf.json';
+import * as styleConst from '../../res/values/styles/StylesConstants'
+import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
 import axios from 'axios';
 import {
     Button,
@@ -71,47 +73,100 @@ const Details = ({ navigation, route }) => {
                 </View>
                 {userIsActive ?
                     <>
-                        <View style={{ flexDirection: 'column' }}>
+                        <ScrollView style={{ flexDirection: 'column' }}>
 
-                            <TouchableOpacity onPress={() => alert("hola")}>
-                                <Card header='Contáctanos'
-                                    text='Ponte en contacto, ¡estamos para ayudarte!'
-                                    icon='user' />
+                            <TouchableOpacity >
+                                <DetailCard 
+                                    header='Detalles del Usuario'
+                                    icon='user'
+                                    data={[
+                                        {
+                                            campo : 'Número Jr',
+                                            campoD : idSubscriber
+                                        },
+                                        {
+                                            campo : 'Nombre Vinculado a la cuenta',
+                                            campoD : getUserName() + ' ' + getUserLastName()
+                                        },
+                                        {
+                                            campo : 'Email Vinculado a la cuenta',
+                                            campoD : getUserEmail()
+                                        },
+                                        {
+                                            campo : '',
+                                            campoD : 
+                                            <TouchableOpacity onPress={() => navigation.navigate('MiPerfil_2')}>
+                                                <Text style={{color:styleConst.COLOR_LINK[0]}}>Editar</Text>
+                                            </TouchableOpacity >,
+                                        },
+                                    ]}
+                                />
                             </TouchableOpacity >
 
-                            <TouchableOpacity onPress={() => alert("hola")}>
-                                <Card header='Ayuda con la App'
-                                    text='Ponte en contacto, ¡estamos para ayudarte!'
-                                    icon='life-ring' />
+                            <TouchableOpacity>
+                            <DetailCard header='Detalles de la Línea'
+                                    icon='mobile'
+                                    data={[
+                                        {
+                                            campo : 'Plan Actual',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Saldo Actual',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Total Contratado',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Total SMS',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Total Tiempo V',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Última Fecha de Pago',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Fecha de Vencimiento',
+                                            campoD : '[Info]'
+                                        },
+                                    ]} 
+                            />
                             </TouchableOpacity>
-
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-
-                            <TouchableOpacity onPress={() => alert("hola")}>
-                                <Card header='Contáctanos'
-                                    text='Ponte en contacto, ¡estamos para ayudarte!'
-                                    icon='user' />
+                            <TouchableOpacity >
+                                <DetailCard 
+                                    header='Servicios Complementarios'
+                                    icon='file'
+                                    data={[
+                                        {
+                                            campo : 'Servicio 1',
+                                            campoD : '[Info]'
+                                        },
+                                        {
+                                            campo : 'Servicio 2',
+                                            campoD : '[Info]'
+                                        },
+                                    ]}
+                                />
                             </TouchableOpacity >
 
-                            <TouchableOpacity onPress={() => alert("hola")}>
-                                <Card header='Ayuda con la App'
-                                    text='Ponte en contacto, ¡estamos para ayudarte!'
-                                    icon='life-ring' />
-                            </TouchableOpacity>
-
-                        </View>
+                        </ScrollView>
                     </>
                     :
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity onPress={() => alert("hola")}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Asistance')}>
                             <UserDataCard header='Contáctanos para mayor Información'
                                 text='¡Vaya, Este númeo se encuentra desactivado!'
                                 icon='alert' />
                         </TouchableOpacity>
 
                     </View>
-                }
+                } 
 
 
             </View>

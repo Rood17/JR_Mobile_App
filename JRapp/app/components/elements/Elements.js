@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input } from 'react-native-elements'
 import IntentBtn from '../elements/IntentBtn'
@@ -12,7 +12,6 @@ const Line = ({ color }) => {
     if (color != null)
         colorMain = color;
 
-    console.log('fdfdf : ' + colorMain)
     return (
         <>
             <View style={{
@@ -128,9 +127,82 @@ const stylesCard = StyleSheet.create({
 });
 // END Card
 
+// Detail Card
+export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
+
+    console.log(data)
+    if( data != undefined)
+        data.map((item) => {
+            console.log(item.campo)
+        })
+    return (
+
+        <View style={stylesCard.boxShadow}>
+            <View style={stylesCard.infoContainer}>
+                <View style={stylesCard.iconContainer}>
+                    <Icon
+                        name={icon}
+                        type='font-awesome'
+                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    />
+                </View>
+                <View style={stylesCard.headContainer}>
+                    <Text style={stylesCard.cardHeadTxt}>{header}</Text>
+                    <View style={{margin:10}}>
+                        { data.map((item) => (
+                            <>
+                                <Text style={stylesdeatilCard.campo}>{item.campo}: </Text>
+                                <Text style={stylesdeatilCard.txtDin}>{item.campoD}</Text>
+                            </>
+                        ))}
+                        
+                        
+                        
+                    </View>
+                </View>
+                
+            </View>
+        </View>
+
+    );
+}
+const stylesdeatilCard = StyleSheet.create({
+    campo:{
+
+    },
+    txtDin:{
+        color:'black',
+        marginBottom:10
+    }
+})
+// End Detail Card
+
+
 // MainCard
-export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
+export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,porcent,
     bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
+    
+    let urlWifi = '../../res/drawable/wifi/'+ porcent +'.png';
+    let require0 = require('../../res/drawable/wifi/0.png')
+    let require1 = require('../../res/drawable/wifi/1.png')
+    let require2 = require('../../res/drawable/wifi/2.png')
+    let require3 = require('../../res/drawable/wifi/3.png')
+    let require4 = require('../../res/drawable/wifi/4.png')
+    
+    console.log(porcent)
+    let requireWifi
+    switch (porcent) {
+        case 'verylow': requireWifi = require1 ;break;
+        case 'low': requireWifi = require2;break;
+        case 'med': requireWifi = require3;break;
+        case 'full': requireWifi = require4;break;
+        default : requireWifi = require0;
+        // etc...
+      }
+
+
+
+    
     return (
 
         <View style={stylesMainCard.boxShadow}>
@@ -162,8 +234,8 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
                     alignItems: 'center', margin: 5
                 }}>
                     <Image
-                        style={{}}
-                        source={require('../../res/drawable/utils/mbcimetro.png')}
+                        style={{ height:200, width:200}}
+                        source={requireWifi}
                     />
                 </View>
                 : null}
@@ -400,10 +472,12 @@ const stylesReturn = StyleSheet.create({
 
 
 // User Image
-export const UserImg = ({ backColor, colorTxt, small, medium, large }) => {
+export const UserImg = ({ backColor, colorTxt, small, medium, large, txt }) => {
     let size = 0.09
     let txtSize = 20
 
+    txt != undefined ? txt = txt.toUpperCase() : null
+    
     if (small) { size = 0.09; txtSize = 20 }
     if (medium) { size = 0.20; txtSize = 40 }
     if (large) { size = 0.50; txtSize = 40 }
@@ -423,22 +497,23 @@ export const UserImg = ({ backColor, colorTxt, small, medium, large }) => {
                 underlayColor='#ccc'
                 onPress={() => alert('Yaay!')}
             >
-                <Text style={colorTxt ? { color: colorTxt, fontSize: txtSize } : styleHeadMain.textAvatar}> R </Text>
+                <Text style={colorTxt ? { color: colorTxt, fontSize: txtSize } : styleHeadMain.textAvatar}> {txt} </Text>
 
             </TouchableHighlight>
         </>
     );
 }
 // MainHeader
-export const MainHeader = ({ name }) => {
+export const MainHeader = ({ name, navigation}) => {
 
-    const onPress = () => {
+    const handleNav = () => {
         //  console.log("goToAyuda")
+        navigation.openDrawer( )
     }
 
     return (
         <>
-            <View style={styleHeadMain.container} onPress={onPress}>
+            <View style={styleHeadMain.container} >
                 <View style={styleHeadMain.iconContainer}>
                     <Icon
                         name='user'
@@ -460,7 +535,7 @@ export const MainHeader = ({ name }) => {
                             alignItems: 'center'
                         }}
                         underlayColor='#ccc'
-                        onPress={() => alert('Yaay!')}
+                        onPress={() => handleNav()}
                     >
                         <Text style={styleHeadMain.textAvatar}> R </Text>
 
@@ -472,7 +547,7 @@ export const MainHeader = ({ name }) => {
 }
 const styleHeadMain = StyleSheet.create({
     container: {
-        height: 65,
+        height: 55,
         backgroundColor: styleConst.MAINCOLORS[0],
         flexDirection: 'row',
         alignItems: 'center',
@@ -696,5 +771,31 @@ const warningStyles = StyleSheet.create({
     },
     text: {
         paddingLeft: 10
+    }
+});
+
+// Loader
+export const Loader = (color) => {
+
+    if( !color ) color = styleConst.MAINCOLORS[0]
+
+    return (
+        <>
+            <View style={loaderStyles.container}>
+                <ActivityIndicator size="large" color={color} />
+                <Text style={loaderStyles.text}>Cargando...</Text>
+            </View>
+        </>
+    );
+}
+const loaderStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        alignContent:'center',
+        marginTop:'50%'
+    },
+    text: {
+        paddingTop: 10
     }
 });
