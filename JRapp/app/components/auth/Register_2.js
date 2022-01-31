@@ -7,7 +7,7 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import type { Node } from 'react';
 
 import DisplayLogo from '../elements/DisplayLogo';
@@ -20,6 +20,7 @@ import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
 import { createUser, registerUser, updateUserPwd } from '../../context/AuthProvider';
+import FirebaseContext from '../../../context/firebase/FirebaseContext';
 
 import {
     Button,
@@ -53,7 +54,11 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
     const [chackColor2, setChackColor2] = useState('grey');
     const [chackColor3, setChackColor3] = useState('grey');
     const [btnDisabled, setbtnDisabled] = useState(true);
+    const [pwd, setPwd] = useState()
     const [registerResponse, setRegisterResponse] = useState(false);
+
+    // Context firebase
+    const {getUserData} = useContext(FirebaseContext)
 
     const onChangeText = (text) => {
 
@@ -104,7 +109,10 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
             setbtnDisabled(false)
 
             // set pwd
-            dataArray[0].pwd = text
+            console.log("text - " + text)
+            dataArray[0].pwd = text;
+            setPwd(dataArray[0].pwd)
+            console.log("dataArray[0].pwd - " + pwd)
         }
         else { setbtnDisabled(true) }
     }
@@ -117,7 +125,6 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
     // User Register??
     function register() {
         let email = dataArray[0].email
-        let pwd = dataArray[0].pwd
 
 
 
@@ -140,21 +147,18 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
             setNewPwd(newSecret)
         }
 
-        console.log("ERRORR -  " + registerResponse)
-        if (registerResponse === 'success') {
-            setRegisterResponsePerfil('success')
-            // Finalizar
-            // Clear Storage
-            clearStorage();
-            // Open Modal            // Store New Data
-            storeUserData(dataArray);
-            // User Just Register
-            storeUserString('lastView', 'register')
+        console.log("registerResponse -  " + registerResponse)
+        // Clear Storage
+        clearStorage();
+        // Open Modal            // Store New Data
+        storeUserData(dataArray);
+        // User Just Register
+        storeUserString('lastView', 'register')
 
             // Handled by Auth
             //navigation.navigate('Main')
 
-        }
+        
 
         if (registerResponse.code === 'auth/email-already-in-use') {
             console.log('That email address is already in use!');
@@ -172,8 +176,6 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
 
 
     }
-
-    console.log("btn : " + btnDisabled)
 
     return (
         <>

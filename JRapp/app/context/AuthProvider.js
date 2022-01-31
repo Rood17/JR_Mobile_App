@@ -4,9 +4,9 @@ import Auth, {
     reauthenticateWithCredential, signInWithEmailAndPassword,
     updateEmail,
     EmailAuthProvider,
-    updatePassword
+    updatePassword,
+    getAdditionalUserInfo
 } from "firebase/auth";
-import * as firebase from 'firebase/app'
 import {getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
 
 
@@ -132,7 +132,7 @@ export const logout = () => {
 export const registerUser = (email, pwd, setRegisterResponse) => {
 
     email = email.toLowerCase();
-
+    console.log('setRegisterResponse : ' +setRegisterResponse)
     try {
         createUserWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
             console.log('User account created & signed in!');

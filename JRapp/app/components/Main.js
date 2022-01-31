@@ -309,6 +309,8 @@ const MainContent = ({ navigation }) => {
         totalSMSData, unsuedSMSData, expireSMSData, actualSMSData,
         totalMINData, unsuedMINData, expireMINData, actualMINData] = [0]
 
+    let porcent = 'med'
+
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
     // respuesta Api
@@ -373,17 +375,19 @@ const MainContent = ({ navigation }) => {
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
     let validityColor = styleConst.MAINCOLORSLIGHT[2]
-
+    
     // Validity neast conditionals
     // If validity is end
     if (parseInt(validityUserCode) < constants.DATE_NOW_CODE) {
         validityResponse = 'SALDO VENCIDO';
         validityColor = styleConst.MAINCOLORS[1]
+        porcent = ''
     }
     // If validity ends today
     else if (parseInt(validityUserCode) == constants.DATE_NOW_CODE) {
         validityResponse = '¡HOY VENCE TU SALDO!';
         validityColor = styleConst.MAINCOLORS[2]
+        porcent = 'verylow'
     }
     // If validity is near to end
     else {
@@ -441,6 +445,7 @@ const MainContent = ({ navigation }) => {
                             dataTwo={actualMBData + ' MB'}
                             MBC='true'
                             text='Consumos de datos:'
+                            porcent={porcent}
                         />
 
                             

@@ -40,6 +40,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import FirebaseState from './context/firebase/FirebaseState';
+import RecargasState from './context/recargas/RecargasState';
+import PaquetesState from './context/paquetes/PaquetesState';
 
 
 import { MAIN_CONTAINER_STYLE } from './app/res/values/styles/StylesConstants'
@@ -104,6 +106,8 @@ const App: () => Node = () => {
   return (
     <>
       <FirebaseState>
+        <PaquetesState>
+        <RecargasState>
         <NavigationContainer>
           <SafeAreaView style={MAIN_CONTAINER_STYLE}>
             <StatusBarHandler hideBar={true} />
@@ -152,6 +156,8 @@ const App: () => Node = () => {
             </Stack.Navigator>
           </SafeAreaView>
         </NavigationContainer>
+        </RecargasState>
+        </PaquetesState>
       </FirebaseState>
     </>
   );

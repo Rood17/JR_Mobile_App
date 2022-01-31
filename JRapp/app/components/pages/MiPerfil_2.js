@@ -89,12 +89,8 @@ export const CardPerfil = ({ navigation }) => {
 
             if (oldEmail != email && oldPwd != newPwd) {
                 updateEmail()
-                //updatePwd()
             }
 
-            if (oldPwd != newPwd) {
-                updatePwd()
-            }
 
             // Always Storage
             storgaeUpdate()

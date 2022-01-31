@@ -95,7 +95,7 @@ const Details = ({ navigation, route }) => {
                                         {
                                             campo : '',
                                             campoD : 
-                                            <TouchableOpacity>
+                                            <TouchableOpacity onPress={() => navigation.navigate('MiPerfil_2')}>
                                                 <Text style={{color:styleConst.COLOR_LINK[0]}}>Editar</Text>
                                             </TouchableOpacity >,
                                         },

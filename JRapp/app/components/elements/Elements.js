@@ -179,8 +179,30 @@ const stylesdeatilCard = StyleSheet.create({
 
 
 // MainCard
-export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
+export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,porcent,
     bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
+    
+    let urlWifi = '../../res/drawable/wifi/'+ porcent +'.png';
+    let require0 = require('../../res/drawable/wifi/0.png')
+    let require1 = require('../../res/drawable/wifi/1.png')
+    let require2 = require('../../res/drawable/wifi/2.png')
+    let require3 = require('../../res/drawable/wifi/3.png')
+    let require4 = require('../../res/drawable/wifi/4.png')
+    
+    console.log(porcent)
+    let requireWifi
+    switch (porcent) {
+        case 'verylow': requireWifi = require1 ;break;
+        case 'low': requireWifi = require2;break;
+        case 'med': requireWifi = require3;break;
+        case 'full': requireWifi = require4;break;
+        default : requireWifi = require0;
+        // etc...
+      }
+
+
+
+    
     return (
 
         <View style={stylesMainCard.boxShadow}>
@@ -212,8 +234,8 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
                     alignItems: 'center', margin: 5
                 }}>
                     <Image
-                        style={{}}
-                        source={require('../../res/drawable/utils/mbcimetro.png')}
+                        style={{ height:200, width:200}}
+                        source={requireWifi}
                     />
                 </View>
                 : null}

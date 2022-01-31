@@ -73,7 +73,8 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
 
     const loginHandler = () => {
         // Let´s see
-        login('roboto@gmail.com', 'Prueba123', setError, setLoginSuccess)
+        storeUserString('lastView', 'login')
+        login('bameetr@gu.bhj', 'Prueba123', setError, setLoginSuccess)
     }
 
 
