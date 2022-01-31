@@ -5,7 +5,9 @@
         "title": "hello"
       }
     ],
-    "profile": {
-      "name": "typicode"
-    }
+    "profile": [
+        {
+          "users": "typicode"
+        },
+    ],
   }
