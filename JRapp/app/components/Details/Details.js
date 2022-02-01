@@ -55,14 +55,18 @@ const Details = ({ navigation, route }) => {
  
  
      // Oferta actual
-     setPayload(simData[4]);
-     const expireMBData = simData[3]
-     const totalSMSData = simData[2]
-     const unsuedMBData = simData[1]
- 
-     const totalSMSData2 = simSMS[0]
- 
-     const totalMINData = simMIN[2]
+    const oferta = !simData[4] ? 'Sin Carga' : simData[4]
+    const expireMBData = !simData[0] ? '202201010100' : simData[0]
+    
+    // MB
+    const unsuedMBData = !simData ? 'NaN' : simData[2]
+    const totalMBData = !simData ? 'NaN' : simData[1]
+    //SMS
+    const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
+    const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
+    //SMS
+    const totalMINData = !simMIN ? 'NaN' : simMIN[1]
+    const unsuedMINData = !simMIN ? 'NaN' : simMIN[2]
 
 
     // header, text, icon
@@ -113,31 +117,35 @@ const Details = ({ navigation, route }) => {
                                     data={[
                                         {
                                             campo : 'Plan Actual',
-                                            campoD : '[Info]'
+                                            campoD : oferta
                                         },
                                         {
                                             campo : 'Saldo Actual',
-                                            campoD : '[Info]'
+                                            campoD : unsuedMBData + ' mb'
                                         },
                                         {
                                             campo : 'Total Contratado',
-                                            campoD : '[Info]'
+                                            campoD : totalMBData + ' mb'
                                         },
                                         {
                                             campo : 'Total SMS',
-                                            campoD : '[Info]'
+                                            campoD : totalSMSData
                                         },
                                         {
-                                            campo : 'Total Tiempo V',
-                                            campoD : '[Info]'
+                                            campo : 'Sms restantes',
+                                            campoD : unsuedSMSData
+                                        },
+                                        {
+                                            campo : 'Total Tiempo VoWifi',
+                                            campoD : 'ILIMITADO'
                                         },
                                         {
                                             campo : 'Última Fecha de Pago',
-                                            campoD : '[Info]'
+                                            campoD : 'NONE'
                                         },
                                         {
                                             campo : 'Fecha de Vencimiento',
-                                            campoD : '[Info]'
+                                            campoD : '02/04/2022'
                                         },
                                     ]} 
                             />
@@ -148,12 +156,12 @@ const Details = ({ navigation, route }) => {
                                     icon='file'
                                     data={[
                                         {
-                                            campo : 'Servicio 1',
-                                            campoD : '[Info]'
+                                            campo : 'Buzón de voz',
+                                            campoD : 'No contratado'
                                         },
                                         {
-                                            campo : 'Servicio 2',
-                                            campoD : '[Info]'
+                                            campo : 'Llamada en espera',
+                                            campoD : 'Sí'
                                         },
                                     ]}
                                 />
