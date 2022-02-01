@@ -252,7 +252,6 @@ const LoginBody = ({ nav }) => {
     // Validate if is JR
     // It´s bring an object
     const validateIsJr = (number, error) => {
-        console.log("** User is JR ** + " + error) 
         console.log("** User is JR **" )
         if (error == null) {
             //Log
@@ -286,7 +285,8 @@ const LoginBody = ({ nav }) => {
     const iconActionHandler = (intent) => {
         // If is JR Movil
         //console.log("Login > isRegister : " + isPwdOk)
-        if (intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH) {
+        if (intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH
+            && !loading) {
             nav.navigate(intent, {
                 idSubscriber: idSubscriber,
                 isRegister: isPwdOk,

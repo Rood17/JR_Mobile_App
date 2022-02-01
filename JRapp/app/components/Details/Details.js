@@ -7,13 +7,14 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Card, ReturnHeader, UserDataCard, DetailCard } from "../elements/Elements";
 import { getPerfilUf } from '../../utils/services/get_services'
 import * as data from '../../utils/services/perfil_uf.json';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
-import axios from 'axios';
+import UserContext from '../../../context/user/UserContext'
+
 import {
     Button,
     SafeAreaView,
@@ -30,35 +31,38 @@ const Details = ({ navigation, route }) => {
     const [userInfo, setUserInfo] = useState([]);
     const userIsActive = data.responseSubscriber.status.subStatus;
     const { idSubscriber } = route.params;
-    // FU_Tethering - please wit /** */
-    /**useEffect(() => {
-        const fetchData = async () => {
-            const response = await getPerfilUf();
-            //console.info("LeagueCatalog > Response >> "+JSON.stringify(response))
-            if (response.statusResponse) {
-                setUserInfo(response.dataPerfilUf);
-                console.log("holaa : " + esponse.dataPerfilUf)
-            }
-        };
-        fetchData();
-    }, []);
-    // I don´t fucking know yet
-    useEffect(() => {
-        const consultarApi = () => {
-            const url = './perfil_uf.json'
-            const resultados = axios.get(url)
-            console.log(resultados)
-        }
-        consultarApi()
-    }, []); **/
-    //setUserInfo(data.responseSubscriber)
-    useEffect(() => {
-        const consultarApi = () => {
-            setUserInfo(data.responseSubscriber)
-        }
-        consultarApi()
-    }, []);
-    console.log(idSubscriber)
+
+     // get userData Context
+     const { userData, getJson } = useContext(UserContext);
+
+     useEffect(() => {
+         getJson();
+     }, [])
+ 
+ 
+     // Open the package
+     if (userData.simData != undefined)
+         var simData = Object.values(userData.simData)
+ 
+     // Open the package
+     if (userData.simSMS != undefined)
+         var simSMS = Object.values(userData.simSMS)
+ 
+     // Open the package
+     if (userData.simMIN != undefined)
+         var simMIN = Object.values(userData.simMIN)
+ 
+ 
+ 
+     // Oferta actual
+     setPayload(simData[4]);
+     const expireMBData = simData[3]
+     const totalSMSData = simData[2]
+     const unsuedMBData = simData[1]
+ 
+     const totalSMSData2 = simSMS[0]
+ 
+     const totalMINData = simMIN[2]
 
 
     // header, text, icon

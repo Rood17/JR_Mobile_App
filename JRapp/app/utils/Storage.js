@@ -38,6 +38,8 @@ export const getUserData = async () => {
             setUserId(jsonValue[0].idSubscriber)
             setSecret(jsonValue[0].pwd)
 
+        } else {
+            console.log( "AsyncStorgae > getData : NULL")
         }
         
         //return jsonValue[0].name != undefined ? data : null;

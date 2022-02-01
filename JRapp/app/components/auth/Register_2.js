@@ -57,9 +57,6 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
     const [pwd, setPwd] = useState()
     const [registerResponse, setRegisterResponse] = useState(false);
 
-    // Context firebase
-    const {getUserData} = useContext(FirebaseContext)
-
     const onChangeText = (text) => {
 
         i = text.length;
@@ -156,8 +153,6 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
         storeUserString('lastView', 'register')
 
         // Set bd
-        setUserDataProfile(dataArray);
-
             // Handled by Auth
             //navigation.navigate('Main')
 

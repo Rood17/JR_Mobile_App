@@ -190,13 +190,12 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
     let require2 = require('../../res/drawable/wifi/2.png')
     let require3 = require('../../res/drawable/wifi/3.png')
     let require4 = require('../../res/drawable/wifi/4.png')
-
-    console.log(' dataTwo : ' + dataTwo)
-    console.log(' dataOne : ' + dataOne)
-
     let porcent = (dataTwo * 100) / dataOne;
     
-    console.log(' porcent : ' + porcent)
+    // Default
+    requireWifi = require1;
+
+    // Porcent
     if ( porcent < 10 ){
         requireWifi = require0;
         mbAlert = true
@@ -213,8 +212,10 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
 
     let requireWifi
     // Now Strings
-    dataOne = dataOne + ' MB';
-    dataTwo = dataTwo + ' MB';
+    if ( !showDetalles){
+        dataOne = dataOne + ' MB';
+        dataTwo = dataTwo + ' MB';
+    }
 
     if (mbAlert)
         mbColor = 'red'
@@ -352,7 +353,7 @@ export const SocialMainCard = ({ header, text, icon }) => {
         <View style={SocialSimpleCard.boxShadow}>
 
             <View style={SocialSimpleCard.iconContainer}>
-                <Text style={SocialSimpleCard.cardHeadTxt}>Redes ilimitadas</Text>
+                <Text style={SocialSimpleCard.cardHeadTxt}>¡Redes ilimitadas!</Text>
                 <Icon
                     name='whatsapp'
                     type='font-awesome'

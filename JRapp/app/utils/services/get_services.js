@@ -1,10 +1,14 @@
 import axios from "axios";
 import { SECRET_AUTH, AUTHORIZATION, GET, POST } from '../../../types'
 import * as data from '../../utils/services/perfil_uf.json'
+import * as paquetes from '../../utils/services/paquetes.json'
 import {
   API_LOCAL_ENPOINT_BASE,
 } from "../constants/Constants";
 
+export const getPaquetes = () => {
+  return paquetes
+}
 export const getDataJson = () => {
   return data
 }

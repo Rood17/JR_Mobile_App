@@ -62,6 +62,7 @@
      }, [])
     
 
+    // Get User Data
     let expireDate,initialAmt,unusedAmt, offeringId, ofertaActual = 0;
     //offeringId
     Object.values(paquetes).map((item) => {
@@ -78,7 +79,7 @@
                         unusedAmt = i.detailOfferings[0].unusedAmt;
                         offeringId = i.detailOfferings[0].offeringId
 
-                        console.log("??? : " + i.detailOfferings[0])                    }
+                        console.log("Getting - UseState : " + i.detailOfferings[0])                    }
                 })
             }
         })
@@ -88,13 +89,6 @@
             ofertaActual = item.name
     })
     
-    console.log("super : " + expireDate)
-    console.log("super : " + initialAmt)
-    console.log("super : " + unusedAmt)
-    console.log("super : " + offeringId)
-    console.log("super : " + ofertaActual)
-
-    let gbProduct = ' nolose '
 
  
      //Validación vigencia - falta 999
@@ -133,24 +127,6 @@
                      (parseInt(validityUserCode) - constants.DATE_NOW_CODE)
                      + ' días'
      }
- 
- 
-     // Payload select
-     useEffect(() => {
- 
-         if (gbProduct) {
-             // Set product
-             let charge = setProductType(gbProduct)
- 
-             // Intent to Recharge_2
-            /** navigation.navigate('Recharge_2', {
-                 idSubscriber: idSubscriber,
-                 isRegister: false,
-                 isJr: true,
-                 sendPayload: charge
-             })**/
-         }
-     });
  
  
      return (
