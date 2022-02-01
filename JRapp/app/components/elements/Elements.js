@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input } from 'react-native-elements'
@@ -179,28 +179,45 @@ const stylesdeatilCard = StyleSheet.create({
 
 
 // MainCard
-export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,porcent,
+export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
     bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
     
-    let urlWifi = '../../res/drawable/wifi/'+ porcent +'.png';
+    let mbAlert = false
+    let mbColor = 'black'
+    
     let require0 = require('../../res/drawable/wifi/0.png')
     let require1 = require('../../res/drawable/wifi/1.png')
     let require2 = require('../../res/drawable/wifi/2.png')
     let require3 = require('../../res/drawable/wifi/3.png')
     let require4 = require('../../res/drawable/wifi/4.png')
+
+    console.log(' dataTwo : ' + dataTwo)
+    console.log(' dataOne : ' + dataOne)
+
+    let porcent = (dataTwo * 100) / dataOne;
     
-    console.log(porcent)
+    console.log(' porcent : ' + porcent)
+    if ( porcent < 10 ){
+        requireWifi = require0;
+        mbAlert = true
+    }
+    if ( porcent < 25 && porcent > 10 )
+        requireWifi = require1;
+    if ( porcent < 50 && porcent > 25 )
+        requireWifi = require2;
+    if ( porcent < 85 && porcent > 50 )
+        requireWifi = require3;
+    if ( porcent > 85 )
+        requireWifi = require4;
+
+
     let requireWifi
-    switch (porcent) {
-        case 'verylow': requireWifi = require1 ;break;
-        case 'low': requireWifi = require2;break;
-        case 'med': requireWifi = require3;break;
-        case 'full': requireWifi = require4;break;
-        default : requireWifi = require0;
-        // etc...
-      }
+    // Now Strings
+    dataOne = dataOne + ' MB';
+    dataTwo = dataTwo + ' MB';
 
-
+    if (mbAlert)
+        mbColor = 'red'
 
     
     return (
@@ -226,7 +243,7 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,porcent,
                 <View style={stylesMainCard.verticalLine}></View>
                 <View style={stylesMainCard.datosContainer}>
                     <Text style={stylesMainCard.cardHeadTxt}>{bodyHeadTwo}</Text>
-                    <Text style={stylesMainCard.mbText}>{dataTwo}</Text>
+                    <Text style={[stylesMainCard.mbText, {color:mbColor}]}>{dataTwo}</Text>
                 </View>
             </View>
             {MBC ?

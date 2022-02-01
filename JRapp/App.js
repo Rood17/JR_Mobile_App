@@ -40,6 +40,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import FirebaseState from './context/firebase/FirebaseState';
+import UserState from './context/user/UserState';
 import RecargasState from './context/recargas/RecargasState';
 import PaquetesState from './context/paquetes/PaquetesState';
 
@@ -105,7 +106,7 @@ const App: () => Node = () => {
 
   return (
     <>
-      <FirebaseState>
+      <UserState>
         <PaquetesState>
         <RecargasState>
         <NavigationContainer>
@@ -158,7 +159,7 @@ const App: () => Node = () => {
         </NavigationContainer>
         </RecargasState>
         </PaquetesState>
-      </FirebaseState>
+      </UserState>
     </>
   );
 };

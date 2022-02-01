@@ -155,6 +155,9 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
         // User Just Register
         storeUserString('lastView', 'register')
 
+        // Set bd
+        setUserDataProfile(dataArray);
+
             // Handled by Auth
             //navigation.navigate('Main')
 

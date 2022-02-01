@@ -7,7 +7,7 @@
  * @flow strict-local
  */
 
- import React, { useState, useEffect } from 'react';
+ import React, { useState, useEffect, useContext } from 'react';
 
  import DisplayLogo from '../elements/DisplayLogo';
  import IntentBtn from '../elements/IntentBtn';
@@ -16,6 +16,8 @@
  import * as styleConst from '../../res/values/styles/StylesConstants'
  import * as constants from '../../utils/constants/Constants'
  import { formatApiDate, setProductType } from '../../utils/Utils'
+ import UserContext from '../../../context/user/UserContext'
+ import PaquetesContext from '../../../context/paquetes/PaquetesContext';
  // Services
  import * as data from '../../utils/services/perfil_uf.json'
  
@@ -43,78 +45,69 @@
  
  
  const DetailLogOut = ({ navigation, route }) => {
- 
-    const { idSubscriber } = route.params;     
- 
+    const { idSubscriber, UFuserData } = route.params;   
+
+    // get userData Context
+    const {userData, getJson} = useContext(UserContext);
+
+    useEffect(() => {
+        getJson();
+    }, [])
+
+     // get Paquetes Context
+     const {paquetes, getPaquetes} = useContext(PaquetesContext);
+
+     useEffect(() => {
+        getPaquetes();
+     }, [])
+    
+
+    let expireDate,initialAmt,unusedAmt, offeringId, ofertaActual = 0;
+    //offeringId
+    Object.values(paquetes).map((item) => {
+        //console.log(item.offerId)
+        Object.values(userData).map((item) => {
+            // Freeeunits
+            if ( item.freeUnits != undefined){
+                item.freeUnits.map((i) => {
+                    // Catch Plans Data
+                    if ( i.name == "FreeData_Altan-RN")
+                    {
+                        expireDate = i.detailOfferings[0].expireDate;
+                        initialAmt = i.detailOfferings[0].initialAmt;
+                        unusedAmt = i.detailOfferings[0].unusedAmt;
+                        offeringId = i.detailOfferings[0].offeringId
+
+                        console.log("??? : " + i.detailOfferings[0])                    }
+                })
+            }
+        })
+
+        // Get oferta actual
+        if (offeringId == item.offerId)
+            ofertaActual = item.name
+    })
+    
+    console.log("super : " + expireDate)
+    console.log("super : " + initialAmt)
+    console.log("super : " + unusedAmt)
+    console.log("super : " + offeringId)
+    console.log("super : " + ofertaActual)
+
     let gbProduct = ' nolose '
-     // Api data
-     let [totalMBData, unsuedMBData, expireMBData, actualMBData,
-         totalSMSData, unsuedSMSData, expireSMSData, actualSMSData,
-         totalMINData, unsuedMINData, expireMINData, actualMINData] = [0]
+
  
      //Validación vigencia - falta 999
      const validitNearDaysEnd = 5
      // respuesta Api
- 
- 
-     data.responseSubscriber.freeUnits.map((item, i) => {
-         // Get data 'mb'
-         if (item.name.indexOf("FreeData_Altan") != -1) {
-             // set Vars
-             totalMBData = item.freeUnit.totalAmt;
-             unsuedMBData = item.freeUnit.unusedAmt;
-             actualMBData = totalMBData - unsuedMBData;
- 
-             // if unsed data is none
-             if (actualMBData == 0)
-                 actualMBData = totalMBData
- 
-             // Get Expirtaion Date
-             item.detailOfferings.map((subItem) => {
-                 //console.log(subItem.expireDate)
-                 expireMBData = subItem.expireDate;
-             })
-         }
- 
-         // get 'sms'  y 'tiempo'
-         if (item.name.indexOf("FU_SMS_Altan-NR-LDI_NA") != -1) {
-             // set Vars
-             totalSMSData = item.freeUnit.totalAmt;
-             unsuedSMSData = item.freeUnit.unusedAmt;
-             actualSMSData = totalSMSData - unsuedSMSData;
- 
-             // if unsed data is none
-             if (actualSMSData == 0)
-                 actualSMSData = totalSMSData
- 
-             // Get Expirtaion Date
-             item.detailOfferings.map((subItem) => {
-                 //console.log(subItem.expireDate)
-                 expireSMSData = subItem.expireDate;
-             })
-         }
-         if (item.name.indexOf("FU_Min_Altan-NR-IR-LDI_NA") != -1) {
-             // set Vars
-             totalMINData = item.freeUnit.totalAmt;
-             unsuedMINData = item.freeUnit.unusedAmt;
-             actualMINData = totalMINData - unsuedMINData;
- 
-             // if unsed data is none
-             if (actualMINData == 0)
-                 actualMINData = totalMINData
- 
-             // Get Expirtaion Date
-             item.detailOfferings.map((subItem) => {
-                 //console.log(subItem.expireDate)
-                 expireMINData = subItem.expireDate;
-             })
-         }
-     })
- 
- 
+     expireDate == undefined ? expireDate='9999999999999' : null
+
+
      // Just accept this format '2022/02/18'
-     const validityUser = formatApiDate(expireMBData)
+     const validityUser = formatApiDate(expireDate)
      const validityUserCode = validityUser.replace(/\//g, '')
+     console.log("validityUser : " + validityUser)
+     console.log("validityUserCode : " + validityUserCode)
      // si no tiene próxima recarga - vigencia
      let validityResponse = 'Vigencia: ' + validityUser
      let validityColor = styleConst.MAINCOLORSLIGHT[2]
@@ -176,13 +169,13 @@
                      </View>
                      <View>
                          <MainCard
-                             title='{payload}'
+                             title={ofertaActual}
                              subtitle={validityResponse}
                              subtitleColor={validityColor}
                              bodyHeadOne='MB Totales'
                              bodyHeadTwo='MB Disponibles'
-                             dataOne={totalMBData + ' MB'}
-                             dataTwo={actualMBData + ' MB'}
+                             dataOne={initialAmt}
+                             dataTwo={unusedAmt}
                              MBC='true'
                              text='Consumos de datos:'
                          />

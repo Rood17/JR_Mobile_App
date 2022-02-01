@@ -40,10 +40,10 @@ export const quitKeyboard = () => {
     Keyboard.dismiss()
 }
 
-export const formatApiDate = ( codedDate) => {
-    let year = codedDate.slice(0,4)
-    let month = codedDate.slice(4,6)
-    let days = codedDate.slice(6,8)
+export const formatApiDate = (expireDate) => {
+    let year = expireDate.slice(0,4)
+    let month = expireDate.slice(4,6)
+    let days = expireDate.slice(6,8)
     let result = year + '/' + month + '/' + days
 
     return result;
