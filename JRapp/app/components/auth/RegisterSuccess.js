@@ -59,8 +59,12 @@ const OverlayModal = ({ openModal, navigation, lastView }) => {
 
   return (
     <View>
-      <Overlay isVisible={openModal}>
+      <Overlay isVisible={openModal} fullScreen={true}>
+      
         <View style={modalStyle.containerModal}>
+        <ImageBackground
+          source={require('../../res/drawable/background/bg_2.jpg')}
+          style={{ width: '100%', height: '100%' }} >
 
           {lastView == 'register' ?
 
@@ -77,15 +81,17 @@ const OverlayModal = ({ openModal, navigation, lastView }) => {
             </View>
           }
 
-
+</ImageBackground>
         </View>
+        
       </Overlay>
     </View>
   );
 };
 const modalStyle = StyleSheet.create({
   containerModal: {
-    margin: 20
+    margin: 20,
+    marginTop:140
   },
   headContainer: {
     margin: 20,
@@ -136,7 +142,7 @@ const RegisterSuccess: () => Node = ({ navigation, route }) => {
     } else {
       setTimeout(() => {
         setOpenModal(true)
-      }, 2000);
+      }, 500);
     }
   }
 
@@ -148,24 +154,22 @@ const RegisterSuccess: () => Node = ({ navigation, route }) => {
 
   return (
     <>
-      {!isReady ?
+                {!isReady ?
         <Loader />
 
         :
         <ImageBackground
-          source={require('../../res/drawable/background/bg_2.jpg')}
           style={{ width: '100%', height: '100%' }} >
-          <View style={styles.logoContainer}>
-            <DisplayLogo stylesLogo={styles.logo} />
-          </View>
+
           <OverlayModal
             openModal={openModal}
             navigation={navigation}
             lastView={lastView}
           />
-        </ImageBackground>
 
-      }
+        </ImageBackground>
+}
+      
 
 
     </>

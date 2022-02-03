@@ -8,13 +8,13 @@
  */
 
 import React, { useContext, useState, useEffect } from 'react';
-import type { Node } from 'react';
-import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
+import { JrBtnCircle,DisplayLogo, LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
-import {setProductType} from '../../utils/Utils'
+import { setProductType } from '../../utils/Utils'
+import { Avatar } from 'react-native-elements';
 import PaquetesContext from '../../../context/paquetes/PaquetesContext';
 
 import {
@@ -31,7 +31,7 @@ import {
 
 let payload;
 // MainCard
-export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle, subtitleColor, navigation, setGbProduct }) => {
+export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
@@ -94,13 +94,13 @@ export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle,
     }
 
     // IsRegister
-    if ( isJr ) {
+    if (isJr) {
         // Set input value
         phoneValue = initNumber
     }
-        
 
-    console.log("Recharge > idSubscriber : "+ idSubscriber)
+
+    console.log("Recharge > idSubscriber : " + idSubscriber)
 
 
     return (
@@ -207,19 +207,19 @@ export const MoneyCard = ({ setGbProduct, togglePrices }) => {
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(20)}
                 >
-                    <Text>$20</Text>
+                    <Text>8GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(30)}
                 >
-                    <Text>$30</Text>
+                    <Text>10GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(50)}
                 >
-                    <Text>$50</Text>
+                    <Text>13GB</Text>
                 </TouchableOpacity>
             </View>
             <View style={stylesMoneyCard.horizontalCard}>
@@ -227,19 +227,19 @@ export const MoneyCard = ({ setGbProduct, togglePrices }) => {
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(100)}
                 >
-                    <Text>$100</Text>
+                    <Text>20GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(150)}
                 >
-                    <Text>$150</Text>
+                    <Text>23GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(200)}
                 >
-                    <Text>$200</Text>
+                    <Text>33GB</Text>
                 </TouchableOpacity>
             </View>
             <View style={stylesMoneyCard.horizontalCard}>
@@ -247,19 +247,19 @@ export const MoneyCard = ({ setGbProduct, togglePrices }) => {
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(300)}
                 >
-                    <Text style={{ alignItems: 'center' }}>$300</Text>
+                    <Text style={{ alignItems: 'center' }}>50GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(400)}
                 >
-                    <Text>$400</Text>
+                    <Text>53GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={stylesMoneyCard.box}
                     onPress={() => moneyHandler(500)}
                 >
-                    <Text>$500</Text>
+                    <Text>100GB</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -305,13 +305,7 @@ const stylesMoneyCard = StyleSheet.create({
 // Products List
 export const ProductCard = ({ setGbProduct, togglePlans }) => {
 
-    // get Paquetes Context
-    const {paquetes, getPaquetes} = useContext(PaquetesContext);
-
-    useEffect(() => {
-        getPaquetes();
-        //console.log("paquetes : " + paquetes)
-    }, [])
+    // get Paquetes Contex
 
     //console.log("paquetes : " + paquetes)
 
@@ -324,7 +318,7 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
     }
 
     return (
-        <ScrollView horizontal >
+        <ScrollView vertical >
             <TouchableHighlight
                 onPress={() => productHandler('A')}
                 style={stylesProductCard.boxShadow}>
@@ -398,6 +392,7 @@ export const OverlayModal = ({ setGbProduct, main }) => {
     let [backgroundIconColor, iconColor] = ['white', styleConst.MAINCOLORSLIGHT[1]]
 
     const togglePlans = () => {
+        console.log("******")
         setVisible1(!visible1);
     };
 
@@ -415,60 +410,61 @@ export const OverlayModal = ({ setGbProduct, main }) => {
         <View>
             <View style={{ alignItems: 'center' }}>
                 <View style={modalStyle.iconContainer}>
+
+
                     <View style={modalStyle.icon}>
-                        <Icon
-                            raised
-                            name='dropbox'
-                            type='font-awesome'
-                            color={iconColor}
-                            onPress={togglePlans} />
-                        <Text>Planes JR</Text>
+                        <JrBtnCircle 
+                            onPress={togglePlans} 
+                        />
+                        <Text style={{ marginTop: 10 }}>Planes de Recarga</Text>
                     </View>
                     <View style={modalStyle.icon}>
-                        <Icon
-                            raised
-                            name='dollar'
-                            type='font-awesome'
-                            color={iconColor}
-                            onPress={togglePrices} />
-                        <Text>Cargar saldo</Text>
+                    <JrBtnCircle 
+                        icon='signal' 
+                        onPress={togglePrices} 
+                    />
+                        <Text style={{ marginTop: 10 }}>¡Recarga por GB!</Text>
                     </View>
                 </View>
             </View>
 
-            <Overlay isVisible={visible1} onBackdropPress={togglePlans}>
+            <Overlay fullScreen={true} isVisible={visible1} onBackdropPress={togglePlans}>
                 <View style={modalStyle.headContainer}>
-                    <Text style={modalStyle.headTxt}>Planes JR</Text>
-                </View>
-
-                <View style={modalStyle.bodyContainer}>
-                    <Text style={{ margin: 15 }}>Slecciona una compra</Text>
-                    <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
-                </View>
-
-                <View style={modalStyle.footer}>
-                    <Button
-                        //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                        onPress={togglePlans}
-                        color={styleConst.MAINCOLORS[0]}
-                        title='Cerrar'
-                    />
+                    <View style={[{ flex: 1, }, modalStyle.headTextContainer]}>
+                        <Text style={modalStyle.headTxt}>Recargar Saldo</Text>
+                        <Text style={{ margin: 0 }}>Selecciona una compra</Text>
+                    </View>
+                    <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
+                        <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
+                    </View>
+                    <View style={[modalStyle.footer, { width: '100%', flex: 1 }]}>
+                        <View style={{ marginTop: 30 }}>
+                            <Button
+                                onPress={togglePlans}
+                                color={styleConst.MAINCOLORS[0]}
+                                title='Cerrar'
+                            />
+                        </View>
+                    </View>
                 </View>
             </Overlay>
-            <Overlay isVisible={visible2} onBackdropPress={togglePrices}>
+            <Overlay fullScreen={true} isVisible={visible2} onBackdropPress={togglePrices}>
                 <View style={modalStyle.headContainer}>
-                    <Text style={modalStyle.headTxt}>Recarga Saldo</Text>
-                    <View style={[modalStyle.bodyContainer, { width: '100%', marginTop: 20 }]}>
-                        <Text style={{ margin: 15, width: '100%' }}>Selecciona una compra</Text>
-                        <MoneyCard setGbProduct={setGbProduct} togglePrices={togglePrices} />
+                    <View style={[{ flex: 1, }, modalStyle.headTextContainer]}>
+                        <Text style={modalStyle.headTxt}>Recargar Saldo</Text>
+                        <Text style={{ margin: 0 }}>Selecciona una compra</Text>
                     </View>
-                    <View style={[modalStyle.footer, { width: '100%' }]}>
-                        <Button
-                            //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                            onPress={togglePrices}
-                            color={styleConst.MAINCOLORS[0]}
-                            title='Cerrar'
-                        />
+                    <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
+                        <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
+                    </View>
+                    <View style={[modalStyle.footer, { width: '100%', flex: 1 }]}>
+                        <View style={{ marginTop: 30 }}>
+                            <Button
+                                onPress={togglePrices}
+                                color={styleConst.MAINCOLORS[0]}
+                                title='Cerrar'
+                            />
+                        </View>
                     </View>
                 </View>
             </Overlay>
@@ -477,19 +473,29 @@ export const OverlayModal = ({ setGbProduct, main }) => {
 };
 const modalStyle = StyleSheet.create({
     headContainer: {
-        margin: 20,
+        flex: 1,
+        margin: 0,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        textAlign: 'center'
+    },
+    headTextContainer: {
+        marginBottom: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
+
     },
     bodyContainer: {
-        width: '80%',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center'
 
 
     },
     footer: {
-        margin: 20
+        margin: 20,
+        paddingTop: 0
     },
     headTxt: {
         fontWeight: 'bold',
@@ -514,16 +520,16 @@ const Recharge = ({ navigation, chargeResume, route }) => {
 
     // Set the prodcut type
     console.log("Recharge - sendPayload : " + sendPayload)
-    if ( sendPayload )
+    if (sendPayload)
         payload = setProductType(sendPayload)
     else
         payload = setProductType(gbProduct)
 
     return (
         <>
-        <ReturnHeader title='Recarga de saldo' navigation={navigation} />
+            <ReturnHeader title='Recarga de saldo' navigation={navigation} />
             <ScrollView style={styles.container} >
-                
+
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
@@ -531,14 +537,14 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                     <View style={styles.headContainer}>
                         <LetterCircle insightData={1} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
+                            <Text>Ingresa tu número JRmóvil y el tipo de compra.</Text>
                         </View>
                     </View>
-                    <RechargeOneCard 
-                    idSubscriber={idSubscriber}
-                    isRegister={isRegister}
-                    isJr={isJr}
-                    navigation={navigation} setGbProduct={setGbProduct} />
+                    <RechargeOneCard
+                        idSubscriber={idSubscriber}
+                        isRegister={isRegister}
+                        isJr={isJr}
+                        navigation={navigation} setGbProduct={setGbProduct} />
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>

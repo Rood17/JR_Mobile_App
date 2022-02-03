@@ -7,7 +7,6 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 let mainColor;
 
 const IntentBtn = ({ color,btnParams, justAction,navigation,intent, btnText, isDisabled }) => {
-
   let goToView = '';
 
   //Styles
@@ -23,6 +22,8 @@ const IntentBtn = ({ color,btnParams, justAction,navigation,intent, btnText, isD
   if (typeof intent == 'object' ){
     goToView = intent[0]
     btnParams = intent[1]
+  } else if (btnParams) {
+    goToView = intent
   } else {
     goToView = intent
   }
@@ -36,7 +37,7 @@ const IntentBtn = ({ color,btnParams, justAction,navigation,intent, btnText, isD
           title={btnText}
           disabled
         />
-        : !justAction ?
+        : !justAction || btnParams ?
         <Button
           //style={stylesBtn == null ? btnNormal() : stylesBtn}
           onPress={() => navigation.navigate(goToView, btnParams)}

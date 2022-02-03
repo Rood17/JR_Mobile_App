@@ -8,7 +8,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import type { Node } from 'react';
 import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
@@ -28,13 +27,13 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-let monthFlag, yearFlag, secretFlag, postalFlag, emailFlag;
+let monthFlag, yearFlag, secretFlag, postalFlag;
 
 // Modal
-const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
+const OverlayModal = ({ isRegister, payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
     const [visible, setVisible] = useState(false);
     const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
-
+    console.log('disabledbtn 1 : ' + disabledBtn)
     const toggleResume = () => {
         setVisible(!visible);
     };
@@ -47,16 +46,13 @@ const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, 
             navigation.navigate('Recharge_3', {
                 payload: payload,
                 idSubscriber: idSubscriber,
-                isRegister:isRegister
+                isRegister: isRegister
             })
         } else {
             toggleResume()
             fail('Error')
         }
     }
-
-
-
 
     return (
         <View>
@@ -68,7 +64,7 @@ const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, 
                     onPress={toggleResume}
                     color={styleConst.MAINCOLORS[0]}
                     title='Continuar'
-                    disabled={false}
+                    disabled={disabledBtn}
                 />
             </View>
 
@@ -136,12 +132,19 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
     const [cardDisplay, setCardDisplay] = useState();
     const [cardData, setCardData] = useState(false);
     const [safeCard, setSafeCard] = useState(5555);
+    const [showError, setShowError] = useState(false)
+    const [cardDetailData, setCardDetailData] = useState()
+    const [errorTxt, SetErrorTxt] = useState('');
+    const [emailFlag, setEmailFlag] = useState(false)
     let { displayMaster, displayVisa, displayAmerican } = 'flex';
+    const [cardMonth, setCardMonth] = useState(false)
+    const [cardYear, setCardYear] = useState(false)
+    const [cardSeret, setCardSecret] = useState(false)
 
     const materCard = 888
     const visa = 777
     const american = 666
-
+    let detailPass;
 
     // Validate if Number account exist
     const onChangeCard = (card) => {
@@ -165,58 +168,54 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
             setCardDisplay(9)
         }
     }
-
-    function setMonth(month) {
-        if (month.length == 2)
-            monthFlag = true;
-        else
-            monthFlag = false;
-
+    const monthVal = (month) => {
+        if (month.length == 2) {
+            setShowError(false); 
+            SetErrorTxt('') 
+        }
+        else { 
+            setShowError(true); 
+            SetErrorTxt('Favor de introducir el mes.') 
+        }
         runVerification()
     }
-    function setYear(year) {
-        if (year.length == 4)
-            yearFlag = true;
-        else
-            yearFlag = false;
-
+    const yearVal = (year) => {
+        if (year.length == 4) { 
+            setShowError(false); 
+            SetErrorTxt('') 
+        }
+        else { detailPass = false;
+             setShowError(true); 
+             SetErrorTxt('Favor de introducir el año.'); 
+        }
         runVerification()
     }
-    function setSecret(secret) {
-        if (secret.length === 3)
-            secretFlag = true;
-        else
-            secretFlag = false;
-
-        runVerification()
-    }
-    function setPostal(postal) {
-        if (postal.length > 5)
-            postalFlag = true;
-        else
-            postalFlag = false;
-
+    const secretVal = (secret) => {
+        if (secret.length == 3) { 
+            setShowError(false); 
+            SetErrorTxt('') 
+        }
+        else {
+            setShowError(true); 
+            SetErrorTxt('Favor de introducir el CVV.') 
+        }
         runVerification()
     }
     function setEmail(email) {
-        if (email.length > 5 && email.indexOf('@') != -1 && email.lastIndexOf('.') != -1)
-            emailFlag = true;
-        else
-            emailFlag = false;
+        if (email.length > 2 && email.indexOf('@') != -1 ) { setEmailFlag(true); setShowError(false); SetErrorTxt('') }
+        else { setEmailFlag(false); setDisabledBtn(false);setShowError(true); SetErrorTxt('El mail no es correcto.') }
 
         runVerification();
     }
-    function runVerification() {
-        if (monthFlag && yearFlag && secretFlag && postalFlag && emailFlag) {
-            setDisabledBtn(false)
 
+    function runVerification() {
+        if (showError && emailFlag) {
+            setDisabledBtn(false)
         }
         else {
             setDisabledBtn(true)
         }
     }
-
-
     const isMasterCard = (card) => {
         if (card.toString().indexOf(materCard) != -1) {
             console.log('pasando')
@@ -297,7 +296,7 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
 
             </View>
             {safeCard === 'Error' ?
-                <View style={{marginLeft:20, marginRight:20}}>
+                <View style={{ marginLeft: 20, marginRight: 20 }}>
                     <WarningAdvice type={1} warningText='No se pudo realizar el pago, favor de intentar de nuevo.' />
                 </View>
                 :
@@ -325,7 +324,7 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
                                         keyboardType='number-pad'
                                         maxLength={2}
                                         style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
-                                        onChangeText={month => setMonth(month)}
+                                        onChangeText={month => monthVal(month)}
                                     />
 
                                 </View>
@@ -338,7 +337,7 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
                                         keyboardType='number-pad'
                                         maxLength={4}
                                         style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
-                                        onChangeText={year => setYear(year)}
+                                        onChangeText={year => yearVal( year)}
                                     />
 
                                 </View>
@@ -349,7 +348,7 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
                                         secureTextEntry={true}
                                         maxLength={3}
                                         style={{ borderBottomColor: displayColor, color: displayColor }}
-                                        onChangeText={secret => setSecret(secret)}
+                                        onChangeText={secret => secretVal(secret)}
                                     />
                                 </View>
                             </View>
@@ -360,9 +359,8 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
                                 <Input
                                     placeholder="Código Postal"
                                     keyboardType='number-pad'
-                                    maxLength={7}
+                                    maxLength={6}
                                     style={{ borderBottomColor: displayColor, color: displayColor }}
-                                    onChangeText={postal => setPostal(postal)}
                                 />
                             </View>
                             <View style={stylesMainCard.inputsRow}>
@@ -370,12 +368,14 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
                                     placeholder="Email"
                                     textContentType='emailAddress'
                                     keyboardType='email-address'
-                                    autoComplete='email'
                                     secureTextEntry={false}
                                     onChangeText={email => setEmail(email)}
                                 />
                             </View>
                         </View>
+                        {showError ?
+                            <WarningAdvice type={2} warningText={errorTxt} />
+                            : null}
                     </View>
                     <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
                         <OverlayModal
@@ -464,7 +464,7 @@ const Recharge_2 = ({ navigation, route }) => {
                     <View style={styles.headContainer}>
                         <LetterCircle insightData={1} color={1} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
+                            <Text>Ingresa tu número JRmóvil y el tipo de compra.</Text>
                         </View>
                     </View>
                     <View style={styles.registerContainer}>
@@ -472,7 +472,7 @@ const Recharge_2 = ({ navigation, route }) => {
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{JSON.stringify(payload)}</Text>
                         </TouchableOpacity>
-                        <Text>Número JR Movil:</Text>
+                        <Text>Número JRmóvil:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>{JSON.stringify(idSubscriber)}</Text>
                         </TouchableOpacity>
@@ -487,11 +487,11 @@ const Recharge_2 = ({ navigation, route }) => {
                             <Text>Realiza tu pago.</Text>
                         </View>
                     </View>
-                    <RechargeTwoCard 
-                        isRegister={isRegister} 
-                        payload={payload} 
-                        idSubscriber={idSubscriber} 
-                        navigation={navigation} 
+                    <RechargeTwoCard
+                        isRegister={isRegister}
+                        payload={payload}
+                        idSubscriber={idSubscriber}
+                        navigation={navigation}
                     />
                     <View style={styles.registerContainer}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>

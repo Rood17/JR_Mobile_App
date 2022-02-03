@@ -77,7 +77,7 @@ const Details = ({ navigation, route }) => {
                 <ReturnHeader title='Detalles de tu Saldo' navigation={navigation} />
 
                 <View style={{ paddingLeft: 15, marginTop: 35 }}>
-                    <Text>Consulta los datos de tu número JR Movil.</Text>
+                    <Text>Consulta los datos de tu número JRmóvil.</Text>
                 </View>
                 {userIsActive ?
                     <>

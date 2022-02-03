@@ -33,7 +33,7 @@ import {
     Text,
     useColorScheme,
     View,
-    TextInput,
+    TouchableOpacity,
     ActivityIndicator,
     TouchableWithoutFeedback,
     Keyboard,
@@ -125,7 +125,9 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
                 color={styleConst.MAINCOLORS[0]}
             />
             <View style={{ alignItems: 'center' }}>
-                <Text style={styles.phoneTxt}>¿Olvidaste tu contraseña?</Text>
+                <TouchableOpacity onPress={() => nav.navigate('ForgottenPwd')}>
+                    <Text style={[styles.phoneTxt, {marginTop:10}]}>¿Olvidaste tu contraseña?</Text>
+                </TouchableOpacity>
             </View>
 
         </>
@@ -149,12 +151,13 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                         si gustas puedes registrarte para aglizar tus consultas
                         y recargas.
                     </Text>
-                    <Text style={{ textAlign: 'center', }}>¡Es totalmente gratuito!</Text>
-                    <IntentBtn
-                        intent='Register'
-                        btnParams={{ idSubscriber: idSubscriber, isRegister: true }}
-                        navigation={navigation}
-                        btnText='Registrarse' />
+                    <Text style={{ textAlign: 'center', marginBottom:20 }}>¡Es totalmente gratuito!</Text>
+                    <Button
+                        //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                        onPress={() => navigation.navigate('RegisterSms', { idSubscriber: idSubscriber })}
+                        color={styleConst.MAINCOLORS[0]}
+                        title='Registrarse'
+                    />
                 </View>
             }
         </>
@@ -186,7 +189,7 @@ const LoginBody = ({ nav }) => {
     const [UFuserData, setUFUserData] = useState([]);
     const [loading, setLoading] = useState(false);
 
-
+    //24917335
     const isRegister = '56'
     let responseUserData = [];
     // Auth handler
@@ -201,11 +204,11 @@ const LoginBody = ({ nav }) => {
             // Call Local Hc
             const fetchData = async () => {
                 let errorResponse;
-                
+
                 setLoading(true)
                 const response = await getPerfilUf(number)
                     .then(function (response) {
-                        responseUserData.array =response.userData
+                        responseUserData.array = response.userData
                         errorResponse = response.error;
                     })
                     .catch(function (error) {
@@ -214,7 +217,7 @@ const LoginBody = ({ nav }) => {
                     }).finally(() => {
                         validateIsJr(number, errorResponse)
                         setLoading(false)
-                        
+
                     });
             };
             fetchData();
@@ -252,7 +255,7 @@ const LoginBody = ({ nav }) => {
     // Validate if is JR
     // It´s bring an object
     const validateIsJr = (number, error) => {
-        console.log("** User is JR **" )
+        console.log("** User is JR **")
         if (error == null) {
             //Log
             console.log("** User is JR **")
@@ -276,7 +279,7 @@ const LoginBody = ({ nav }) => {
             }
         } else {
             setJrAlert(true)
-            setErrorStr('Este no es un número JR Móvil.')
+            setErrorStr('Este no es un número JRmóvil.')
             setIconFlex(1.5)
         }
     }
@@ -309,7 +312,6 @@ const LoginBody = ({ nav }) => {
         }
 
     }
-
 
     return (
         <View style={styles.container}>

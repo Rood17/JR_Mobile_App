@@ -46,9 +46,12 @@ import {
 
 // Btn Disabled Flaf Team
 let pass1, pass2, pass3, i;
-let { isBold1, isBold2, isBold3 } = 'normal'
+let { isBold1, isBold2, isBold3 } = '500'
 
-export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
+export const NewPwd = ({ setOnPwdChange,setNewPwd, 
+    update, setError, emailPass, goToIntent, btnTxt, 
+    label, navigation, dataArray }) => {
+
 
     const [chackColor, setChackColor] = useState('grey');
     const [chackColor2, setChackColor2] = useState('grey');
@@ -56,9 +59,15 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
     const [btnDisabled, setbtnDisabled] = useState(true);
     const [pwd, setPwd] = useState()
     const [registerResponse, setRegisterResponse] = useState(false);
-
+    
+    useEffect(() => {
+        !emailPass
+        ? setbtnDisabled(true)
+        : setbtnDisabled(false)
+    }, [emailPass])
+    
     const onChangeText = (text) => {
-
+        setOnPwdChange(true)
         i = text.length;
         console.log(text.length)
         if (utils.CheckUppercase(text)) {
@@ -245,7 +254,7 @@ const modalStyle = StyleSheet.create({
         margin: 10
     },
     headTxt: {
-        fontWeight: 'bold',
+        fontWeight: '600',
         color: styleConst.MAINCOLORS[1]
     },
 });
@@ -253,28 +262,46 @@ const modalStyle = StyleSheet.create({
 const Register_2: () => Node = ({ recovery, navigation, route }) => {
 
     // Params
-    const { idSubscriber, name, lastName } = route.params;
-
+    //const { idSubscriber, name, lastName } = route.params;
+    let idSubscriber = '99'
+    let name = '99'
+    let lastName = '99'
     const dataArray = [{ idSubscriber: idSubscriber, name: name, lastName: lastName, email: null }]
 
     const [emailIsCorrect, setEmailIsCorrect] = useState(false);
-    const [email, setEmail] = useState();
+    const [email, setEmail] = useState('none');
     const [error, setError] = useState();
+    const [onPwdChange, setOnPwdChange] = useState(false);
 
     const [keyBoardIsOpen, setKeyBoardIsOpen] = useState();
 
-    const onChangeEmail = (inputEmail) => {
+    // Just one time
+    useEffect(() => {
+        if (onPwdChange) validateEmail()
+    }, [onPwdChange])
+    
+    const validateEmail = () => {
         setError('')
-        setEmailIsCorrect(false)
-        if (inputEmail.indexOf('@') != -1 && inputEmail.indexOf('.') != -1) {
-            setEmailIsCorrect(true)
-            setEmail(inputEmail)
-            setError('')
-
+        if (onPwdChange && email != undefined && email.length > 1){
+            if (email.indexOf('@') != -1 && email.indexOf('.') != -1) {
+                setEmailIsCorrect(true)
+                setError('')
+    
+            } else {
+                setError('')
+                setError(<WarningAdvice type={2} warningText='Introduzca un email válido.' />)
+                setEmailIsCorrect(false)
+            }
         } else {
             setEmailIsCorrect(false)
-            setError(<WarningAdvice type={2} warningText='Introduzca un email válido.' />)
         }
+    }
+
+    const onChangeEmail = (inputEmail) => {
+        setEmailIsCorrect(false)
+        setError('')
+        setEmail(inputEmail)
+        validateEmail()
     }
     // Set email
     dataArray[0].email = email
@@ -304,7 +331,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                         {!recovery ?
                             <>
                                 <Text>
-                                    Para entrar a tu portal "JR movil" es necesario que
+                                    Para entrar a tu portal "JRmóvil" es necesario que
                                     introduzcas tus datos.
                                 </Text>
                                 <View>
@@ -323,19 +350,20 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                             </>
                             :
                             <Text style={{ marginBottom: 20 }}>
-                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JR Movil.
+                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JRmóvil.
                             </Text>
                         }
 
 
                         <NewPwd
-                            label='Ingresar Nueva Contraseña'
+                            label='Ingresar Contraseña'
                             goToIntent='Register_Sms'
                             btnTxt='Registrarse'
                             navigation={navigation}
                             emailPass={emailIsCorrect}
                             dataArray={dataArray}
                             setError={setError}
+                            setOnPwdChange={setOnPwdChange}
                         />
 
                     </View>
@@ -375,7 +403,7 @@ const styles = StyleSheet.create({
     phoneTxt: {
         color: styleConst.MAINCOLORS[1],
         fontSize: 15,
-        fontWeight: 'bold',
+        fontWeight: '600',
         margin: 10
     }
 });

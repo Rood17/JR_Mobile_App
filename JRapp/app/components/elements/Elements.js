@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { Pressable, ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input } from 'react-native-elements'
 import IntentBtn from '../elements/IntentBtn'
@@ -40,35 +40,48 @@ export const UserDataCard = ({ header, text, icon, actionBtnTxt }) => {
                         color={styleConst.WARNINGS[0]}
                     />
                     <View style={stylesCard.headContainer}>
-                    
-                    <Text>{text}</Text>
-                    <Text style={stylesCard.cardHeadTxt}>{header}</Text>
+
+                        <Text>{text}</Text>
+                        <Text style={stylesCard.cardHeadTxt}>{header}</Text>
+                    </View>
                 </View>
-                </View>
-                
+
             </View>
-                
+
         </View>
 
     );
 }
 
 // Card
-export const Card = ({ header, text, icon, actionBtnTxt }) => {
+export const Card = ({ header, text, icon, actionBtnTxt, social }) => {
+    let backgroundColor;
+    let textColor;
+    let secColorText;
+
+    if (social) {
+        backgroundColor = styleConst.MAINCOLORS[0]
+        textColor = 'white'
+        secColorText = 'grey'
+    }
+
     return (
 
         <View style={stylesCard.boxShadow}>
-            <View style={stylesCard.infoContainer}>
+            <View style={[stylesCard.infoContainer, {
+                backgroundColor: backgroundColor,
+                color: textColor
+            }]}>
                 <View style={stylesCard.iconContainer}>
                     <Icon
                         name={icon}
                         type='font-awesome'
-                        color={styleConst.MAINCOLORSLIGHT[1]}
+                        color={!social ? styleConst.MAINCOLORSLIGHT[1] : textColor}
                     />
                 </View>
                 <View style={stylesCard.headContainer}>
-                    <Text style={stylesCard.cardHeadTxt}>{header}</Text>
-                    <Text>{text}</Text>
+                    <Text style={[stylesCard.cardHeadTxt, { color: textColor }]}>{header}</Text>
+                    <Text style={{ color: textColor }}>{text}</Text>
                 </View>
             </View>
             {actionBtnTxt ?
@@ -131,7 +144,7 @@ const stylesCard = StyleSheet.create({
 export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
 
     console.log(data)
-    if( data != undefined)
+    if (data != undefined)
         data.map((item) => {
             console.log(item.campo)
         })
@@ -148,71 +161,71 @@ export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
                 </View>
                 <View style={stylesCard.headContainer}>
                     <Text style={stylesCard.cardHeadTxt}>{header}</Text>
-                    <View style={{margin:10}}>
-                        { data.map((item) => (
+                    <View style={{ margin: 10 }}>
+                        {data.map((item) => (
                             <>
                                 <Text style={stylesdeatilCard.campo}>{item.campo}: </Text>
                                 <Text style={stylesdeatilCard.txtDin}>{item.campoD}</Text>
                             </>
                         ))}
-                        
-                        
-                        
+
+
+
                     </View>
                 </View>
-                
+
             </View>
         </View>
 
     );
 }
 const stylesdeatilCard = StyleSheet.create({
-    campo:{
+    campo: {
 
     },
-    txtDin:{
-        color:'black',
-        marginBottom:10
+    txtDin: {
+        color: 'black',
+        marginBottom: 10
     }
 })
 // End Detail Card
 
 
 // MainCard
-export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
+export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
     bodyHeadTwo, dataOne, dataTwo, MBC, text, showDetalles, navigation, idSubscriber }) => {
-    
+
     let mbAlert = false
     let mbColor = 'black'
-    
+
     let require0 = require('../../res/drawable/wifi/0.png')
     let require1 = require('../../res/drawable/wifi/1.png')
     let require2 = require('../../res/drawable/wifi/2.png')
     let require3 = require('../../res/drawable/wifi/3.png')
     let require4 = require('../../res/drawable/wifi/4.png')
     let porcent = (dataTwo * 100) / dataOne;
-    
+
     // Default
     requireWifi = require1;
 
     // Porcent
-    if ( porcent < 10 ){
+    if (porcent < 10) {
         requireWifi = require0;
         mbAlert = true
     }
-    if ( porcent < 25 && porcent > 10 )
+    if (porcent < 25 && porcent > 10)
         requireWifi = require1;
-    if ( porcent < 50 && porcent > 25 )
+    if (porcent < 50 && porcent > 25)
         requireWifi = require2;
-    if ( porcent < 85 && porcent > 50 )
+    if (porcent < 85 && porcent > 50)
         requireWifi = require3;
-    if ( porcent > 85 )
+    if (porcent > 85)
         requireWifi = require4;
 
 
     let requireWifi
     // Now Strings
-    if ( !showDetalles){
+    if (!showDetalles) {
         dataOne = dataOne + ' MB';
         dataTwo = dataTwo + ' MB';
     }
@@ -220,7 +233,7 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
     if (mbAlert)
         mbColor = 'red'
 
-    
+
     return (
 
         <View style={stylesMainCard.boxShadow}>
@@ -244,7 +257,7 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
                 <View style={stylesMainCard.verticalLine}></View>
                 <View style={stylesMainCard.datosContainer}>
                     <Text style={stylesMainCard.cardHeadTxt}>{bodyHeadTwo}</Text>
-                    <Text style={[stylesMainCard.mbText, {color:mbColor}]}>{dataTwo}</Text>
+                    <Text style={[stylesMainCard.mbText, { color: mbColor }]}>{dataTwo}</Text>
                 </View>
             </View>
             {MBC ?
@@ -252,7 +265,7 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
                     alignItems: 'center', margin: 5
                 }}>
                     <Image
-                        style={{ height:200, width:200}}
+                        style={{ height: 200, width: 200 }}
                         source={requireWifi}
                     />
                 </View>
@@ -260,10 +273,10 @@ export const MainCard = ({ title, subtitle, subtitleColor, bodyHeadOne,
 
             {showDetalles ?
                 <View style={stylesMainCard.detalles}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Details',{
-                        idSubscriber:idSubscriber,
-                        isRegister:true,
-                        isJr:true
+                    <TouchableOpacity onPress={() => navigation.navigate('Details', {
+                        idSubscriber: idSubscriber,
+                        isRegister: true,
+                        isJr: true
                     })}
                     >
                         <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Ver más detalles</Text>
@@ -353,7 +366,7 @@ export const SocialMainCard = ({ header, text, icon }) => {
         <View style={SocialSimpleCard.boxShadow}>
 
             <View style={SocialSimpleCard.iconContainer}>
-                <Text style={SocialSimpleCard.cardHeadTxt}>¡Redes ilimitadas!</Text>
+                <Text style={SocialSimpleCard.cardHeadTxt}>¡Navega en tus redes!</Text>
                 <Icon
                     name='whatsapp'
                     type='font-awesome'
@@ -423,14 +436,14 @@ const SocialSimpleCard = StyleSheet.create({
 export const ReturnHeader = ({ title, navigation, clear, isRegister, idSubscriber }) => {
 
     const handleIntent = () => {
-        if ( isRegister )
+        if (isRegister)
             navigation.reset({
                 index: 0,
                 routes: [
-                {
-                    name: 'Main', 
-                    params: { idSubscriber:idSubscriber, isRegister: isRegister },
-                },
+                    {
+                        name: 'Main',
+                        params: { idSubscriber: idSubscriber, isRegister: isRegister },
+                    },
                 ],
             })
         else
@@ -495,7 +508,7 @@ export const UserImg = ({ backColor, colorTxt, small, medium, large, txt }) => {
     let txtSize = 20
 
     txt != undefined ? txt = txt.toUpperCase() : null
-    
+
     if (small) { size = 0.09; txtSize = 20 }
     if (medium) { size = 0.20; txtSize = 40 }
     if (large) { size = 0.50; txtSize = 40 }
@@ -522,12 +535,16 @@ export const UserImg = ({ backColor, colorTxt, small, medium, large, txt }) => {
     );
 }
 // MainHeader
-export const MainHeader = ({ name, navigation}) => {
+export const MainHeader = ({ name, navigation }) => {
+    let letter;
 
     const handleNav = () => {
         //  console.log("goToAyuda")
-        navigation.openDrawer( )
+        navigation.openDrawer()
     }
+
+    if (name != undefined)
+        letter = name.slice(0, 1 - name.length);
 
     return (
         <>
@@ -540,7 +557,7 @@ export const MainHeader = ({ name, navigation}) => {
                     />
                 </View>
                 <View style={styleHeadMain.nameContainer}>
-                    <Text style={styleHeadMain.returnHeadTxt}>{name}</Text>
+                    <Text style={styleHeadMain.returnHeadTxt}>hola {name}</Text>
                 </View>
                 <View style={styleHeadMain.avatarContainer}>
                     <TouchableHighlight
@@ -555,7 +572,7 @@ export const MainHeader = ({ name, navigation}) => {
                         underlayColor='#ccc'
                         onPress={() => handleNav()}
                     >
-                        <Text style={styleHeadMain.textAvatar}> R </Text>
+                        <Text style={styleHeadMain.textAvatar}> {letter} </Text>
 
                     </TouchableHighlight>
                 </View>
@@ -613,11 +630,11 @@ export const MainFooter = ({ name, navigation, idSubscriber }) => {
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
-                    onPress={() => navigation.navigate('Recharge',{
-                        idSubscriber:idSubscriber,
-                        isRegister:true,
-                        isJr:true
-                        })}>
+                    onPress={() => navigation.navigate('Recharge', {
+                        idSubscriber: idSubscriber,
+                        isRegister: true,
+                        isJr: true
+                    })}>
                     <Icon
                         name='mobile'
                         type='font-awesome'
@@ -627,11 +644,11 @@ export const MainFooter = ({ name, navigation, idSubscriber }) => {
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
-                    onPress={() => navigation.navigate('Details',{
-                        idSubscriber:idSubscriber,
-                        isRegister:true,
-                        isJr:true
-                        })}>
+                    onPress={() => navigation.navigate('Details', {
+                        idSubscriber: idSubscriber,
+                        isRegister: true,
+                        isJr: true
+                    })}>
                     <Icon
                         name='file'
                         type='font-awesome'
@@ -795,7 +812,7 @@ const warningStyles = StyleSheet.create({
 // Loader
 export const Loader = (color) => {
 
-    if( !color ) color = styleConst.MAINCOLORS[0]
+    if (!color) color = styleConst.MAINCOLORS[0]
 
     return (
         <>
@@ -810,10 +827,61 @@ const loaderStyles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        alignContent:'center',
-        marginTop:'50%'
+        alignContent: 'center',
+        marginTop: '50%'
     },
     text: {
         paddingTop: 10
+    }
+});
+
+export const JrBtnCircle = ({onPress, icon}) => {
+    return (
+        <>
+            {icon == 'signal' ?
+                <TouchableHighlight
+                    onPress={onPress}
+                    style={pressableJrStyles.shadowPressable}
+                >
+                    <Icon
+                        raised
+                        name='signal'
+                        type='font-awesome'
+                        color={styleConst.MAINCOLORS[0]}
+                        onPress={onPress} />
+                </TouchableHighlight>
+                :
+                <TouchableHighlight
+                    onPress={onPress}
+                    style={pressableJrStyles.shadowPressable}
+                    >
+                    <Image
+                        source={require('../../res/drawable/logo/minicon.png')}
+                        style={{ height: 50, width: 50, borderRadius: 30 }}
+                    />
+                </TouchableHighlight>
+            }
+
+        </>
+    )
+}
+const pressableJrStyles = StyleSheet.create({
+    shadowPressable: {
+        height: 50,
+        width: 50,
+        padding: 0,
+        marginRight: 0,
+        shadowColor: 'black',
+        shadowOpacity: 0.2,
+        shadowRadius: 30,
+        shadowOffset: {
+            height: 0,
+            width: 0,
+        },
+        borderRadius: 30,
+        elevation: 5,
+        zIndex: 5, // works on ios
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 });

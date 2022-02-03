@@ -130,7 +130,7 @@ function CustomDrawerContent(props) {
                         <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
-                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize: 12 }}>@2022 JR Movil S.A. de C.V.</Text>
+                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize: 12 }}>@2022 JR móvil S.A. de C.V.</Text>
                 </View>
 
 
@@ -163,7 +163,6 @@ const stylesNav = StyleSheet.create({
     }
 })
 function MyDrawer({ userData }) {
-
     return (
         <Drawer.Navigator
             screenOptions={{ drawerPosition: 'right', width: 200 }}
@@ -173,15 +172,17 @@ function MyDrawer({ userData }) {
         >
             <Drawer.Screen 
             name="MainContent"
-             component={MainContent}
-                options={{
-                    headerShown: false,
-                    drawerLabel: 'Main',
-                    // Section/Group Name
-                    groupName: 'Section 1',
-                    activeTintColor: '#e91e63',
-                }}
             initialParams={{ userData: userData }} 
+            component={MainContent}
+            options={{
+                headerShown: false,
+                drawerLabel: 'Main',
+                // Section/Group Name
+                groupName: 'Section 1',
+                activeTintColor: '#e91e63',
+            }}
+            
+            
             />
         </Drawer.Navigator>
     );
@@ -319,7 +320,7 @@ const MainContent = ({ navigation, route }) => {
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
     const payload = !simData[4] ? 'Sin Carga' : simData[4]
-    const expireMBData = !simData[0] ? '202201010100' : simData[0]
+    const expireMBData = !simData[0] ? '202202010100' : simData[0]
     
     // MB
     const unsuedMBData = !simData ? 'NaN' : simData[2]
@@ -388,7 +389,7 @@ const MainContent = ({ navigation, route }) => {
         <>
             <View style={styles.container}>
 
-                <MainHeader name={'hola ' + userName} navigation={navigation} />
+                <MainHeader name={userName} navigation={navigation} />
 
                 <ScrollView style={styles.container}>
                     <View style={styles.numberContainer}>
@@ -431,7 +432,7 @@ const MainContent = ({ navigation, route }) => {
                     <View style={{ marginBottom: 30 }}>
                         <View style={styles.productTitleContiner}>
                             <Icon
-                                name='dropbox'
+                                name='mobile'
                                 type='font-awesome'
                                 color={styleConst.MAINCOLORSLIGHT[1]}
                             />
@@ -512,7 +513,7 @@ const Main = ({ navigation, route }) => {
     // Call UserState
     useEffect(() => {
         getJson();
-    }, [])
+    }, [userData])
 
         
 

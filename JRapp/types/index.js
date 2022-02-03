@@ -15,3 +15,5 @@ export const USER_INFO = 'USER_INFO'
 export const SIM_DATA = 'FreeData_Altan-RN'
 export const SIM_SMS = 'FU_SMS_Altan-NR-IR-LDI_NA'
 export const SIM_MIN = "FU_Min_Altan-NR-IR-LDI_NA"
+
+export const CALL_WHATSAPP = '5530687563'

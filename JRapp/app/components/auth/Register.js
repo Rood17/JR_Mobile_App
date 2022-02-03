@@ -98,7 +98,7 @@ const Register: () => Node = ({navigation, route}) => {
                     <DisplayLogo stylesLogo={styles.logo} />
                 </View>
                 <View style={styles.btnActionContainer}>
-                    <Text>Para entrar a tu portal "JR movil" es necesario que introduzcas tus datos.</Text>
+                    <Text>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
                     <View>
                         <Input
                             placeholder="Nombre(s)"
