@@ -2,59 +2,73 @@
     {
         "offerId" :"1509901006",
         "name" : "JR5 MiFi 5",
-        "precio" : "$99"
+        "precio" : "$99",
+        "days":"30"
     },
     {   "offerId" :"1509901007",
         "name" : "JR10 MiFi 10",
-        "precio" : "$175"
+        "precio" : "$175",
+        "days":"30"
     },
     {   "offerId" :"1509901008",
         "name" : "JR5 MiFi 20",
-        "precio" : "$300"
+        "precio" : "$300",
+        "days":"30"
     },
     {   "offerId" :"1509901009",
         "name" : "JR5 MiFi 30",
-        "precio" : "$399"
+        "precio" : "$399",
+        "days":"30"
     },
     {   "offerId" :"1509901010",
         "name" : "JR5 MiFi 50",
-        "precio" : "$499"
+        "precio" : "$499",
+        "days":"30"
     },
-    {   "offerId" :"1509901017",
+    {   "offerId" :"1879901017",
         "name" : "Plan JR5",
-        "precio" : "$49"
+        "precio" : "$49",
+        "days":"7"
     },
-    {   "offerId" :"1509901018",
+    {   "offerId" :"1879901018",
         "name" : "Plan JR10",
-        "precio" : "$99"
+        "precio" : "$99",
+        "days":"15"
     },
-    {   "offerId" :"1509901019",
+    {   "offerId" :"1879901019",
         "name" : "Plan JR20",
-        "precio" : "$199"
+        "precio" : "$199",
+        "days":"30"
     },
-    {   "offerId" :"1509901013",
+    {   "offerId" :"1809901013",
         "name" : "Plan JR5+",
-        "precio" : "$75"
+        "precio" : "$75",
+        "days":"7"
     },
-    {   "offerId" :"1509901014",
+    {   "offerId" :"1809901014",
         "name" : "Plan JR10+",
-        "precio" : "$149"
+        "precio" : "$149",
+        "days":"15"
     },
-    {   "offerId" :"1509901015",
+    {   "offerId" :"1809901015",
         "name" : "Plan JR20+",
-        "precio" : "$260"
+        "precio" : "$260",
+        "days":"30"
     },
-    {   "offerId" :"1509901016",
+    {   "offerId" :"1809901016",
         "name" : "Plan JR Master",
-        "precio" : "$449"
+        "precio" : "$449",
+        "days":"30"
     },
     {   "offerId" :"1809901178",
         "name" : "Plan JR Básico",
-        "precio" : "$99"
+        "precio" : "$99",
+        "days":"30"
     },
     {   "offerId" :"1809901179",
         "name" : "Plan JR Total",
-        "precio" : "$149"
+        "precio" : "$149",
+        "days":"30"
     }
 
 ]

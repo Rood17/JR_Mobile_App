@@ -2,14 +2,14 @@ import React, { useReducer } from 'react';
 
 import UserReducer from './UserReducer';
 import UserContext from './UserContext';
-import {getPerfilUf, getDataJson, getPaquetes} from '../../app/utils/services/get_services'
+import {getPerfilUf, getDataJson, getPaquetesApi} from '../../app/utils/services/get_services'
 
 import { GET_USER_DATA, USER_INFO, SIM_DATA, SIM_SMS, SIM_MIN } from "../../types";
 
 
 
 const userArray = {userInfo:{}, simData:{}, simSMS:{}, simMIN:{} }
-const paquetes = getPaquetes()
+const paquetes = getPaquetesApi()
 
 const filterArray = (userData) => {
     // Get User Data

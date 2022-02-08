@@ -234,6 +234,17 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
         mbColor = 'red'
 
 
+    // If nothing
+    if (!title && !showDetalles) {
+        requireWifi = require0;
+        mbAlert = true
+        title = 'Sin Recarga'
+        dataOne = '0 MB';
+        dataTwo = '0 MB';
+        subtitle = ' - '
+    }
+
+
     return (
 
         <View style={stylesMainCard.boxShadow}>

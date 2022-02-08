@@ -30,7 +30,7 @@ import {
 let monthFlag, yearFlag, secretFlag, postalFlag;
 
 // Modal
-const OverlayModal = ({ isRegister, payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
+const OverlayModal = ({ payloadArray, isRegister, payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
     const [visible, setVisible] = useState(false);
     const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
     console.log('disabledbtn 1 : ' + disabledBtn)
@@ -38,21 +38,37 @@ const OverlayModal = ({ isRegister, payload, idSubscriber, navigation, safeCard,
         setVisible(!visible);
     };
 
+    // All data ready for API
+    //console.log('payloadArray :  ' + payloadArray.startDate)
     // Set safe card
     safeCard = 'xxxx xxxx xxxx ' + safeCard.toString().slice(12);
 
     const safePaymentHandler = () => {
         if (safePaymentSuccess) {
-            navigation.navigate('Recharge_3', {
-                payload: payload,
-                idSubscriber: idSubscriber,
-                isRegister: isRegister
+            navigation.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: 'Recharge_3',
+                        params: { 
+                            idSubscriber: idSubscriber, 
+                            isRegister: isRegister,
+                            payload: payload,
+                        },
+                    },
+                ],
             })
         } else {
             toggleResume()
             fail('Error')
         }
     }
+
+    /**
+     * Aquí debe llamarse a paquetes
+     * obtener el ofertid y las fechas
+     * y llamar a la API EN POST
+     */
 
     return (
         <View>
@@ -125,7 +141,7 @@ const modalStyle = StyleSheet.create({
 });
 
 // MainCard
-export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation }) => {
+export const RechargeTwoCard = ({ payloadArray, isRegister, payload, idSubscriber, navigation }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
     const [errorMsg, setErrorMsg] = useState('');
@@ -203,16 +219,18 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
     }
     function setEmail(email) {
         if (email.length > 2 && email.indexOf('@') != -1 ) { setEmailFlag(true); setShowError(false); SetErrorTxt('') }
-        else { setEmailFlag(false); setDisabledBtn(false);setShowError(true); SetErrorTxt('El mail no es correcto.') }
+        else { setEmailFlag(false); setDisabledBtn(true);setShowError(true); SetErrorTxt('El mail no es correcto.') }
 
         runVerification();
     }
 
     function runVerification() {
-        if (showError && emailFlag) {
+        if (!showError && emailFlag) {
+            
             setDisabledBtn(false)
         }
         else {
+            console.log('disabledbtn true : ' + disabledBtn)
             setDisabledBtn(true)
         }
     }
@@ -386,6 +404,7 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
                             fail={setSafeCard}
                             disabledBtn={disabledBtn}
                             isRegister={isRegister}
+                            payloadArray={payloadArray}
                         />
                     </View>
                 </View>
@@ -449,8 +468,9 @@ const stylesMainCard = StyleSheet.create({
 // Main
 const Recharge_2 = ({ navigation, route }) => {
 
-    const { idSubscriber, sendPayload, isRegister } = route.params;
-    const payload = sendPayload;
+    const { idSubscriber, sendPayload, isRegister, payloadArray } = route.params;
+    const payload = sendPayload.name;
+
 
     return (
         <>
@@ -492,6 +512,7 @@ const Recharge_2 = ({ navigation, route }) => {
                         payload={payload}
                         idSubscriber={idSubscriber}
                         navigation={navigation}
+                        payloadArray={payloadArray}
                     />
                     <View style={styles.registerContainer}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>

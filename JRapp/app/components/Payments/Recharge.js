@@ -30,6 +30,7 @@ import {
 } from 'react-native';
 
 let payload;
+let payloadArray;
 // MainCard
 export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
@@ -100,7 +101,7 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
     }
 
 
-    console.log("Recharge > idSubscriber : " + idSubscriber)
+    console.log("Recharge > payloadArray : " + payloadArray.name)
 
 
     return (
@@ -134,8 +135,9 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
                 <IntentBtn
                     isDisabled={disabledBtn}
                     intent={['Recharge_2', {
-                        sendPayload: payload,
+                        sendPayload: payloadArray,
                         idSubscriber: initNumber,
+                        payloadArray:payloadArray
                     }]}
                     navigation={navigation}
                     btnText='Continuar' />
@@ -190,7 +192,7 @@ const stylesMainCard = StyleSheet.create({
 // END MainCard
 
 // Money List
-export const MoneyCard = ({ setGbProduct, togglePrices }) => {
+export const MifiMoneyCard = ({ setGbProduct, togglePrices }) => {
 
     // handle money bby
     const moneyHandler = (payloadCode) => {
@@ -201,62 +203,62 @@ export const MoneyCard = ({ setGbProduct, togglePrices }) => {
     }
 
     return (
-        <View style={stylesMoneyCard.boxShadow} >
-            <View style={stylesMoneyCard.horizontalCard}>
+        <View style={stylesMifiMoneyCard.boxShadow} >
+            <View style={stylesMifiMoneyCard.horizontalCard}>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(20)}
                 >
                     <Text>8GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(30)}
                 >
                     <Text>10GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(50)}
                 >
                     <Text>13GB</Text>
                 </TouchableOpacity>
             </View>
-            <View style={stylesMoneyCard.horizontalCard}>
+            <View style={stylesMifiMoneyCard.horizontalCard}>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(100)}
                 >
                     <Text>20GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(150)}
                 >
                     <Text>23GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(200)}
                 >
                     <Text>33GB</Text>
                 </TouchableOpacity>
             </View>
-            <View style={stylesMoneyCard.horizontalCard}>
+            <View style={stylesMifiMoneyCard.horizontalCard}>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(300)}
                 >
                     <Text style={{ alignItems: 'center' }}>50GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(400)}
                 >
                     <Text>53GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(500)}
                 >
                     <Text>100GB</Text>
@@ -266,7 +268,7 @@ export const MoneyCard = ({ setGbProduct, togglePrices }) => {
     );
 }
 
-const stylesMoneyCard = StyleSheet.create({
+const stylesMifiMoneyCard = StyleSheet.create({
     container: {
 
     },
@@ -303,6 +305,96 @@ const stylesMoneyCard = StyleSheet.create({
 });
 
 // Products List
+export const MifiCard = ({ setGbProduct, togglePlans }) => {
+
+    // get Paquetes Contex
+
+    //console.log("paquetes : " + paquetes)
+
+    // 999 seguro aquí se va a neceistar un ref
+    const productHandler = (payload) => {
+        // Set charge
+        setGbProduct(payload)
+        // Close Modal
+        togglePlans()
+    }
+
+    return (
+        <ScrollView vertical >
+            <TouchableHighlight
+                onPress={() => productHandler('1509901006')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/1.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901007')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/2.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901008')}
+                style={stylesMifiCard.boxShadow}
+            >
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/3.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901009')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/4.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901010')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/5.jpg')}
+                />
+            </TouchableHighlight>
+        </ScrollView>
+    );
+}
+
+const stylesMifiCard = StyleSheet.create({
+    container: {
+
+    },
+    imageProduct: {
+        width: 300,
+        height: 300,
+        padding: 5,
+        borderBottomWidth: .8,
+        //borderBottomColor: styleConst.MAINCOLORSLIGHT[1],
+        margin: 0,
+    },
+    boxShadow: {
+        marginTop: 0,
+        margin: 20,
+        backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+
+        elevation: 6,
+    }
+});
+
+// Products List
 export const ProductCard = ({ setGbProduct, togglePlans }) => {
 
     // get Paquetes Contex
@@ -320,7 +412,15 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
     return (
         <ScrollView vertical >
             <TouchableHighlight
-                onPress={() => productHandler('A')}
+                onPress={() => productHandler('1879901017')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/1.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901178')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
@@ -328,28 +428,52 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => productHandler('B')}
-                style={stylesProductCard.boxShadow}>
+                onPress={() => productHandler('1809901013')}
+                style={stylesProductCard.boxShadow}
+            >
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../../res/drawable/products/3.jpg')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => productHandler('C')}
-                style={stylesProductCard.boxShadow}
-            >
+                onPress={() => productHandler('1809901179')}
+                style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../../res/drawable/products/4.jpg')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => productHandler('D')}
+                onPress={() => productHandler('1879901018')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../../res/drawable/products/5.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901014')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/6.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1879901019')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/7.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901016')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/8.jpg')}
                 />
             </TouchableHighlight>
         </ScrollView>
@@ -392,7 +516,6 @@ export const OverlayModal = ({ setGbProduct, main }) => {
     let [backgroundIconColor, iconColor] = ['white', styleConst.MAINCOLORSLIGHT[1]]
 
     const togglePlans = () => {
-        console.log("******")
         setVisible1(!visible1);
     };
 
@@ -455,7 +578,7 @@ export const OverlayModal = ({ setGbProduct, main }) => {
                         <Text style={{ margin: 0 }}>Selecciona una compra</Text>
                     </View>
                     <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
-                        <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
+                        <MifiCard setGbProduct={setGbProduct} togglePlans={togglePrices} />
                     </View>
                     <View style={[modalStyle.footer, { width: '100%', flex: 1 }]}>
                         <View style={{ marginTop: 30 }}>
@@ -519,11 +642,18 @@ const Recharge = ({ navigation, chargeResume, route }) => {
     const { idSubscriber, isRegister, isJr, sendPayload } = route.params;
 
     // Set the prodcut type
-    console.log("Recharge - sendPayload : " + sendPayload)
+    /**
+     * Aquí debe llamarse a paquetes state para
+     * alimentar los paquetes
+     */
+    // console.log("Recharge - sendPayload : " + sendPayload)
+    // console.log("Recharge - gbProduct : " + gbProduct)
     if (sendPayload)
-        payload = setProductType(sendPayload)
+        payloadArray = setProductType(sendPayload)
     else
-        payload = setProductType(gbProduct)
+        payloadArray = setProductType(gbProduct)
+
+    payload = payloadArray.name
 
     return (
         <>

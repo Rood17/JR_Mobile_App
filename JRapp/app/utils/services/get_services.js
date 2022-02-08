@@ -6,7 +6,7 @@ import {
   API_LOCAL_ENPOINT_BASE,
 } from "../constants/Constants";
 
-export const getPaquetes = () => {
+export const getPaquetesApi = () => {
   return paquetes
 }
 export const getDataJson = () => {

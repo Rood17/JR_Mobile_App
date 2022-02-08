@@ -61,6 +61,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
 
     let pwdInput = React.createRef();
 
+    // Se verifica el PWD
     const onChangeText = (pwd) => {
         if (pwd.length > 0) {
             setDisabledBtn(false);
@@ -73,8 +74,9 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     }
 
     const loginHandler = () => {
-        // Let´s see
+        // Se almacena en el storage el view anterior.
         storeUserString('lastView', 'login')
+        // Aquí se llama al login
         login('bameetr@gu.bhj', 'Prueba123', setError, setLoginSuccess)
     }
 
@@ -189,7 +191,8 @@ const LoginBody = ({ nav }) => {
     const [UFuserData, setUFUserData] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    //24917335
+    // ****** API999 24917335
+    // esta constante deberá llamar al backend para verificar si el usuario ya existe.
     const isRegister = '56'
     let responseUserData = [];
     // Auth handler
@@ -198,10 +201,10 @@ const LoginBody = ({ nav }) => {
         setUFUserData('');
 
 
-        // Validate if is Jr Movil
+        // Validar si el número ingrsado es JR.
         if (number.length == constants.MAX_NUMBER_LENGTH) {
 
-            // Call Local Hc
+            // Se llama a la API
             const fetchData = async () => {
                 let errorResponse;
 
@@ -252,10 +255,8 @@ const LoginBody = ({ nav }) => {
     );
 
 
-    // Validate if is JR
-    // It´s bring an object
+    // Función de validación
     const validateIsJr = (number, error) => {
-        console.log("** User is JR **")
         if (error == null) {
             //Log
             console.log("** User is JR **")
@@ -281,6 +282,7 @@ const LoginBody = ({ nav }) => {
             setJrAlert(true)
             setErrorStr('Este no es un número JRmóvil.')
             setIconFlex(1.5)
+            console.log("** User is not JR **")
         }
     }
 
@@ -409,8 +411,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         flex: 1,
-        height: 60,
-        margin: 90
+        height: 90,
+        margin: 30,
+        marginTop:80,
+        marginBottom:80
 
     },
     btnActionContainer: {

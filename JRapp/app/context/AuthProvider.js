@@ -90,8 +90,7 @@ export const isUserLog = () => {
 }
 
 export const login = (email, pwd, setError, setLoginSuccess) => {
-    // no one enters
-    //setError(true)
+
 
     signInWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
         console.log('User is log in!');

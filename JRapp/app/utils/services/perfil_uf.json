@@ -40,12 +40,12 @@
           },
           "detailOfferings": [
             {
-              "offeringId": "1509901015",
+              "offeringId": "1809901178",
               "purchaseSecuence": "520013634587",
               "initialAmt": "3765",
               "unusedAmt": "2490",
               "effectiveDate": "20200608152707",
-              "expireDate": "20220303235959"
+              "expireDate": "20220503235959"
             }
           ]
         },

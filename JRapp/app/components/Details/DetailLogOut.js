@@ -93,7 +93,7 @@ const DetailLogOut = ({ navigation, route }) => {
     const validitNearDaysEnd = 5
     // respuesta Api
     // Just accept this format '2022/02/18'
-    const validityUser = formatApiDate('20220203152707')
+    const validityUser = formatApiDate(expireMBData)
     const validityUserCode = validityUser.replace(/\//g, '')
     console.log("validityUser : " + validityUser)
     console.log("validityUserCode : " + validityUserCode)

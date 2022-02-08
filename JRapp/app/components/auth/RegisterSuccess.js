@@ -94,7 +94,8 @@ const modalStyle = StyleSheet.create({
     marginTop:140
   },
   headContainer: {
-    margin: 20,
+    margin: 0,
+    marginTop:160,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -109,7 +110,7 @@ const modalStyle = StyleSheet.create({
   headTxt: {
     fontWeight: 'bold',
     color: styleConst.MAINCOLORS[0],
-    fontSize: 18
+    fontSize: 22
   },
 });
 
