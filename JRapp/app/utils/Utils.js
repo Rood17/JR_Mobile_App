@@ -44,10 +44,15 @@ export const quitKeyboard = () => {
 }
 
 export const formatApiDate = (expireDate) => {
-    let year = expireDate.slice(0,4)
-    let month = expireDate.slice(4,6)
-    let days = expireDate.slice(6,8)
-    let result = year + '/' + month + '/' + days
+    let result
+    if ( expireDate != undefined ) {
+        let year = expireDate.slice(0,4)
+        let month = expireDate.slice(4,6)
+        let days = expireDate.slice(6,8)
+        result = year + '/' + month + '/' + days
+    } else {
+        result = '-'
+    }
 
     return result;
 }

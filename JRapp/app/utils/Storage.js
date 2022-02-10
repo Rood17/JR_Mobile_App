@@ -19,16 +19,17 @@ export const storeUserString = async (key, value) => {
         await AsyncStorage.setItem(key, value) ?? null
     } catch (e) {
         // saving error
+        console.log(" Error in storeUserString : " + key)
     }
 }
 
 
 let userName, lastName, id, email, pwd;
 export const getUserData = async () => {
-    
+    let result = false
     try {
         let jsonValue = await AsyncStorage.getItem('userData') ?? null
-        if (jsonValue !== null) {
+        if (jsonValue !== null && jsonValue != undefined) {
             // value previously stored
             jsonValue = JSON.parse(jsonValue)
             console.log( "AsyncStorgae > getData : " + jsonValue[0].name)
@@ -37,6 +38,7 @@ export const getUserData = async () => {
             setUserEmail(jsonValue[0].email)
             setUserId(jsonValue[0].idSubscriber)
             setSecret(jsonValue[0].pwd)
+            result = true;
 
         } else {
             console.log( "AsyncStorgae > getData : NULL")
@@ -45,7 +47,9 @@ export const getUserData = async () => {
         //return jsonValue[0].name != undefined ? data : null;
     } catch (e) {
         // error reading value
+        console.log("Error in getUserData" )
     }
+    return result
 }
 
 let stringValue;

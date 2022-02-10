@@ -508,21 +508,26 @@ const Main = ({ navigation, route }) => {
 
     // Charge ZONE
     const [isReady, setIsReady] = useState(false);
-    const { userData, getJson } = useContext(UserContext);
+    const { userData, getAPIUserData } = useContext(UserContext);
 
     // Call UserState
     useEffect(() => {
-        getJson();
+        storeUserString('lastView', 'main')
+            getUserData().catch(() => console.log("Error in Main"))
+            .finally(()=>{
+                console.log("** Main - Welcome ** " + getUserId())
+                getAPIUserData(getUserId()).then((response) => {
+                    console.log("** Main - Welcome **")
+                    if ( response ){
+                        setIsReady(true)
+                    }
+            
+                })
+            })
+        
     }, [userData])
 
-        
-
-    // Reset User is register
-    storeUserString('lastView', 'main')
-    getUserData()
-    .then(() => () =>console.log("** Main - Welcome **"))
-    .finally(()=>setIsReady(true))
-
+    console.log("** Main - Welcome ** " + getUserId())
     userId = getUserId();
 
     return (

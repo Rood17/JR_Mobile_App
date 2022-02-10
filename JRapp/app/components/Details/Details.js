@@ -14,6 +14,8 @@ import * as data from '../../utils/services/perfil_uf.json';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
 import UserContext from '../../../context/user/UserContext'
+import { formatApiDate, setProductType } from '../../utils/Utils'
+
 
 import {
     Button,
@@ -33,10 +35,10 @@ const Details = ({ navigation, route }) => {
     const { idSubscriber } = route.params;
 
      // get userData Context
-     const { userData, getJson } = useContext(UserContext);
+     const { userData, getAPIUserData } = useContext(UserContext);
 
      useEffect(() => {
-         getJson();
+        getAPIUserData(idSubscriber);
      }, [])
  
  
@@ -56,7 +58,7 @@ const Details = ({ navigation, route }) => {
  
      // Oferta actual
     const oferta = !simData[4] ? 'Sin Carga' : simData[4]
-    const expireMBData = !simData[0] ? '202201010100' : simData[0]
+    const expireMBData = !simData[0] ? '-' : formatApiDate(simData[0])
     
     // MB
     const unsuedMBData = !simData ? 'NaN' : simData[2]
@@ -136,16 +138,16 @@ const Details = ({ navigation, route }) => {
                                             campoD : unsuedSMSData
                                         },
                                         {
-                                            campo : 'Total Tiempo VoWifi',
-                                            campoD : 'ILIMITADO'
+                                            campo : 'Minutos VoWifi',
+                                            campoD : totalMINData
                                         },
                                         {
-                                            campo : 'Última Fecha de Pago',
-                                            campoD : 'NONE'
+                                            campo : 'Minutos VoWifi Restantes',
+                                            campoD : unsuedMINData
                                         },
                                         {
                                             campo : 'Fecha de Vencimiento',
-                                            campoD : '02/04/2022'
+                                            campoD : expireMBData
                                         },
                                     ]} 
                             />

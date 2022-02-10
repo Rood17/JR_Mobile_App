@@ -46,17 +46,18 @@ import {
 
 const DetailLogOut = ({ navigation, route }) => {
     const { idSubscriber, UFuserData } = route.params;
-    const { userData, getJson } = useContext(UserContext);
+    const { userData, getAPIUserData } = useContext(UserContext);
     const [isReady, setIsReady] = useState(false);
 
 
     useEffect(() => {
-        getJson()
+        getAPIUserData(idSubscriber).then((response) => {
+            if ( response ){
+                setIsReady(true)
+            }
+        })
     }, [userData])
 
-    setTimeout(() => {
-        setIsReady(true)
-    }, 1000);
 
     let simData, simSMS, simMIN = [0, 0, 0, 0, 0]
 
@@ -82,12 +83,12 @@ const DetailLogOut = ({ navigation, route }) => {
 
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
-    const oferta = !simData ? 'Plan JR20+' : simData[4]
-    const expireMBData = !simData ? '2022/06/08' : simData[0]
+    const oferta = !simData ? 'Sin Plan' : simData[4]
+    const expireMBData = !simData ? '' : simData[0]
 
     // MB
-    const unsuedMBData = !simData ? '1790' : simData[2]
-    const totalMBData = !simData ? '3765' : simData[1]
+    const unsuedMBData = !simData ? '-' : simData[2]
+    const totalMBData = !simData ? '-' : simData[1]
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5

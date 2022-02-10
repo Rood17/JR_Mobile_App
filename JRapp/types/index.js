@@ -12,7 +12,8 @@ export const GET = 'get'
 export const POST = 'post'
 
 export const USER_INFO = 'USER_INFO'
-export const SIM_DATA = 'FreeData_Altan-RN'
+export const SIM_DATA = 'FU_Data_Altan-RN_CT'
+export const SIM_DATA_EXTRA = 'FU_Data_Altan-NR-IR_NA_CT'
 export const SIM_SMS = 'FU_SMS_Altan-NR-IR-LDI_NA'
 export const SIM_MIN = "FU_Min_Altan-NR-IR-LDI_NA"
 

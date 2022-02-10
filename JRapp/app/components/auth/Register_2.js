@@ -262,10 +262,7 @@ const modalStyle = StyleSheet.create({
 const Register_2: () => Node = ({ recovery, navigation, route }) => {
 
     // Params
-    //const { idSubscriber, name, lastName } = route.params;
-    let idSubscriber = '99'
-    let name = '99'
-    let lastName = '99'
+    const { idSubscriber, name, lastName } = route.params;
     const dataArray = [{ idSubscriber: idSubscriber, name: name, lastName: lastName, email: null }]
 
     const [emailIsCorrect, setEmailIsCorrect] = useState(false);

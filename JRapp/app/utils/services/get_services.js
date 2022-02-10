@@ -17,7 +17,8 @@ export const getDataJson = () => {
 }
 
 export const getPerfilUf = (idSubscriber) => {
-  return getTokenAndUF(idSubscriber)
+  console.log(' ** Calling UF ** : ' + idSubscriber)
+  return getAPI(idSubscriber, 'UF')
 }
 
 export const getPerfilUfAPI = async (idSubscriber, secret) => {
@@ -29,7 +30,7 @@ export const getPerfilUfAPI = async (idSubscriber, secret) => {
 
   
   if ( idSubscriber == 5688888888 || idSubscriber == 8888888888)
-    idSubscriber = 1000223908;
+    idSubscriber = 5624898598;
 
   let config = {
     method: GET,
@@ -42,9 +43,9 @@ export const getPerfilUfAPI = async (idSubscriber, secret) => {
     await axios(config)
       .then(function (response) {
         //console.log(JSON.stringify(response.data));
-        result.userData = response.data.responseSubscriber.information;
-        console.log("Services response.data : " + result.userData.idSubscriber)
-        //console.log("Services response.data : " + response.data[responseSubscriber])
+        result.userData = response.data;
+        console.log("Services response.data : " + result.userData.responseSubscriber.freeUnits)
+        console.log("Services response.data : " + JSON.stringify(result.userData))
       })
       .catch(function (error) {
         console.log(error);
@@ -63,7 +64,7 @@ export const getPerfilUfAPI = async (idSubscriber, secret) => {
   return result;
 };
 
-export const getTokenAndUF = async (idSubscriber) => {
+export const getAPI = async (idSubscriber, action) => {
   const axios = require('axios');
   const qs = require('qs');
   
@@ -85,7 +86,15 @@ export const getTokenAndUF = async (idSubscriber) => {
     axios(config)
       .then((response) => {
         const secret = BEARER + response.data.accessToken
-        resolve(getPerfilUfAPI(idSubscriber, secret))
+
+        // Get UF API
+        if ( action == 'UF') {
+          resolve(getPerfilUfAPI(idSubscriber, secret))
+        }
+        if ( action == 'Activate') {
+          // Aqui api para activate
+        }
+        
       })
       .catch((error) => {
         console.log(error);

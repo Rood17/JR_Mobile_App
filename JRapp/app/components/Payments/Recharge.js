@@ -326,7 +326,7 @@ export const MifiCard = ({ setGbProduct, togglePlans }) => {
                 style={stylesMifiCard.boxShadow}>
                 <Image
                     style={stylesMifiCard.imageProduct}
-                    source={require('../../res/drawable/products/1.jpg')}
+                    source={require('../../res/drawable/products/mifi_1.png')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
@@ -334,7 +334,7 @@ export const MifiCard = ({ setGbProduct, togglePlans }) => {
                 style={stylesMifiCard.boxShadow}>
                 <Image
                     style={stylesMifiCard.imageProduct}
-                    source={require('../../res/drawable/products/2.jpg')}
+                    source={require('../../res/drawable/products/mifi_2.png')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
@@ -343,7 +343,7 @@ export const MifiCard = ({ setGbProduct, togglePlans }) => {
             >
                 <Image
                     style={stylesMifiCard.imageProduct}
-                    source={require('../../res/drawable/products/3.jpg')}
+                    source={require('../../res/drawable/products/mifi_3.png')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
@@ -351,7 +351,7 @@ export const MifiCard = ({ setGbProduct, togglePlans }) => {
                 style={stylesMifiCard.boxShadow}>
                 <Image
                     style={stylesMifiCard.imageProduct}
-                    source={require('../../res/drawable/products/4.jpg')}
+                    source={require('../../res/drawable/products/mifi_4.png')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
@@ -359,7 +359,7 @@ export const MifiCard = ({ setGbProduct, togglePlans }) => {
                 style={stylesMifiCard.boxShadow}>
                 <Image
                     style={stylesMifiCard.imageProduct}
-                    source={require('../../res/drawable/products/5.jpg')}
+                    source={require('../../res/drawable/products/mifi_5.png')}
                 />
             </TouchableHighlight>
         </ScrollView>
