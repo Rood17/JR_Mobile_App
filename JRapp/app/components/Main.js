@@ -7,20 +7,22 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import DisplayLogo from './elements/DisplayLogo';
 import IntentBtn from './elements/IntentBtn';
 import { Icon, Input } from 'react-native-elements'
-import { Loader ,WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
+import { Loader, WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
 import * as styleConst from '../res/values/styles/StylesConstants'
 import * as constants from '../utils/constants/Constants'
 import { formatApiDate, setProductType } from '../utils/Utils'
 import { OverlayModal } from '../components/Payments/Recharge'
 import MiPerfil from './pages/MiPerfil';
 import Asistance from './pages/Asistance';
-import { storeUserString, storeUserData, getUserKey,getUserData, getUserName, getUserLastName, getUserEmail, getUserId } from '../utils/Storage'
+import { storeUserString, storeUserData, getUserKey, getUserData, getUserName, getUserLastName, getUserEmail, getUserId } from '../utils/Storage'
 import { logout } from '../context/AuthProvider';
+import UserContext from '../../context/user/UserContext'
+
 // Services
 import * as data from '../utils/services/perfil_uf.json'
 
@@ -46,8 +48,7 @@ import {
 } from 'react-native';
 
 // Global Vars
-let userName, userId, fromZero = null;
-
+let userName, userId = null;
 
 // Drawer
 function CustomDrawerContent(props) {
@@ -63,7 +64,7 @@ function CustomDrawerContent(props) {
             })
         }
         else if (intent === 'Cerrar') {
-            
+
             // LoginOut
             console.log("Mandando Loginout")
             logout() ? props.navigation.navigate('Login') : null
@@ -129,7 +130,7 @@ function CustomDrawerContent(props) {
                         <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
-                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize: 12 }}>@2022 JR Movil S.A. de C.V.</Text>
+                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize: 12 }}>@2022 JR móvil S.A. de C.V.</Text>
                 </View>
 
 
@@ -161,8 +162,7 @@ const stylesNav = StyleSheet.create({
         marginLeft: 15
     }
 })
-function MyDrawer({hola}) {
-
+function MyDrawer({ userData }) {
     return (
         <Drawer.Navigator
             screenOptions={{ drawerPosition: 'right', width: 200 }}
@@ -170,14 +170,19 @@ function MyDrawer({hola}) {
             />}
 
         >
-            <Drawer.Screen name="MainContent" component={MainContent}
-                options={{
-                    headerShown: false,
-                    drawerLabel: 'Main',
-                    // Section/Group Name
-                    groupName: 'Section 1',
-                    activeTintColor: '#e91e63',
-                }}
+            <Drawer.Screen 
+            name="MainContent"
+            initialParams={{ userData: userData }} 
+            component={MainContent}
+            options={{
+                headerShown: false,
+                drawerLabel: 'Main',
+                // Section/Group Name
+                groupName: 'Section 1',
+                activeTintColor: '#e91e63',
+            }}
+            
+            
             />
         </Drawer.Navigator>
     );
@@ -274,8 +279,7 @@ const stylesProductCard = StyleSheet.create({
     }
 });
 
-const MainContent = ({ navigation }) => {
-
+const MainContent = ({ navigation, route }) => {
 
     // 
     // Set Constants
@@ -286,87 +290,51 @@ const MainContent = ({ navigation }) => {
     // Cuando inici debe pdirlo a la bd
 
     // sino lo tomará de storga 
-    
+
     // Setting Global Vars
     // Se debe quitar
-  
-    
-    //data.responseSubscriber.status.subStatus
-    
+    // get userData Contextus
 
-    
+    const userData = route.params.userData
+
+    let simData, simSMS, simMIN = [0,0,0,0,0]
+    console.log("** " + Object.values(userData.simData))
+
+    // Open the package
+    if (userData != null || userData.simData != undefined )
+        simData = Object.values(userData.simData)
+
+    // Open the package
+    if ( userData != null || userData.simSMS != undefined)
+        simSMS = Object.values(userData.simSMS)
+
+    // Open the package
+    if ( userData != null || userData.simMIN != undefined )
+        simMIN = Object.values(userData.simMIN)
+
 
     userName = getUserName()
-    console.log("userName > Main : " + userName)
-    
-   
-    const [payload, setPayload] = useState('Carga - $50');
+    //console.log("simData > Main : " + Object.values(userDataMain.simData))
+
+
     const [gbProduct, setGbProduct] = useState()
+    // Oferta actual
+    const payload = !simData[4] ? 'Sin Carga' : simData[4]
+    const expireMBData = !simData[0] ? '202202010100' : simData[0]
+    
+    // MB
+    const unsuedMBData = !simData ? 'NaN' : simData[2]
+    const totalMBData = !simData ? 'NaN' : simData[1]
+    //SMS
+    const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
+    const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
 
 
-    // Api data
-    let [totalMBData, unsuedMBData, expireMBData, actualMBData,
-        totalSMSData, unsuedSMSData, expireSMSData, actualSMSData,
-        totalMINData, unsuedMINData, expireMINData, actualMINData] = [0]
-
-    let porcent = 'med'
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
     // respuesta Api
 
-
-    data.responseSubscriber.freeUnits.map((item, i) => {
-        // Get data 'mb'
-        if (item.name.indexOf("FreeData_Altan") != -1) {
-            // set Vars
-            totalMBData = item.freeUnit.totalAmt;
-            unsuedMBData = item.freeUnit.unusedAmt;
-            actualMBData = totalMBData - unsuedMBData;
-
-            // if unsed data is none
-            if (actualMBData == 0)
-                actualMBData = totalMBData
-
-            // Get Expirtaion Date
-            item.detailOfferings.map((subItem) => {
-                //console.log(subItem.expireDate)
-                expireMBData = subItem.expireDate;
-            })
-        }
-
-        // get 'sms'  y 'tiempo'
-        if (item.name.indexOf("FU_SMS_Altan-NR-LDI_NA") != -1) {
-            // set Vars
-            totalSMSData = item.freeUnit.totalAmt;
-            unsuedSMSData = item.freeUnit.unusedAmt;
-            actualSMSData = totalSMSData - unsuedSMSData;
-            // if unsed data is none
-            if (actualSMSData == 0)
-                actualSMSData = totalSMSData
-            // Get Expirtaion Date
-            item.detailOfferings.map((subItem) => {
-                //console.log(subItem.expireDate)
-                expireSMSData = subItem.expireDate;
-            })
-        }
-        if (item.name.indexOf("FU_Min_Altan-NR-IR-LDI_NA") != -1) {
-            // set Vars
-            totalMINData = item.freeUnit.totalAmt;
-            unsuedMINData = item.freeUnit.unusedAmt;
-            actualMINData = totalMINData - unsuedMINData;
-
-            // if unsed data is none
-            if (actualMINData == 0)
-                actualMINData = totalMINData
-
-            // Get Expirtaion Date
-            item.detailOfferings.map((subItem) => {
-                //console.log(subItem.expireDate)
-                expireMINData = subItem.expireDate;
-            })
-        }
-    })
 
 
     // Just accept this format '2022/02/18'
@@ -375,19 +343,17 @@ const MainContent = ({ navigation }) => {
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
     let validityColor = styleConst.MAINCOLORSLIGHT[2]
-    
+
     // Validity neast conditionals
     // If validity is end
     if (parseInt(validityUserCode) < constants.DATE_NOW_CODE) {
         validityResponse = 'SALDO VENCIDO';
         validityColor = styleConst.MAINCOLORS[1]
-        porcent = ''
     }
     // If validity ends today
     else if (parseInt(validityUserCode) == constants.DATE_NOW_CODE) {
         validityResponse = '¡HOY VENCE TU SALDO!';
         validityColor = styleConst.MAINCOLORS[2]
-        porcent = 'verylow'
     }
     // If validity is near to end
     else {
@@ -423,7 +389,7 @@ const MainContent = ({ navigation }) => {
         <>
             <View style={styles.container}>
 
-                <MainHeader name={'hola ' + userName} navigation={navigation} />
+                <MainHeader name={userName} navigation={navigation} />
 
                 <ScrollView style={styles.container}>
                     <View style={styles.numberContainer}>
@@ -441,60 +407,32 @@ const MainContent = ({ navigation }) => {
                             subtitleColor={validityColor}
                             bodyHeadOne='MB Totales'
                             bodyHeadTwo='MB Disponibles'
-                            dataOne={totalMBData + ' MB'}
-                            dataTwo={actualMBData + ' MB'}
+                            dataOne={totalMBData}
+                            dataTwo={unsuedMBData}
                             MBC='true'
                             text='Consumos de datos:'
-                            porcent={porcent}
                         />
 
-                            
-                                <SocialMainCard />
-                                <MainCard
-                                    bodyHeadOne='Min Consumidos'
-                                    bodyHeadTwo='SMS Consumidos'
-                                    dataOne={actualSMSData + ' Sms'}
-                                    dataTwo={actualMINData + ' Min'}
-                                    showDetalles
-                                    navigation={navigation}
-                                    idSubscriber={userId}
-                                />
-                                {/** Exported from recharge */}
-                                <View style={{ marginTop: 20 }}>
-                                    <OverlayModal setGbProduct={setGbProduct} main />
-                                </View>
-                                {/**
-                                <View style={styles.btnsContainer}>
-                                    <View style={styles.btnAction}>
-                                        <IntentBtn
-                                            navigation={navigation}
-                                            intent='Recharge'
-                                            btnParams={{ userId: userId, isRegister: isRegister, isJr: true }}
-                                            btnText='Paquetes' />
-                                    </View>
-                                    <View style={styles.btnAction}>
-                                    <IntentBtn
-                                            navigation={navigation}
-                                            intent='Recharge'
-                                            btnParams={{ 
-                                                idSubscriber: userId, 
-                                                isRegister: isRegister, 
-                                                isJr: true,
-                                                sendPayload: 'B'
-                                             }}
-                                            btnText='Cargar Saldo' />
-                                    </View>
-                                </View>**/}
-                            
-                            
 
-
-
+                        <SocialMainCard />
+                        <MainCard
+                            bodyHeadOne='Min Consumidos'
+                            bodyHeadTwo='SMS Consumidos'
+                            dataOne={totalSMSData}
+                            dataTwo={unsuedSMSData}
+                            showDetalles
+                            navigation={navigation}
+                            idSubscriber={userId}
+                        />
+                        {/** Exported from recharge */}
+                        <View style={{ marginTop: 20 }}>
+                            <OverlayModal setGbProduct={setGbProduct} main />
+                        </View>
                     </View>
                     <View style={{ marginBottom: 30 }}>
                         <View style={styles.productTitleContiner}>
                             <Icon
-                                name='dropbox'
+                                name='mobile'
                                 type='font-awesome'
                                 color={styleConst.MAINCOLORSLIGHT[1]}
                             />
@@ -512,10 +450,10 @@ const MainContent = ({ navigation }) => {
 
 
 
-                    <MainFooter
-                        navigation={navigation}
-                        idSubscriber={userId}
-                    />
+                <MainFooter
+                    navigation={navigation}
+                    idSubscriber={userId}
+                />
 
             </View>
 
@@ -567,41 +505,38 @@ const styles = StyleSheet.create({
 
 const Main = ({ navigation, route }) => {
 
-    
 
-    const [ isReady, setIsReady] = useState(false);
-    // La ide aaquí es que la página main pueda entrar con params y sin params.
-    // si no tiene paramas viene de inicio y los tomara del storgae
-    // si tiene params viene de registros y s olo toamra de route como segunda opción.
+    // Charge ZONE
+    const [isReady, setIsReady] = useState(false);
+    const { userData, getAPIUserData } = useContext(UserContext);
 
-    // Entering From Auth
-    if ( route.params != undefined && route.params != null)
-    {
-        const { idSubscriber } = route.params;
-        userId = idSubscriber;
+    // Call UserState
+    useEffect(() => {
+        storeUserString('lastView', 'main')
+            getUserData().catch(() => console.log("Error in Main"))
+            .finally(()=>{
+                console.log("** Main - Welcome ** " + getUserId())
+                getAPIUserData(getUserId()).then((response) => {
+                    console.log("** Main - Welcome **")
+                    if ( response ){
+                        setIsReady(true)
+                    }
+            
+                })
+            })
+        
+    }, [userData])
 
-        // searching for first time
-        getUserData().then(() => setIsReady(true))
-    }
-    // Entering from start
-    else 
-    {
-        userId = getUserId();
-        fromZero = true;
-        // get Storage
-        getUserData().then(() => setIsReady(true))
-    }
-
-    // Reset User is register
-    storeUserString('lastView', 'main')
+    console.log("** Main - Welcome ** " + getUserId())
+    userId = getUserId();
 
     return (
         <>
-            { !isReady ? 
+            {!isReady ?
                 <Loader />
-            :
-                <MyDrawer 
-                hola='hola'
+                :
+                <MyDrawer
+                    userData={userData}
                 />
             }
         </>

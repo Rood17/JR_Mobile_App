@@ -40,8 +40,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import FirebaseState from './context/firebase/FirebaseState';
+import UserState from './context/user/UserState';
 import RecargasState from './context/recargas/RecargasState';
 import PaquetesState from './context/paquetes/PaquetesState';
+import NetInfo from "@react-native-community/netinfo";
+
 
 
 import { MAIN_CONTAINER_STYLE } from './app/res/values/styles/StylesConstants'
@@ -68,9 +71,21 @@ const UserLogged = () => {
 }
 
 // Intro
-const App: () => Node = () => {
+const App = () => {
 
   const [showIntro, setShowIntro] = useState(true);
+
+  // Subscribe
+  const unsubscribe = NetInfo.addEventListener(state => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+    if (!state.isConnected)
+      alert("Favor de revisar su conexión a internet.")
+
+  });
+
+  // Unsubscribe
+  unsubscribe();
 
   setTimeout(() => {
     setShowIntro(false)
@@ -105,60 +120,60 @@ const App: () => Node = () => {
 
   return (
     <>
-      <FirebaseState>
+      <UserState>
         <PaquetesState>
-        <RecargasState>
-        <NavigationContainer>
-          <SafeAreaView style={MAIN_CONTAINER_STYLE}>
-            <StatusBarHandler hideBar={true} />
-            <Stack.Navigator initialRouteName={'Intro'} screenOptions={{ headerShown: false }}>
+          <RecargasState>
+            <NavigationContainer>
+              <SafeAreaView style={MAIN_CONTAINER_STYLE}>
+                <StatusBarHandler hideBar={true} />
+                <Stack.Navigator initialRouteName={'Intro'} screenOptions={{ headerShown: false }}>
 
-              {userLogged ?
-                <>
+                  {userLogged ?
+                    <>
 
-                  <Stack.Screen name="RegisterSuccess" component={RegisterSuccess} />
-                  <Stack.Screen name="Main" component={Main} />
-                  <Stack.Screen name="MiPerfil" component={MiPerfil} />
-                  <Stack.Screen name="MiPerfil_2" component={MiPerfil_2} />
-                  <Stack.Screen name="Details" component={Details} />
-                </>
-                :
-                <>
-                  {showIntro ?
-                    <Stack.Screen name="Intro" component={Intro} />
-                    : null}
-                  <Stack.Screen name='Login' component={Login} options={{
-                    // When logging out, a pop animation feels intuitive
-                    // You can remove this if you want the default 'push' animation
-                    animationTypeForReplace: 'pop',
-                  }} />
-                  <Stack.Screen name="Register" component={Register} />
-                  <Stack.Screen name="RegisterSms" component={RegisterSms} />
+                      <Stack.Screen name="RegisterSuccess" component={RegisterSuccess} />
+                      <Stack.Screen name="Main" component={Main} />
+                      <Stack.Screen name="MiPerfil" component={MiPerfil} />
+                      <Stack.Screen name="MiPerfil_2" component={MiPerfil_2} />
+                      <Stack.Screen name="Details" component={Details} />
+                    </>
+                    :
+                    <>
+                      {showIntro ?
+                        <Stack.Screen name="Intro" component={Intro} />
+                        : null}
+                      <Stack.Screen name='Login' component={Login} options={{
+                        // When logging out, a pop animation feels intuitive
+                        // You can remove this if you want the default 'push' animation
+                        animationTypeForReplace: 'pop',
+                      }} />
+                      <Stack.Screen name="Register" component={Register} />
+                      <Stack.Screen name="RegisterSms" component={RegisterSms} />
 
-                  <Stack.Screen name="Register_2" component={Register_2} />
-                  <Stack.Screen name="DetailLogOut" component={DetailLogOut} />
-                  <Stack.Screen name="ForgottenPwd" component={ForgottenPwd} />
-                </>
-              }
+                      <Stack.Screen name="Register_2" component={Register_2} />
+                      <Stack.Screen name="DetailLogOut" component={DetailLogOut} />
+                      <Stack.Screen name="ForgottenPwd" component={ForgottenPwd} />
+                    </>
+                  }
 
 
-              <Stack.Screen name="Asistance" component={Asistance} />
+                  <Stack.Screen name="Asistance" component={Asistance} />
 
-              <Stack.Screen name="Recharge" component={Recharge} />
-              <Stack.Screen name="Recharge_2" component={Recharge_2} />
-              <Stack.Screen name="Recharge_3" component={Recharge_3} />
+                  <Stack.Screen name="Recharge" component={Recharge} />
+                  <Stack.Screen name="Recharge_2" component={Recharge_2} />
+                  <Stack.Screen name="Recharge_3" component={Recharge_3} />
 
-              <Stack.Screen name="Privacidad" component={Privacidad} />
-              <Stack.Screen name="Terminos" component={Terminos} />
-              <Stack.Screen name="Contacto" component={Contacto} />
-              <Stack.Screen name="Faqs" component={Faqs} />
+                  <Stack.Screen name="Privacidad" component={Privacidad} />
+                  <Stack.Screen name="Terminos" component={Terminos} />
+                  <Stack.Screen name="Contacto" component={Contacto} />
+                  <Stack.Screen name="Faqs" component={Faqs} />
 
-            </Stack.Navigator>
-          </SafeAreaView>
-        </NavigationContainer>
-        </RecargasState>
+                </Stack.Navigator>
+              </SafeAreaView>
+            </NavigationContainer>
+          </RecargasState>
         </PaquetesState>
-      </FirebaseState>
+      </UserState>
     </>
   );
 };

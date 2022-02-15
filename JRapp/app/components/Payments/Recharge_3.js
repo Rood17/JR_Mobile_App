@@ -158,7 +158,7 @@ const Recharge_3 = ({ navigation, route }) => {
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>
-                        <Text>Número JR Movil:</Text>
+                        <Text>Número JRmóvil:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>{idSubscriber}</Text>
                         </TouchableOpacity>
