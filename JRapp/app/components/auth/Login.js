@@ -211,16 +211,25 @@ const LoginBody = ({ nav }) => {
                 setLoading(true)
                 const response = await getPerfilUf(number)
                     .then(function (response) {
-                        responseUserData.array = response.userData
+
+                        // Manejar errores
                         errorResponse = response.error;
+                        if (response.indexOf('Error') != -1 ){
+                            errorResponse = response;
+                        }
+                        
+                        // Data user
+                        responseUserData.array = response.userData
+                        
+                        
                     })
                     .catch(function (error) {
-                        console.log(error);
-                        console.error(error.message);
+                        responseUserData = error.message
+                        console.info("Login error");
+                        //throw new Error ('Error - ' + error.message)
                     }).finally(() => {
                         validateIsJr(number, errorResponse)
                         setLoading(false)
-
                     });
             };
             fetchData();
@@ -280,7 +289,10 @@ const LoginBody = ({ nav }) => {
             }
         } else {
             setJrAlert(true)
-            setErrorStr('Este no es un número JRmóvil.')
+            if (error == 'Network Error')
+                setErrorStr('No hay conexión a internet.')
+            else
+                setErrorStr('Este no es un número JRmóvil.')
             setIconFlex(1.5)
             console.log("** User is not JR **")
         }
@@ -299,7 +311,9 @@ const LoginBody = ({ nav }) => {
             })
             setErrorStr('')
 
-        } else if (intent === 'Recharge') {
+        } else if (intent === 'Recharge' && !jrAlert
+                    && idSubscriber.length == constants.MAX_NUMBER_LENGTH
+                    && !loading) {
             console.log("Login > inside else if iconactionhandler idSubscriber : " + idSubscriber)
             console.log(isPwdOk)
 

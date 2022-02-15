@@ -38,8 +38,21 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
     const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [errorMsg, setErrorMsg] = useState('');
     const [errorMsg2, setErrorMsg2] = useState('');
-    const [initNumber, setInitNumber] = useState();
+    const [initNumber, setInitNumber] = useState(idSubscriber);
     const [pass1, setPass1] = useState(false);
+
+    /**
+     * Si se bloquea el idSubscriber
+     * llamar change number 1
+     */
+    const [autoFlag, setAutoFlag] = useState(true);
+
+    useEffect(() => {
+        autoFlag 
+        ? setPass1(true) 
+        : null
+    }, [autoFlag])
+    
 
     const numberExist = 888
     let phoneValue;
@@ -116,6 +129,7 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
                     value={phoneValue}
+                    disabled={autoFlag}
                     leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor1 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
                     onChangeText={number => onChangeNumber(number)}
