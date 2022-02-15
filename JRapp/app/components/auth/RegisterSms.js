@@ -106,10 +106,10 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
     const [isFinish, setIsFinish] = useState(false);
     const [smsSendDisabled, setSmsSendDisabled] = useState(true)
     const [btnText, setBtnText] = useState('Siguiente');
-    const [countDown, setCountDown] = useState(1);
+    const [countDown, setCountDown] = useState(15);
 
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
-    const { name, lastName } = route.params;
+    const { idSubscriber } = route.params;
     //setSafeName(name)
 
     const onChangeCode = (code) => {
@@ -159,7 +159,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
     useEffect(() => {
         if (pass1) {
             setBtnDisabledFlag(false)
-            navigation.navigate('Register_2', { passName: name, passLastName: lastName })
+            navigation.navigate('Register', { idSubscriber: idSubscriber  })
         }
         else { setBtnDisabledFlag(true) }
 
@@ -200,7 +200,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
         // Sending again SMS
         if (action === 'SendAgain') {
             //alert('send SMS')
-            setCountDown(3)
+            setCountDown(60)
             countPass += 1;
         }
         if (action === 'SendAgain2') {
@@ -249,7 +249,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
                                 <>
                                     <Text>Favor de ingresar de nuevo un número.</Text>
                                     <Input
-                                        placeholder="Número JR Movil"
+                                        placeholder="Número JRmóvil"
                                         secureTextEntry={false}
                                         keyboardType='number-pad'
                                         leftIcon={{ type: 'font-awesome', name: 'mobile', size: 24, color: 'grey' }}
@@ -280,8 +280,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
                                 <>
                                     <IntentBtn
                                         isDisabled={btnDisabledFlag}
-                                        intent='Register_2'
-                                        btnParams={{ passName: name, passLastName: lastName }}
+                                        intent='Register'
                                         navigation={navigation}
                                         btnText='Continuar' />
                                 </>

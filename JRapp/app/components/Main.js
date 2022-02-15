@@ -7,18 +7,22 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import DisplayLogo from './elements/DisplayLogo';
 import IntentBtn from './elements/IntentBtn';
 import { Icon, Input } from 'react-native-elements'
-import { WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
+import { Loader, WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
 import * as styleConst from '../res/values/styles/StylesConstants'
 import * as constants from '../utils/constants/Constants'
 import { formatApiDate, setProductType } from '../utils/Utils'
 import { OverlayModal } from '../components/Payments/Recharge'
 import MiPerfil from './pages/MiPerfil';
 import Asistance from './pages/Asistance';
+import { storeUserString, storeUserData, getUserKey, getUserData, getUserName, getUserLastName, getUserEmail, getUserId } from '../utils/Storage'
+import { logout } from '../context/AuthProvider';
+import UserContext from '../../context/user/UserContext'
+
 // Services
 import * as data from '../utils/services/perfil_uf.json'
 
@@ -43,25 +47,29 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-let globalRoute
-
+// Global Vars
+let userName, userId = null;
 
 // Drawer
 function CustomDrawerContent(props) {
 
     const goToIntent = (intent) => {
 
-        if ( intent === 'Recharge')
+        if (intent === 'Recharge') {
             props.navigation.navigate(intent, {
-                idSubscriber: globalRoute.params.idSubscriber,
+                idSubscriber: getUserId(),
                 isRegister: true,
                 isJr: true,
 
             })
-        else if (intent === 'Cerrar')
-            props.navigation.popToTop()
-        else
-            props.navigation.navigate(intent)
+        }
+        else if (intent === 'Cerrar') {
+
+            // LoginOut
+            console.log("Mandando Loginout")
+            logout() ? props.navigation.navigate('Login') : null
+        }
+        else { props.navigation.navigate(intent) }
 
         props.navigation.closeDrawer();
     }
@@ -70,8 +78,8 @@ function CustomDrawerContent(props) {
             <View >
                 <View style={{ height: '28%', margin: 20, alignItems: 'center', alignContent: 'center' }}>
                     <DisplayLogo stylesLogo={{ height: '55%', width: '55%', margin: 10 }} mini />
-                    <Text>Hola [Nombre]</Text>
-                    <Text>{globalRoute.params.idSubscriber}</Text>
+                    <Text>{getUserName() + ' ' + getUserLastName()}</Text>
+                    <Text>{getUserId()}</Text>
                 </View>
                 <View style={stylesNav.line}></View>
                 <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('MiPerfil')}>
@@ -122,7 +130,7 @@ function CustomDrawerContent(props) {
                         <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
-                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize:12 }}>@2022 JR Movil S.A. de C.V.</Text>
+                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize: 12 }}>@2022 JR móvil S.A. de C.V.</Text>
                 </View>
 
 
@@ -148,13 +156,13 @@ const stylesNav = StyleSheet.create({
         height: 1
     },
     txtA: {
-        color:styleConst.COLOR_LINK[0]
+        color: styleConst.COLOR_LINK[0]
     },
     txtIcon: {
-        marginLeft:15
+        marginLeft: 15
     }
 })
-function MyDrawer() {
+function MyDrawer({ userData }) {
     return (
         <Drawer.Navigator
             screenOptions={{ drawerPosition: 'right', width: 200 }}
@@ -162,19 +170,26 @@ function MyDrawer() {
             />}
 
         >
-            <Drawer.Screen name="MainContent" component={MainContent}
-                options={{
-                    headerShown: false,
-                    drawerLabel: 'Main',
-                    // Section/Group Name
-                    groupName: 'Section 1',
-                    activeTintColor: '#e91e63',
-                }}
+            <Drawer.Screen 
+            name="MainContent"
+            initialParams={{ userData: userData }} 
+            component={MainContent}
+            options={{
+                headerShown: false,
+                drawerLabel: 'Main',
+                // Section/Group Name
+                groupName: 'Section 1',
+                activeTintColor: '#e91e63',
+            }}
+            
+            
             />
         </Drawer.Navigator>
     );
 }
 
+
+// Product card va a lements 999
 // Card
 export const ProductCard = ({ navigation, idSubscriber, isRegister }) => {
 
@@ -192,7 +207,7 @@ export const ProductCard = ({ navigation, idSubscriber, isRegister }) => {
 
         // Go to
         navigation.navigate(intent, {
-            idSubscriber: idSubscriber,
+            idSubscriber: userId,
             isRegister: isRegister,
             isJr: true,
             sendPayload: charge
@@ -265,75 +280,61 @@ const stylesProductCard = StyleSheet.create({
 });
 
 const MainContent = ({ navigation, route }) => {
-    //data.responseSubscriber.status.subStatus
-    const userIsActive = false;
-    const { idSubscriber, isRegister } = globalRoute.params;
-    const [payload, setPayload] = useState('Carga - $50');
+
+    // 
+    // Set Constants
+    // Hacer pruebas on diferentes números
+    // la idea aquí es que siempre se tome de storage, porque en teoría venga de donde venga tendrá el storgae
+
+    // Si viene de Auth tomaá el id de rout
+    // Cuando inici debe pdirlo a la bd
+
+    // sino lo tomará de storga 
+
+    // Setting Global Vars
+    // Se debe quitar
+    // get userData Contextus
+
+    const userData = route.params.userData
+
+    let simData, simSMS, simMIN = [0,0,0,0,0]
+    console.log("** " + Object.values(userData.simData))
+
+    // Open the package
+    if (userData != null || userData.simData != undefined )
+        simData = Object.values(userData.simData)
+
+    // Open the package
+    if ( userData != null || userData.simSMS != undefined)
+        simSMS = Object.values(userData.simSMS)
+
+    // Open the package
+    if ( userData != null || userData.simMIN != undefined )
+        simMIN = Object.values(userData.simMIN)
+
+
+    userName = getUserName()
+    //console.log("simData > Main : " + Object.values(userDataMain.simData))
+
+
     const [gbProduct, setGbProduct] = useState()
+    // Oferta actual
+    const payload = !simData[4] ? 'Sin Carga' : simData[4]
+    const expireMBData = !simData[0] ? '202202010100' : simData[0]
+    
+    // MB
+    const unsuedMBData = !simData ? 'NaN' : simData[2]
+    const totalMBData = !simData ? 'NaN' : simData[1]
+    //SMS
+    const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
+    const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
 
 
-    let [totalMBData, unsuedMBData, expireMBData, actualMBData,
-        totalSMSData, unsuedSMSData, expireSMSData, actualSMSData,
-        totalMINData, unsuedMINData, expireMINData, actualMINData] = [0]
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
     // respuesta Api
 
-
-    data.responseSubscriber.freeUnits.map((item, i) => {
-        // Get data 'mb'
-        if (item.name.indexOf("FreeData_Altan") != -1) {
-            // set Vars
-            totalMBData = item.freeUnit.totalAmt;
-            unsuedMBData = item.freeUnit.unusedAmt;
-            actualMBData = totalMBData - unsuedMBData;
-
-            // if unsed data is none
-            if (actualMBData == 0)
-                actualMBData = totalMBData
-
-            // Get Expirtaion Date
-            item.detailOfferings.map((subItem) => {
-                //console.log(subItem.expireDate)
-                expireMBData = subItem.expireDate;
-            })
-        }
-
-        // get 'sms'  y 'tiempo'
-        if (item.name.indexOf("FU_SMS_Altan-NR-LDI_NA") != -1) {
-            // set Vars
-            totalSMSData = item.freeUnit.totalAmt;
-            unsuedSMSData = item.freeUnit.unusedAmt;
-            actualSMSData = totalSMSData - unsuedSMSData;
-
-            // if unsed data is none
-            if (actualSMSData == 0)
-                actualSMSData = totalSMSData
-
-            // Get Expirtaion Date
-            item.detailOfferings.map((subItem) => {
-                //console.log(subItem.expireDate)
-                expireSMSData = subItem.expireDate;
-            })
-        }
-        if (item.name.indexOf("FU_Min_Altan-NR-IR-LDI_NA") != -1) {
-            // set Vars
-            totalMINData = item.freeUnit.totalAmt;
-            unsuedMINData = item.freeUnit.unusedAmt;
-            actualMINData = totalMINData - unsuedMINData;
-
-            // if unsed data is none
-            if (actualMINData == 0)
-                actualMINData = totalMINData
-
-            // Get Expirtaion Date
-            item.detailOfferings.map((subItem) => {
-                //console.log(subItem.expireDate)
-                expireMINData = subItem.expireDate;
-            })
-        }
-    })
 
 
     // Just accept this format '2022/02/18'
@@ -375,8 +376,8 @@ const MainContent = ({ navigation, route }) => {
 
             // Intent to Recharge_2
             navigation.navigate('Recharge_2', {
-                idSubscriber: idSubscriber,
-                isRegister: isRegister,
+                idSubscriber: userId,
+                isRegister: true,
                 isJr: true,
                 sendPayload: charge
             })
@@ -387,11 +388,9 @@ const MainContent = ({ navigation, route }) => {
     return (
         <>
             <View style={styles.container}>
-                {isRegister ?
-                    <MainHeader name='Hola [Usuario]' navigation={navigation} />
-                    :
-                    <ReturnHeader title='Detalles de tu Saldo' navigation={navigation} />
-                }
+
+                <MainHeader name={userName} navigation={navigation} />
+
                 <ScrollView style={styles.container}>
                     <View style={styles.numberContainer}>
                         <Icon
@@ -399,7 +398,7 @@ const MainContent = ({ navigation, route }) => {
                             type='font-awesome'
                             color={styleConst.MAINCOLORSLIGHT[1]}
                         />
-                        <Text style={styles.number}>{idSubscriber}</Text>
+                        <Text style={styles.number}>{getUserId()}</Text>
                     </View>
                     <View>
                         <MainCard
@@ -408,83 +407,32 @@ const MainContent = ({ navigation, route }) => {
                             subtitleColor={validityColor}
                             bodyHeadOne='MB Totales'
                             bodyHeadTwo='MB Disponibles'
-                            dataOne={totalMBData + ' MB'}
-                            dataTwo={actualMBData + ' MB'}
+                            dataOne={totalMBData}
+                            dataTwo={unsuedMBData}
                             MBC='true'
                             text='Consumos de datos:'
                         />
-                        {isRegister ?
-                            <>
-                                <SocialMainCard />
-                                <MainCard
-                                    bodyHeadOne='Min Consumidos'
-                                    bodyHeadTwo='SMS Consumidos'
-                                    dataOne={actualSMSData + ' Sms'}
-                                    dataTwo={actualMINData + ' Min'}
-                                    showDetalles
-                                    navigation={navigation}
-                                    idSubscriber={idSubscriber}
-                                />
-                                {/** Exported from recharge */}
-                                <View style={{ marginTop: 20 }}>
-                                    <OverlayModal setGbProduct={setGbProduct} main />
-                                </View>
-                                {/**
-                                <View style={styles.btnsContainer}>
-                                    <View style={styles.btnAction}>
-                                        <IntentBtn
-                                            navigation={navigation}
-                                            intent='Recharge'
-                                            btnParams={{ idSubscriber: idSubscriber, isRegister: isRegister, isJr: true }}
-                                            btnText='Paquetes' />
-                                    </View>
-                                    <View style={styles.btnAction}>
-                                    <IntentBtn
-                                            navigation={navigation}
-                                            intent='Recharge'
-                                            btnParams={{ 
-                                                idSubscriber: idSubscriber, 
-                                                isRegister: isRegister, 
-                                                isJr: true,
-                                                sendPayload: 'B'
-                                             }}
-                                            btnText='Cargar Saldo' />
-                                    </View>
-                                </View>**/}
-                            </>
-                            :
-                            <View style={styles.infoNoRegisterTxt}>
-                                <TouchableOpacity>
-                                    <Text style={{ textAlign: 'center' }}>
-                                        Para más información
-                                        <Text style={{ color: styleConst.MAINCOLORS[0] }}> Ingresa </Text>
-                                        a tu "Cuenta".
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity>
-                                    <Text style={{ textAlign: 'center' }}>
-                                        O<Text style={{ color: styleConst.MAINCOLORS[0] }}> Registrate Aquí. </Text>
-                                        ¡Es gratuito!
-                                    </Text>
-                                </TouchableOpacity>
-                                <View style={styles.btnsContainer}>
-                                    <View style={styles.btnAction}>
-                                        <IntentBtn
-                                            navigation={navigation}
-                                            intent='Recharge'
-                                            btnParams={{ idSubscriber: idSubscriber, isRegister: isRegister, isJr: true }}
-                                            btnText='Recarga' />
-                                    </View>
-                                </View>
-                            </View>
-                        }
 
 
+                        <SocialMainCard />
+                        <MainCard
+                            bodyHeadOne='Min Consumidos'
+                            bodyHeadTwo='SMS Consumidos'
+                            dataOne={totalSMSData}
+                            dataTwo={unsuedSMSData}
+                            showDetalles
+                            navigation={navigation}
+                            idSubscriber={userId}
+                        />
+                        {/** Exported from recharge */}
+                        <View style={{ marginTop: 20 }}>
+                            <OverlayModal setGbProduct={setGbProduct} main />
+                        </View>
                     </View>
                     <View style={{ marginBottom: 30 }}>
                         <View style={styles.productTitleContiner}>
                             <Icon
-                                name='dropbox'
+                                name='mobile'
                                 type='font-awesome'
                                 color={styleConst.MAINCOLORSLIGHT[1]}
                             />
@@ -493,22 +441,20 @@ const MainContent = ({ navigation, route }) => {
                         <View>
                             <ProductCard
                                 navigation={navigation}
-                                idSubscriber={idSubscriber}
-                                isRegister={isRegister}
+                                idSubscriber={userId}
+                                isRegister={true}
                             />
                         </View>
                     </View>
                 </ScrollView>
 
 
-                {isRegister ?
-                    <MainFooter
-                        navigation={navigation}
-                        idSubscriber={idSubscriber}
-                    />
-                    :
-                    null
-                }
+
+                <MainFooter
+                    navigation={navigation}
+                    idSubscriber={userId}
+                />
+
             </View>
 
 
@@ -558,10 +504,41 @@ const styles = StyleSheet.create({
 });
 
 const Main = ({ navigation, route }) => {
-    globalRoute = route;
+
+
+    // Charge ZONE
+    const [isReady, setIsReady] = useState(false);
+    const { userData, getAPIUserData } = useContext(UserContext);
+
+    // Call UserState
+    useEffect(() => {
+        storeUserString('lastView', 'main')
+            getUserData().catch(() => console.log("Error in Main"))
+            .finally(()=>{
+                console.log("** Main - Welcome ** " + getUserId())
+                getAPIUserData(getUserId()).then((response) => {
+                    console.log("** Main - Welcome **")
+                    if ( response ){
+                        setIsReady(true)
+                    }
+            
+                })
+            })
+        
+    }, [userData])
+
+    console.log("** Main - Welcome ** " + getUserId())
+    userId = getUserId();
+
     return (
         <>
-            <MyDrawer route={route} />
+            {!isReady ?
+                <Loader />
+                :
+                <MyDrawer
+                    userData={userData}
+                />
+            }
         </>
     );
 }

@@ -7,17 +7,20 @@
  * @flow strict-local
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import type { Node } from 'react';
 
 import DisplayLogo from '../elements/DisplayLogo';
-import IntentBtn from '../elements/IntentBtn';
+import { WarningAdvice } from '../elements/Elements'
 import Help from '../elements/Help';
 import * as constants from '../../utils/constants/Constants';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
+import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
+import { createUser, registerUser, updateUserPwd } from '../../context/AuthProvider';
+import FirebaseContext from '../../../context/firebase/FirebaseContext';
 
 import {
     Button,
@@ -30,6 +33,7 @@ import {
     View,
     TextInput,
     TouchableWithoutFeedback,
+    Keyboard,
 } from 'react-native';
 
 import {
@@ -41,21 +45,29 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 // Btn Disabled Flaf Team
-let pass1, pass2, pass3, isBold1, isBold2, isBold3, i;
+let pass1, pass2, pass3, i;
+let { isBold1, isBold2, isBold3 } = '500'
 
-export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
+export const NewPwd = ({ setOnPwdChange,setNewPwd, 
+    update, setError, emailPass, goToIntent, btnTxt, 
+    label, navigation, dataArray }) => {
 
 
     const [chackColor, setChackColor] = useState('grey');
     const [chackColor2, setChackColor2] = useState('grey');
     const [chackColor3, setChackColor3] = useState('grey');
-    const [btnDisabledFlag, setBtnDisabledFlag] = useState(true);
-
-    if (!btnTxt)
-        btnTxt = 'Texto'
-
+    const [btnDisabled, setbtnDisabled] = useState(true);
+    const [pwd, setPwd] = useState()
+    const [registerResponse, setRegisterResponse] = useState(false);
+    
+    useEffect(() => {
+        !emailPass
+        ? setbtnDisabled(true)
+        : setbtnDisabled(false)
+    }, [emailPass])
+    
     const onChangeText = (text) => {
-
+        setOnPwdChange(true)
         i = text.length;
         console.log(text.length)
         if (utils.CheckUppercase(text)) {
@@ -99,13 +111,78 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation, dataA
         }
 
         // Open the portal
-        if (pass1 != undefined && pass2 != undefined && pass3 != undefined && emailPass)
-            setBtnDisabledFlag(false)
-        else
-            setBtnDisabledFlag(true)
-    }
-    console.log(btnDisabledFlag)
+        if (pass1 != undefined && pass2 != undefined && pass3 != undefined && emailPass) {
+            setbtnDisabled(false)
 
+            // set pwd
+            console.log("text - " + text)
+            dataArray[0].pwd = text;
+            setPwd(dataArray[0].pwd)
+            console.log("dataArray[0].pwd - " + pwd)
+        }
+        else { setbtnDisabled(true) }
+    }
+
+    const registerHandler = () => {
+        register()
+    }
+
+    // Register
+    // User Register??
+    function register() {
+        let email = dataArray[0].email
+
+
+
+
+        console.log("****************  ")
+        console.log("*** pwd : " + pwd)
+        console.log("*** email : " + email)
+        console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
+        console.log("*** name : " + dataArray[0].name)
+        console.log("*** lastName : " + dataArray[0].lastName)
+
+        email = email.toLowerCase();
+        let newSecret = pwd
+
+        // Handle type of action
+        if ( !update){
+            registerUser(email, pwd, setRegisterResponse);
+        } else {
+            updateUserPwd(newSecret, setRegisterResponse)
+            setNewPwd(newSecret)
+        }
+
+        console.log("registerResponse -  " + registerResponse)
+        // Clear Storage
+        clearStorage();
+        // Open Modal            // Store New Data
+        storeUserData(dataArray);
+        // User Just Register
+        storeUserString('lastView', 'register')
+
+        // Set bd
+            // Handled by Auth
+            //navigation.navigate('Main')
+
+        
+
+        if (registerResponse.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+            setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
+        }
+
+        if (registerResponse.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+        }
+
+
+
+
+
+
+    }
 
     return (
         <>
@@ -144,13 +221,12 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation, dataA
                     </View>
                 </View>
 
-
-                <OverlayModal
-                    btnText={btnTxt}
-                    isDisabled={btnDisabledFlag}
-                    navigation={navigation}
-                    fail={btnDisabledFlag}
-                    dataArray={dataArray}
+                <Button
+                    //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                    onPress={registerHandler}
+                    color={styleConst.MAINCOLORS[0]}
+                    title='Continuar'
+                    disabled={btnDisabled}
                 />
             </View>
 
@@ -159,65 +235,7 @@ export const NewPwd = ({ emailPass, goToIntent, btnTxt, label, navigation, dataA
 
 }
 
-// Modal
-const OverlayModal = ({ btnDisabledFlag, navigation, fail,dataArray }) => {
-    const [visible, setVisible] = useState(false);
-    const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
 
-    const toggleResume = () => {
-        setVisible(!visible);
-    };
-
-    const safePaymentHandler = () => {
-        if (safePaymentSuccess) {
-            navigation.navigate('Main', {
-                userArray: dataArray,
-            })
-        } else {
-            toggleResume()
-            fail('Error')
-        }
-    }
-
-    return (
-        <View>
-
-            <View style={{ marginLeft: 20, marginRight: 20, marginTop: 15, marginBottom: 5 }}>
-
-                <Button
-                    //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                    onPress={toggleResume}
-                    color={styleConst.MAINCOLORS[0]}
-                    title='Continuar 55'
-                    disabled={btnDisabledFlag}
-                />
-
-            </View>
-
-
-            <Overlay isVisible={visible} onBackdropPress={toggleResume}>
-                <View style={modalStyle.containerModal}>
-                    <View style={modalStyle.headContainer}>
-                        <Text style={modalStyle.headTxt}>¡Gracias {dataArray.passName}!</Text>
-                        <Text >Tu cuenta se ha registrado exitosamente.</Text>
-                    </View>
-
-
-
-                    <View style={modalStyle.footer}>
-                        <Button
-                            //style={stylesBtn == null ? btnNormal() : stylesBtn}
-
-                            onPress={safePaymentHandler}
-                            color={styleConst.MAINCOLORS[0]}
-                            title='Ir a tu portal'
-                        />
-                    </View>
-                </View>
-            </Overlay>
-        </View>
-    );
-};
 const modalStyle = StyleSheet.create({
     containerModal: {
         margin: 20
@@ -236,7 +254,7 @@ const modalStyle = StyleSheet.create({
         margin: 10
     },
     headTxt: {
-        fontWeight: 'bold',
+        fontWeight: '600',
         color: styleConst.MAINCOLORS[1]
     },
 });
@@ -244,20 +262,60 @@ const modalStyle = StyleSheet.create({
 const Register_2: () => Node = ({ recovery, navigation, route }) => {
 
     // Params
-    const { passName, passLastName } = route.params;
-    const [emailIsCorrect, setEmailIsCorrect] = useState(false);
+    const { idSubscriber, name, lastName } = route.params;
+    const dataArray = [{ idSubscriber: idSubscriber, name: name, lastName: lastName, email: null }]
 
-    const onChangeEmail = (email) => {
-        if (email.indexOf('@') != -1 && email.indexOf('.') != -1) {
-            setEmailIsCorrect(true)
-            console.log('dentro : ' + emailIsCorrect)
+    const [emailIsCorrect, setEmailIsCorrect] = useState(false);
+    const [email, setEmail] = useState('none');
+    const [error, setError] = useState();
+    const [onPwdChange, setOnPwdChange] = useState(false);
+
+    const [keyBoardIsOpen, setKeyBoardIsOpen] = useState();
+
+    // Just one time
+    useEffect(() => {
+        if (onPwdChange) validateEmail()
+    }, [onPwdChange])
+    
+    const validateEmail = () => {
+        setError('')
+        if (onPwdChange && email != undefined && email.length > 1){
+            if (email.indexOf('@') != -1 && email.indexOf('.') != -1) {
+                setEmailIsCorrect(true)
+                setError('')
+    
+            } else {
+                setError('')
+                setError(<WarningAdvice type={2} warningText='Introduzca un email válido.' />)
+                setEmailIsCorrect(false)
+            }
         } else {
             setEmailIsCorrect(false)
-            console.log('dentro : ' + emailIsCorrect)
         }
-
-
     }
+
+    const onChangeEmail = (inputEmail) => {
+        setEmailIsCorrect(false)
+        setError('')
+        setEmail(inputEmail)
+        validateEmail()
+    }
+    // Set email
+    dataArray[0].email = email
+
+
+    // Keyboard Listener for disapear icons
+    Keyboard.addListener('keyboardDidShow',
+        () => {
+            setKeyBoardIsOpen(true);
+        },
+    );
+
+    Keyboard.addListener('keyboardDidHide',
+        () => {
+            setKeyBoardIsOpen(false);
+        },
+    );
 
     return (
         <View style={styles.container}>
@@ -270,7 +328,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                         {!recovery ?
                             <>
                                 <Text>
-                                    Para entrar a tu portal "JR movil" es necesario que
+                                    Para entrar a tu portal "JRmóvil" es necesario que
                                     introduzcas tus datos.
                                 </Text>
                                 <View>
@@ -279,26 +337,30 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                                         textContentType='emailAddress'
                                         keyboardType='email-address'
                                         autoComplete='email'
+                                        errorMessage={error}
                                         secureTextEntry={false}
                                         leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: 'grey' }}
                                         onChangeText={email => onChangeEmail(email)}
                                     />
+
                                 </View>
                             </>
                             :
                             <Text style={{ marginBottom: 20 }}>
-                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JR Movil.
+                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JRmóvil.
                             </Text>
                         }
 
 
                         <NewPwd
-                            label='Ingresar Nueva Contraseña'
+                            label='Ingresar Contraseña'
                             goToIntent='Register_Sms'
                             btnTxt='Registrarse'
                             navigation={navigation}
                             emailPass={emailIsCorrect}
-                            dataArray={{passName:passName, passLastName:passLastName}}
+                            dataArray={dataArray}
+                            setError={setError}
+                            setOnPwdChange={setOnPwdChange}
                         />
 
                     </View>
@@ -307,7 +369,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
 
                 </ScrollView>
             </TouchableWithoutFeedback>
-            <Help navigation={navigation} />
+            {!keyBoardIsOpen ? <Help navigation={navigation} /> : null}
         </View>
     );
 };
@@ -338,7 +400,7 @@ const styles = StyleSheet.create({
     phoneTxt: {
         color: styleConst.MAINCOLORS[1],
         fontSize: 15,
-        fontWeight: 'bold',
+        fontWeight: '600',
         margin: 10
     }
 });

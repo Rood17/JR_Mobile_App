@@ -13,6 +13,8 @@ import { UserImg, ReturnHeader } from "../elements/Elements";
 import { Icon, Input } from 'react-native-elements'
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import IntentBtn from '../elements/IntentBtn'
+import { getUserName,  getUserEmail, getUserId } from '../../utils/Storage'
+
 import {
     Button,
     SafeAreaView,
@@ -27,7 +29,7 @@ import {
 } from 'react-native';
 
 // Card
-export const CardPerfil = ({ }) => {
+export const CardPerfil = ({ navigation }) => {
     return (
 
         <View style={stylesCardPerfil.boxShadow}>
@@ -42,18 +44,19 @@ export const CardPerfil = ({ }) => {
                 </View>
                 <View style={stylesCardPerfil.headContainer}>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Titular de la línea</Text>
-                    <Text>'User'</Text>
-                    <Text style={stylesCardPerfil.cardHeadTxt}>Número JR Movil</Text>
-                    <Text>55 89 74 56 23</Text>
+                    <Text>{getUserName()}</Text>
+                    <Text style={stylesCardPerfil.cardHeadTxt}>Número JRmóvil</Text>
+                    <Text>{getUserId()}</Text>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Email</Text>
-                    <Text>'User@hotmail.com'</Text>
+                    <Text>{getUserEmail()}</Text>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Contraseña</Text>
                     <Text>********</Text>
                 </View>
             </View>
             <View style={stylesCardPerfil.btnContainer}>
                 <IntentBtn
-                intent='Editar perfil'
+                    intent='MiPerfil_2'
+                    navigation={navigation} 
                     color={1}
                     btnText='Editar perfil'
                 />
@@ -62,7 +65,7 @@ export const CardPerfil = ({ }) => {
 
     );
 }
-export const CardPerfilInfo = ({ }) => {
+export const CardPerfilInfo = ({navigation }) => {
     const [isEnabled, setIsEnabled] = useState(true);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     let agree = 'Sí'
@@ -86,7 +89,7 @@ export const CardPerfilInfo = ({ }) => {
                 </View>
                 <SafeAreaView style={stylesCardPerfil.headContainer}>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Estoy de acuerdo en recibir promociones e
-                        información que JR Movil considere relevante enviarme;
+                        información que JRmóvil considere relevante enviarme;
                         ya sea por whatsapp o cualquier otro medio de difusión.
                     </Text>
                 </SafeAreaView>
@@ -103,8 +106,9 @@ export const CardPerfilInfo = ({ }) => {
             </View>
             <View style={stylesCardPerfil.btnContainer}>
                 <IntentBtn
+                    navigation={navigation}
                     color={1}
-                    intent='guardar'
+                    intent='Main'
                     btnText='Guardar configuración'
                 />
             </View>
@@ -176,10 +180,12 @@ const MiPerfil = ({navigation}) => {
         <View style={styles.container} >
             <ReturnHeader title='Mi perfil' navigation={navigation} />
             <View style={{ paddingLeft: 15, marginTop: 35 }}>
-                <Text>Aquí puedes modificar tus datos personales registrados en "JR Movil" y tu contraseña.</Text>
+                <Text>Aquí puedes modificar tus datos personales registrados en "JRmóvil" y tu contraseña.</Text>
             </View>
-            <CardPerfil />
-            <CardPerfilInfo />
+            <CardPerfil navigation={navigation} />
+            <CardPerfilInfo 
+                navigation={navigation}
+            />
         </View>
 
     );

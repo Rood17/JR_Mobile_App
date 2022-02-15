@@ -37,9 +37,6 @@ const Intro: () => Node = () => {
     backgroundColor: isDarkMode ? 'Colors.blu': 'Colors.lighter',
   };
 
-  const goToIntent = () => {
-    console.log("holaaaa 123")
-  }
 
   return (
     <>
@@ -50,7 +47,7 @@ const Intro: () => Node = () => {
        <DisplayLogo stylesLogo={styles.logo}/> 
       </View>
       <View style={styles.btnActionContainer}>
-        <Text style={{fontWeight:'normal', fontSize:20}}>Cambiate de CHIP</Text>
+        <Text style={{fontWeight:'600', fontSize:30, color:'black'}}></Text>
       </View>
     </ImageBackground>
     </> 
@@ -75,7 +72,7 @@ const styles = StyleSheet.create({
   },
   btnActionContainer : {
     padding: 20,
-    flex:2,
+    flex:3,
     alignItems:'flex-start',
     alignItems:'center'
   },
