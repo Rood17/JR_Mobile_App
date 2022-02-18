@@ -19,7 +19,7 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
-import { login, isUserLog } from '../../context/AuthProvider';
+import { login } from '../../context/AuthProvider';
 import { storeUserString } from '../../utils/Storage'
 import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
 
@@ -57,6 +57,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [disabledBtn, setDisabledBtn] = useState(true)
     const [error, setError] = useState()
     const [loginSuccess, setLoginSuccess] = useState(false)
+    const [secret, setSecret] = useState()
 
     let pwdInput = React.createRef();
 
@@ -65,6 +66,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         if (pwd.length > 0) {
             setDisabledBtn(false);
             setIsPwdOk(true)
+            setSecret(pwd)
         }
         else {
             setDisabledBtn(true)
@@ -76,7 +78,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         // Se almacena en el storage el view anterior.
         storeUserString('lastView', 'login')
         // Aquí se llama al login
-        login('bameetr@gu.bhj', 'Prueba123', setError, setLoginSuccess)
+        login(idSubscriber, secret, setError, setLoginSuccess)
     }
 
 
@@ -88,9 +90,6 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         if (loginSuccess) {
             nav.navigate('Main',
                 { idSubscriber: idSubscriber, isRegister: true });
-
-            // Set LastView
-            storeUserString('lastView', 'login')
 
             // Reset values
             setDisabledBtn(true);

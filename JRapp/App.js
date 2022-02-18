@@ -33,8 +33,6 @@ import Faqs from './app/components/pages/Faqs';
 import DetailLogOut from './app/components/Details/DetailLogOut';
 import RegisterSuccess from './app/components/auth/RegisterSuccess';
 
-import { isUserLog } from './app/context/AuthProvider';
-
 // React navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -60,23 +58,13 @@ import {
 
 const Stack = createNativeStackNavigator();
 
-// IUserRegister?
-const UserLogged = () => {
-  return (
-    <>
-      <Stack.Screen name={initRoute} component={initComponent} options={{
-        // When logging out, a pop animation feels intuitive
-        // You can remove this if you want the default 'push' animation
-        animationTypeForReplace: 'pop',
-      }} />
-    </>
-  )
-}
 
 // Intro
 const App = () => {
+  getUserData()
+
   const [showIntro, setShowIntro] = useState(true);
-  const [isUserLogin, setIsUserLogin] = useState(false);
+  const [isUserLogin, setIsUserLogin] = useState(getUserId());
 
   // Subscribe
   const unsubscribe = NetInfo.addEventListener(state => {
@@ -117,15 +105,8 @@ const App = () => {
   //<Recharge_3 />
 
   // Details
-  // Is User logIn
-  getUserData()
-  let userLogged;
-
-  useEffect( () => {
-    userLogged = getUserId()
-  }, [getUserId()])
   
-  console.log('************************ userLogged : ' + userLogged)
+  console.log('************************ isUserLogin : ' + isUserLogin)
 
   return (
     <>
@@ -137,7 +118,7 @@ const App = () => {
                 <StatusBarHandler hideBar={true} />
                 <Stack.Navigator initialRouteName={'Intro'} screenOptions={{ headerShown: false }}>
 
-                  {userLogged ?
+                  {isUserLogin ?
                     <>
 
                       <Stack.Screen name="RegisterSuccess" component={RegisterSuccess} />

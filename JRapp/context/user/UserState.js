@@ -117,7 +117,7 @@ const filterArray = (userData) => {
     }
 }
 
-const UserState = props => {
+const UserState = (props) => {
 
     // Crear state inicial
     const initialState = {

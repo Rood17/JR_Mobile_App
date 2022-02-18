@@ -7,7 +7,6 @@ import {
 import * as data from '../../utils/services/perfil_uf.json'
 import * as paquetes from '../../utils/services/paquetes.json'
 import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
-import { isUserLog } from '../../context/AuthProvider'
 
 import * as qs from 'qs'
 import {
@@ -190,8 +189,8 @@ export const getUserAuth = async (idSubscriber, pwd) => {
 
     var myHeaders = new Headers();
     var formdata = new FormData();
-    formdata.append("user_number", "8888888888");
-    formdata.append("password", "Prueba123");
+    formdata.append("user_number", idSubscriber);
+    formdata.append("password", pwd);
 
     var requestOptions = {
       method: 'POST',
@@ -203,7 +202,17 @@ export const getUserAuth = async (idSubscriber, pwd) => {
     fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/login/", requestOptions)
       .then(response => response.text())
       .then(result => {
-        console.log(result)
+        result = JSON.parse(result)
+
+        let dataArray = [{ 
+          idSubscriber: idSubscriber, 
+          name: result.first_name, 
+          email: result.email, 
+          lastName: result.last_name, 
+          pwd: pwd }]
+
+        
+
         resolve(result)
       })
       .catch(error => console.log('error', error))
@@ -257,7 +266,6 @@ export const registerAPIUser = async (dataArray, email) => {
         storeUserData(dataArray);
         // User Just Register
         storeUserString('lastView', 'register')
-        isUserLog(dataArray[0].idSubscriber, dataArray[0].pwd)
         resolve(response.data)
       })
       .catch((error) => {
@@ -287,7 +295,7 @@ export const userIsRegisterAPI = async (idSubscriber) => {
   
       var myHeaders = new Headers();
       var formdata = new FormData();
-      formdata.append("user_number", "8888888888");
+      formdata.append("user_number", idSubscriber);
   
       var requestOptions = {
         method: 'POST',
@@ -299,7 +307,7 @@ export const userIsRegisterAPI = async (idSubscriber) => {
       fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/is_register/", requestOptions)
         .then(response => response.text())
         .then(result => {
-          console.log(result)
+          console.log('userIsRegisterAPI : ' +  result)
           resolve(result)
         })
         .catch(error => console.log('error', error))

@@ -9,7 +9,7 @@ import Auth, {
 } from "firebase/auth";
 import {clearStorage, getUserData,getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
 import {getUserAuth, registerAPIUser} from '../utils/services/get_services'
-import App from '../../App'
+import {isUserActive} from '../../App'
 
 const auth = getAuth();
 
@@ -84,7 +84,7 @@ export const isFireUserLog = () => {
 }
 
 // JR API
-export const login = async (idSubscriber, pwd) => {
+export const login = async (idSubscriber, pwd, setError, setLoginSuccess) => {
     // Set an initializing state whilst Firebase connects
     let result = false;
     
@@ -104,8 +104,29 @@ export const login = async (idSubscriber, pwd) => {
             getUserAuth(idSubscriber, pwd).then((response)=> {
                 
                 console.log("AUTH PROVIDER 222 ****   : ",response);
+                console.log("AUTH PROVIDER 222 ****   : ",response.last_name);
+                console.log("AUTH PROVIDER 222 ****   : ",response.email);
                 result = response;
-                setUser(true)
+
+                // handle errors
+                if ( result.toString().indexOf('Contraseña inválida') != -1) {
+                    setError(500)
+                } else {
+                    // antes de activar este es necesario
+                    // que la api ed login regrese los datos del usuario
+                    // y los mande al storge = 9999
+                    // setLoginSuccess(true
+                    // Clear Storage
+                    clearStorage();
+                    // Store New Data
+                    storeUserData(dataArray);
+                    // User Just Register
+                    storeUserString('lastView', 'login')
+                    setError()
+                    console.log("calling user !!! ")
+                    isUserActive()
+                }
+
             }).catch((error) => console.log("Error in isUserLogin : " + error))
             .finally(()=>{
                 console.log("** isAuth final  ** ")
@@ -161,6 +182,7 @@ export const logout = () => {
     });*/
     // Clear Storeg
     clearStorage()
+    isUserActive()
     console.log('User is log out!');
 }
 
