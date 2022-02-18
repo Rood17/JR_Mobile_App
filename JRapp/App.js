@@ -45,6 +45,9 @@ import RecargasState from './context/recargas/RecargasState';
 import PaquetesState from './context/paquetes/PaquetesState';
 import NetInfo from "@react-native-community/netinfo";
 
+import {getUserData, getUserId } from './app/utils/Storage'
+
+
 
 
 import { MAIN_CONTAINER_STYLE } from './app/res/values/styles/StylesConstants'
@@ -72,8 +75,8 @@ const UserLogged = () => {
 
 // Intro
 const App = () => {
-
   const [showIntro, setShowIntro] = useState(true);
+  const [isUserLogin, setIsUserLogin] = useState(false);
 
   // Subscribe
   const unsubscribe = NetInfo.addEventListener(state => {
@@ -84,7 +87,7 @@ const App = () => {
 
   });
 
-  // Unsubscribe
+  // Check connection
   unsubscribe();
 
   setTimeout(() => {
@@ -114,9 +117,15 @@ const App = () => {
   //<Recharge_3 />
 
   // Details
-  // Is User logeIn
-  const userLogged = isUserLog()
-  console.log('userLogged : ' + userLogged)
+  // Is User logIn
+  getUserData()
+  let userLogged;
+
+  useEffect( () => {
+    userLogged = getUserId()
+  }, [getUserId()])
+  
+  console.log('************************ userLogged : ' + userLogged)
 
   return (
     <>

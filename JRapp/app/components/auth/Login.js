@@ -21,7 +21,7 @@ import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
 import { login, isUserLog } from '../../context/AuthProvider';
 import { storeUserString } from '../../utils/Storage'
-import { getPerfilUf } from '../../utils/services/get_services'
+import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
 
 
 import {
@@ -50,7 +50,6 @@ import { WarningAdvice } from '../elements/Elements';
 
 
 // Global Vars
-let isNumberRegister = false;
 let numberInput = React.createRef();
 
 const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
@@ -190,10 +189,10 @@ const LoginBody = ({ nav }) => {
     const [clear, setClear] = useState(null);
     const [UFuserData, setUFUserData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isRegister, setIsRegister] = useState(false)
 
     // ****** API999 24917335
     // esta constante deberá llamar al backend para verificar si el usuario ya existe.
-    const isRegister = '56'
     let responseUserData = [];
     // Auth handler
     const onChangeNumber = (number) => {
@@ -205,10 +204,12 @@ const LoginBody = ({ nav }) => {
         if (number.length == constants.MAX_NUMBER_LENGTH) {
 
             // Se llama a la API
+            
             const fetchData = async () => {
                 let errorResponse;
 
                 setLoading(true)
+                
                 const response = await getPerfilUf(number)
                     .then(function (response) {
 
@@ -221,17 +222,17 @@ const LoginBody = ({ nav }) => {
                         // Data user
                         responseUserData.array = response.userData
                         
-                        
                     })
                     .catch(function (error) {
                         responseUserData = error.message
                         console.info("Login error");
                         //throw new Error ('Error - ' + error.message)
                     }).finally(() => {
-                        validateIsJr(number, errorResponse)
-                        setLoading(false)
-                    });
-            };
+                        // Finalizando - está registrado??
+                        isRegisterAPI(number, errorResponse)
+                                             
+                });                
+            };       
             fetchData();
 
             // Clear input error
@@ -265,7 +266,7 @@ const LoginBody = ({ nav }) => {
 
 
     // Función de validación
-    const validateIsJr = (number, error) => {
+    const validateIsJr = async (number, error, result) => {
         if (error == null) {
             //Log
             console.log("** User is JR **")
@@ -278,14 +279,13 @@ const LoginBody = ({ nav }) => {
             setJrAlert(false)
             setPhoneIsCorrect(true)
             setIconFlex(4)
-
             // Is register??
-            if (number.toString().indexOf(isRegister) != -1) {
-                isNumberRegister = true
+            if (result == 'true') {
+                setIsRegister(true)
                 setIconFlex(5)
             }
             else {
-                isNumberRegister = false
+                setIsRegister(false)
             }
         } else {
             setJrAlert(true)
@@ -297,6 +297,32 @@ const LoginBody = ({ nav }) => {
             console.log("** User is not JR **")
         }
     }
+
+    // Call bd
+    const isRegisterAPI = async (number, errorResponse) => {
+
+        let result = false;
+        setLoading(true)
+        const response = await userIsRegisterAPI(number)
+            .then(function (response) {
+
+                // Manejar errores
+                console.log(' Login - Is register : ' + response)
+                result = response
+                setIsRegister(result)
+                validateIsJr(number, errorResponse, result)
+
+            })
+            .catch(function (error) {
+                console.info("Login isRegister error : " + error);
+                //throw new Error ('Error - ' + error.message)
+            }).finally(() => {
+                setLoading(false)  
+                console.log("Login Isregister final")
+            });
+
+            return result
+    };
 
     // Consulta handler
     const iconActionHandler = (intent) => {
@@ -354,7 +380,7 @@ const LoginBody = ({ nav }) => {
                                     <PassOrRegister
                                         setIsPwdOk={setIsPwdOk}
                                         idSubscriber={idSubscriber}
-                                        numberFlag={isNumberRegister}
+                                        numberFlag={isRegister}
                                         navigation={nav}
                                     />
                                     :

@@ -7,11 +7,13 @@ import Auth, {
     updatePassword,
     getAdditionalUserInfo
 } from "firebase/auth";
-import {getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
-
-
+import {clearStorage, getUserData,getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
+import {getUserAuth, registerAPIUser} from '../utils/services/get_services'
+import App from '../../App'
 
 const auth = getAuth();
+
+
 
 function AuthProvider() {
     const [loading, setLoading] = useState(true);
@@ -62,7 +64,7 @@ export const createUser = (email, phoneNumber, name, lastName, pwd, setRegisterS
     });
 }
 
-export const isUserLog = () => {
+export const isFireUserLog = () => {
     // Set an initializing state whilst Firebase connects
     const [initializing, setInitializing] = useState(true);
     const [user, setUser] = useState();
@@ -74,14 +76,6 @@ export const isUserLog = () => {
 
     const subscriber = getAuth().onAuthStateChanged(onAuthStateChanged);
 
-    //const auth = auth();
-    //const userc = auth.currentUser;
-
-    // Hcer pruebas al usuario -- lograr guardar más datos en el auth
-
-    //console.log("user : " + user.id)
-    //console.log("user : " + user.name)
-
     if (user)
         return true;
     else
@@ -89,7 +83,44 @@ export const isUserLog = () => {
 
 }
 
-export const login = (email, pwd, setError, setLoginSuccess) => {
+// JR API
+export const login = async (idSubscriber, pwd) => {
+    // Set an initializing state whilst Firebase connects
+    let result = false;
+    
+    if ( !idSubscriber || !pwd ) {
+        getUserData()
+        idSubscriber = getUserId()
+        pwd = getSecret()
+    } 
+
+    console.log(" *** 1 getUserId : " + idSubscriber)
+    console.log(" *** 1 getSecret() : " + pwd)
+
+    let myPromise = new Promise(function (resolve) {
+        if ( idSubscriber != undefined && pwd != undefined ) {
+            console.log('************************ isUserLog : dentro del if ' )
+
+            getUserAuth(idSubscriber, pwd).then((response)=> {
+                
+                console.log("AUTH PROVIDER 222 ****   : ",response);
+                result = response;
+                setUser(true)
+            }).catch((error) => console.log("Error in isUserLogin : " + error))
+            .finally(()=>{
+                console.log("** isAuth final  ** ")
+            })
+
+        
+        }
+    });
+
+    console.log("*************************** AUTH PROVIDER 4444 ****   : ",result);
+    return  await myPromise;
+
+}
+
+export const Firelogin = (email, pwd, setError, setLoginSuccess) => {
 
 
     signInWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
@@ -120,15 +151,20 @@ export const login = (email, pwd, setError, setLoginSuccess) => {
 }
 
 export const logout = () => {
+    let unsubscribe = true
+    /*
     getAuth().signOut().then(() => {
         console.log('User is log out!');
         return true;
     }).catch(error => {
         console.error(error);
-    });
+    });*/
+    // Clear Storeg
+    clearStorage()
+    console.log('User is log out!');
 }
 
-export const registerUser = (email, pwd, setRegisterResponse) => {
+export const registerFireUser = (email, pwd, setRegisterResponse) => {
 
     email = email.toLowerCase();
     console.log('setRegisterResponse : ' +setRegisterResponse)
@@ -146,6 +182,39 @@ export const registerUser = (email, pwd, setRegisterResponse) => {
         alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
 
     }
+}
+
+export const registerUser = (dataArray) => {
+
+    console.log("**************** Register  ")
+    console.log("****************  ")
+    console.log("*** pwd : " + dataArray[0].pwd)
+    console.log("*** email : " + dataArray[0].email)
+    console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
+    console.log("*** name : " + dataArray[0].name)
+    console.log("*** lastName : " + dataArray[0].lastName)
+    console.log("****************  ")
+    console.log("****************  ")
+    let result;
+
+    const email = dataArray[0].email.toLowerCase();
+    try {
+        registerAPIUser(dataArray, email, dataArray[0].pwd).then((response) => {
+            console.log('User account created & signed in!');
+            // Response
+            result = response.data
+
+        }).catch(error => {
+            result = error
+            console.error("Register error - " + error);
+        });
+    } catch {
+        alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
+
+    }
+
+    console.log('Qué esta pasando??? ');
+    return result;
 }
 
 export function updateUserEmail(navigation, newEmail, currentPassword, newSecret, oldEmail, setRegisterResponse ) {

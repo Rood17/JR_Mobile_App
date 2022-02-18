@@ -137,6 +137,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
 
         console.log("****************  ")
         console.log("*** pwd : " + pwd)
+        dataArray[0].pwd = pwd
         console.log("*** email : " + email)
         console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
         console.log("*** name : " + dataArray[0].name)
@@ -147,40 +148,23 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
 
         // Handle type of action
         if ( !update){
-            registerUser(email, pwd, setRegisterResponse);
+            setRegisterResponse(registerUser(dataArray));
         } else {
             updateUserPwd(newSecret, setRegisterResponse)
             setNewPwd(newSecret)
         }
 
         console.log("registerResponse -  " + registerResponse)
-        // Clear Storage
-        clearStorage();
-        // Open Modal            // Store New Data
-        storeUserData(dataArray);
-        // User Just Register
-        storeUserString('lastView', 'register')
 
-        // Set bd
-            // Handled by Auth
-            //navigation.navigate('Main')
-
-        
-
-        if (registerResponse.code === 'auth/email-already-in-use') {
+        if (registerResponse === 'auth/email-already-in-use') {
             console.log('That email address is already in use!');
             setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
         }
 
-        if (registerResponse.code === 'auth/invalid-email') {
+        if (registerResponse === 'auth/invalid-email') {
             console.log('That email address is invalid!');
             setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
         }
-
-
-
-
-
 
     }
 
