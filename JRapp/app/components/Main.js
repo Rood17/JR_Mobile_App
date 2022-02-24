@@ -19,9 +19,10 @@ import { formatApiDate, setProductType } from '../utils/Utils'
 import { OverlayModal } from '../components/Payments/Recharge'
 import MiPerfil from './pages/MiPerfil';
 import Asistance from './pages/Asistance';
-import { storeUserString, storeUserData, getUserKey, getUserData, getUserName, getUserLastName, getUserEmail, getUserId } from '../utils/Storage'
+import { storeUserString, clearStorage, getUserKey, getUserData, getUserName, getUserLastName, getUserEmail, getUserId } from '../utils/Storage'
 import { logout } from '../context/AuthProvider';
 import UserContext from '../../context/user/UserContext'
+import AuthContext from '../../context/auth/AuthContext';
 
 // Services
 import * as data from '../utils/services/perfil_uf.json'
@@ -53,6 +54,8 @@ let userName, userId = null;
 // Drawer
 function CustomDrawerContent(props) {
 
+    const { isUserLogged } = useContext(AuthContext);
+
     const goToIntent = (intent) => {
 
         if (intent === 'Recharge') {
@@ -66,8 +69,9 @@ function CustomDrawerContent(props) {
         else if (intent === 'Cerrar') {
 
             // LoginOut
-            console.log("Mandando Loginout")
-            logout() ? props.navigation.navigate('Login') : null
+            clearStorage()
+            isUserLogged(false)
+            //logout(props.navigation)
         }
         else { props.navigation.navigate(intent) }
 
@@ -163,6 +167,7 @@ const stylesNav = StyleSheet.create({
     }
 })
 function MyDrawer({ userData }) {
+
     return (
         <Drawer.Navigator
             screenOptions={{ drawerPosition: 'right', width: 200 }}
@@ -513,17 +518,18 @@ const Main = ({ navigation, route }) => {
     // Call UserState
     useEffect(() => {
         storeUserString('lastView', 'main')
-            getUserData().catch(() => console.log("Error in Main"))
-            .finally(()=>{
-                console.log("** Main - Welcome ** " + getUserId())
-                getAPIUserData(getUserId()).then((response) => {
-                    console.log("** Main - Welcome **")
-                    if ( response ){
-                        setIsReady(true)
-                    }
-            
-                })
+        getUserData().catch(() => console.log("Error in Main"))
+        .finally(()=>{
+            console.log("** Main - Welcome ** " + getUserId())
+            console.log("** Main - Welcome getUserName  ** " + getUserName())
+            getAPIUserData(getUserId()).then((response) => {
+                console.log("** Main - Welcome **")
+                if ( response ){
+                    setIsReady(true)
+                }
+        
             })
+        })
         
     }, [userData])
 

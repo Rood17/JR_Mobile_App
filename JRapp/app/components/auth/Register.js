@@ -18,6 +18,8 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input } from 'react-native-elements'
+import { WarningAdvice } from '../elements/Elements';
+
 
 import {
     Button,
@@ -42,41 +44,44 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 // Btn Disabled Flaf Team
-const Register: () => Node = ({navigation, route}) => {
+let name, lastName
+const Register: () => Node = ({ navigation, route }) => {
 
-    const  {idSubscriber} = route.params
+    const { idSubscriber } = route.params
 
-    const [name, setName] = useState('');
-    const [lastName, setLastName] = useState('');
+   // const [name, setName] = useState('');
+    //const [lastName, setLastName] = useState('');
     const [btnDisabledFlag, setBtnDisabledFlag] = useState(true)
     const [keyBoardIsOpen, setKeyBoardIsOpen] = useState(false);
+    const [error, setError] = useState(false);
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
+    
+    
+    const onChangeName = (inputName, inputLastName) => {
+        setError('')
+        if (inputName != null)
+            if (inputName.length >= 3) {
+                name = inputName
+            }else{
+                name = ''
+            }
+        if (inputLastName != null)
+            if (inputLastName.length >= 3) {
+                lastName = inputLastName
+            }  else {
+                lastName = ''
+            }
 
-
-    const onChangeName = (inputName) => {
-        if (inputName.length >= 3) {
-            setName(inputName)
-        } else {
-            setName("")
-        }
-    }
-
-    const onChangeLastName = (inputLastName) => {
-        if (inputLastName.length >= 3 && name.length >= 3) {
-            setLastName(inputLastName)
-        } else {
-            setLastName("")
-        }
-    }
-
-    useEffect(() => {
-        // Name super verification
-        if (name.length >= 3 && lastName.length >= 3)
+        if (name != undefined && lastName != undefined && 
+            (name.length >= 3 && lastName.length >= 3))
             setBtnDisabledFlag(false)
         else
             setBtnDisabledFlag(true)
-    });
- 
+        
+    }
+
+
+
     // Keyboard Listener for disapear icons
     Keyboard.addListener('keyboardDidShow',
         () => {
@@ -90,50 +95,73 @@ const Register: () => Node = ({navigation, route}) => {
         },
     );
 
+    const registerHandler = () => {
+
+        console.log('name : '+name)
+        console.log('lastName : '+lastName)
+
+        if (name != undefined && lastName != undefined && 
+            name.length >= 3 && lastName.length >= 3)
+            navigation.navigate('Register_2', {
+                idSubscriber: idSubscriber,
+                name: name,
+                lastName: lastName
+            })
+        else
+            setError(true)
+    }
+
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
-            <ScrollView>
-                <View style={styles.logoContainer}>
-                    <DisplayLogo stylesLogo={styles.logo} />
-                </View>
-                <View style={styles.btnActionContainer}>
-                    <Text>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
-                    <View>
-                        <Input
-                            placeholder="Nombre(s)"
-                            autoComplete='name'
-                            maxLength={20}
-                            secureTextEntry={false}
-                            leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
-                            onChangeText={name => onChangeName(name)}
-                        />
-                        <Input
-                            placeholder="Apellido(s)"
-                            secureTextEntry={false}
-                            leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
-                            onChangeText={text => onChangeLastName(text)}
-                        />
+                <ScrollView>
+                    <View style={styles.logoContainer}>
+                        <DisplayLogo stylesLogo={styles.logo} />
                     </View>
-                    <View>
-                        <IntentBtn
-                            isDisabled={btnDisabledFlag}
-                            navigation={navigation}
-                            intent='Register_2'
-                            btnParams={{idSubscriber:idSubscriber, name : name, lastName : lastName}}
-                            btnText='Ingresar' />
+                    <View style={styles.btnActionContainer}>
+                        <Text>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
+                        <>
+                            {error 
+                                ? <WarningAdvice type={2} warningText='Favor de llenar los campos correctamente.' />
+                                : null }
+                        </>
+                        <View>
+                            <Input
+                                placeholder="Nombre(s)"
+                                autoComplete='name'
+                                maxLength={20}
+                                secureTextEntry={false}
+                                leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
+                                onChangeText={name => onChangeName(name, null)}
+                            />
+                            <Input
+                                placeholder="Apellido(s)"
+                                secureTextEntry={false}
+                                leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
+                                onChangeText={lastName => onChangeName(null, lastName)}
+                            />
+                        </View>
+                        <View>
+                            <Button
+                                //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                                onPress={() => registerHandler()}
+                                color={styleConst.MAINCOLORS[0]}
+                                disabled={btnDisabledFlag}
+                                btnParams={{ idSubscriber: idSubscriber, name: name, lastName: lastName }}
+                                title='Continuar'
+                            />
+                        </View>
+
+
+
                     </View>
 
 
+                </ScrollView>
+            </TouchableWithoutFeedback>
+            {keyBoardIsOpen ? null : <Help navigation={navigation} />
+            }
 
-                </View>
-
-                    
-            </ScrollView>
-        </TouchableWithoutFeedback>
-        { keyBoardIsOpen ? null  : <Help navigation={navigation}/>
-    }
-        
         </View>
     );
 };
@@ -147,14 +175,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    
+
     btnActionContainer: {
         padding: 20,
         flex: 1,
     },
-    helpContainer :{
+    helpContainer: {
         flex: 1,
-        marginTop:'48%'
+        marginTop: '48%'
     },
     logo: {
         flex: 1,

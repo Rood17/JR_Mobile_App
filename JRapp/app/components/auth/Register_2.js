@@ -18,10 +18,11 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
-import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
-import { createUser, registerUser, updateUserPwd } from '../../context/AuthProvider';
+import { clearStorage, getUserId, storeUserData, storeUserString } from '../../utils/Storage';
+import { createUser, registerUser, editUser } from '../../context/AuthProvider';
 import FirebaseContext from '../../../context/firebase/FirebaseContext';
-
+import RNRestart from 'react-native-restart'; 
+import AuthContext from '../../../context/auth/AuthContext';
 import {
     Button,
     SafeAreaView,
@@ -50,7 +51,10 @@ let { isBold1, isBold2, isBold3 } = '500'
 
 export const NewPwd = ({ setOnPwdChange,setNewPwd, 
     update, setError, emailPass, goToIntent, btnTxt, 
-    label, navigation, dataArray }) => {
+    label, navigation, dataArray,
+    editName, editLastName, editEmail }) => {
+
+    const { registerResponse, registerUser } = useContext(AuthContext);
 
 
     const [chackColor, setChackColor] = useState('grey');
@@ -58,7 +62,6 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
     const [chackColor3, setChackColor3] = useState('grey');
     const [btnDisabled, setbtnDisabled] = useState(true);
     const [pwd, setPwd] = useState()
-    const [registerResponse, setRegisterResponse] = useState(false);
     
     useEffect(() => {
         !emailPass
@@ -129,14 +132,12 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
 
     // Register
     // User Register??
-    function register() {
+    async function register () {
         let email = dataArray[0].email
-
-
-
 
         console.log("****************  ")
         console.log("*** pwd : " + pwd)
+        dataArray[0].pwd = pwd
         console.log("*** email : " + email)
         console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
         console.log("*** name : " + dataArray[0].name)
@@ -146,41 +147,35 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
         let newSecret = pwd
 
         // Handle type of action
+        let registerResponse2;
         if ( !update){
-            registerUser(email, pwd, setRegisterResponse);
+            let myPromiseCreate = new Promise( ( resolve ) => {
+                //resolve(registerUser(dataArray,))
+                
+                resolve(registerUser(dataArray))
+            })
+            const create = await myPromiseCreate.finally(
+                () => {
+                    console.log("Finally myPromiseCreate")
+                }
+            )
+            registerResponse2 = create
+            console.log('****************************************************')
+            console.log("create 22 - " + create)
+            console.log("registerResponse - " + registerResponse)
+
+            
+            
         } else {
-            updateUserPwd(newSecret, setRegisterResponse)
-            setNewPwd(newSecret)
+            const edit = editUser(navigation, dataArray[0].idSubscriber, editName, editLastName, editEmail, newSecret)
         }
 
-        console.log("registerResponse -  " + registerResponse)
-        // Clear Storage
-        clearStorage();
-        // Open Modal            // Store New Data
-        storeUserData(dataArray);
-        // User Just Register
-        storeUserString('lastView', 'register')
-
-        // Set bd
-            // Handled by Auth
-            //navigation.navigate('Main')
-
-        
-
-        if (registerResponse.code === 'auth/email-already-in-use') {
-            console.log('That email address is already in use!');
-            setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
+        if (registerResponse2 =='Error: Request failed with status code 400' ) {
+            setError(<WarningAdvice type={2} warningText='Este mail ya se encuentra registrado.' />)
         }
-
-        if (registerResponse.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
-            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+        else if (registerResponse2 =='Error: Network Error') {
+            setError(<WarningAdvice type={2} warningText='Favor de revisar su conexión.' />)
         }
-
-
-
-
-
 
     }
 

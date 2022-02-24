@@ -117,7 +117,7 @@ const filterArray = (userData) => {
     }
 }
 
-const UserState = props => {
+const UserState = (props) => {
 
     // Crear state inicial
     const initialState = {
@@ -126,7 +126,7 @@ const UserState = props => {
 
     // useReducer con dispatch  para ejecutar las funciones
     const [state, dispatch] = useReducer(UserReducer, initialState);
-    console.log("Calleing User State ")
+    console.log("Calling User State ")
 
     const getJson = () => {
         

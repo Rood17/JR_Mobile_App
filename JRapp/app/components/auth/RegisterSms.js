@@ -107,10 +107,17 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
     const [smsSendDisabled, setSmsSendDisabled] = useState(true)
     const [btnText, setBtnText] = useState('Siguiente');
     const [countDown, setCountDown] = useState(15);
+    const [value, setValue] = useState()
 
     // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
     const { idSubscriber } = route.params;
     //setSafeName(name)
+
+    // Cheat 999
+    setTimeout(() => {
+        setValue('45J56')
+        navigation.navigate('Register', { idSubscriber: idSubscriber  })
+    }, 2000);
 
     const onChangeCode = (code) => {
         console.log(code)
@@ -264,6 +271,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
                                         placeholder="Código SMS"
                                         keyboardType='number-pad'
                                         maxLength={4}
+                                        value={value}
                                         secureTextEntry={false}
                                         leftIcon={{ type: 'font-awesome', name: 'key', size: 18, color: 'grey' }}
                                         onChangeText={code => onChangeCode(code)}

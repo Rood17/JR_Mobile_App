@@ -19,9 +19,10 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
-import { login, isUserLog } from '../../context/AuthProvider';
+//import { login } from '../../context/AuthProvider';
 import { storeUserString } from '../../utils/Storage'
-import { getPerfilUf } from '../../utils/services/get_services'
+import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
+import AuthContext from '../../../context/auth/AuthContext';
 
 
 import {
@@ -50,7 +51,6 @@ import { WarningAdvice } from '../elements/Elements';
 
 
 // Global Vars
-let isNumberRegister = false;
 let numberInput = React.createRef();
 
 const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
@@ -58,14 +58,19 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [disabledBtn, setDisabledBtn] = useState(true)
     const [error, setError] = useState()
     const [loginSuccess, setLoginSuccess] = useState(false)
+    const [secret, setSecret] = useState()
+
+    const { login } = useContext(AuthContext);
 
     let pwdInput = React.createRef();
 
     // Se verifica el PWD
     const onChangeText = (pwd) => {
+        setError('')
         if (pwd.length > 0) {
             setDisabledBtn(false);
             setIsPwdOk(true)
+            setSecret(pwd)
         }
         else {
             setDisabledBtn(true)
@@ -77,7 +82,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         // Se almacena en el storage el view anterior.
         storeUserString('lastView', 'login')
         // Aquí se llama al login
-        login('bameetr@gu.bhj', 'Prueba123', setError, setLoginSuccess)
+        login(nav, idSubscriber, secret, setError, setLoginSuccess)
     }
 
 
@@ -89,9 +94,6 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         if (loginSuccess) {
             nav.navigate('Main',
                 { idSubscriber: idSubscriber, isRegister: true });
-
-            // Set LastView
-            storeUserString('lastView', 'login')
 
             // Reset values
             setDisabledBtn(true);
@@ -156,7 +158,7 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                     <Text style={{ textAlign: 'center', marginBottom:20 }}>¡Es totalmente gratuito!</Text>
                     <Button
                         //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                        onPress={() => navigation.navigate('RegisterSms', { idSubscriber: idSubscriber })}
+                        onPress={() => navigation.navigate('Register', { idSubscriber: idSubscriber })}
                         color={styleConst.MAINCOLORS[0]}
                         title='Registrarse'
                     />
@@ -190,10 +192,10 @@ const LoginBody = ({ nav }) => {
     const [clear, setClear] = useState(null);
     const [UFuserData, setUFUserData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isRegister, setIsRegister] = useState(false)
 
     // ****** API999 24917335
     // esta constante deberá llamar al backend para verificar si el usuario ya existe.
-    const isRegister = '56'
     let responseUserData = [];
     // Auth handler
     const onChangeNumber = (number) => {
@@ -205,10 +207,12 @@ const LoginBody = ({ nav }) => {
         if (number.length == constants.MAX_NUMBER_LENGTH) {
 
             // Se llama a la API
+            
             const fetchData = async () => {
                 let errorResponse;
 
                 setLoading(true)
+                
                 const response = await getPerfilUf(number)
                     .then(function (response) {
 
@@ -221,17 +225,23 @@ const LoginBody = ({ nav }) => {
                         // Data user
                         responseUserData.array = response.userData
                         
-                        
                     })
                     .catch(function (error) {
                         responseUserData = error.message
                         console.info("Login error");
                         //throw new Error ('Error - ' + error.message)
                     }).finally(() => {
-                        validateIsJr(number, errorResponse)
-                        setLoading(false)
-                    });
-            };
+                        // Finalizando - está registrado??
+                        console.log('999 error ?? ' + errorResponse)
+                        if (errorResponse != undefined && errorResponse.length > 2) {
+                            validateIsJr(number, errorResponse, null)
+                            setLoading(false)
+                        } else {
+                            console.log('Llamando is register?? ')
+                            isRegisterAPI(number, errorResponse)
+                        }                                             
+                });                
+            };       
             fetchData();
 
             // Clear input error
@@ -265,7 +275,7 @@ const LoginBody = ({ nav }) => {
 
 
     // Función de validación
-    const validateIsJr = (number, error) => {
+    const validateIsJr = async (number, error, result) => {
         if (error == null) {
             //Log
             console.log("** User is JR **")
@@ -278,14 +288,13 @@ const LoginBody = ({ nav }) => {
             setJrAlert(false)
             setPhoneIsCorrect(true)
             setIconFlex(4)
-
             // Is register??
-            if (number.toString().indexOf(isRegister) != -1) {
-                isNumberRegister = true
+            if (result == 'true') {
+                setIsRegister(true)
                 setIconFlex(5)
             }
             else {
-                isNumberRegister = false
+                setIsRegister(false)
             }
         } else {
             setJrAlert(true)
@@ -297,6 +306,34 @@ const LoginBody = ({ nav }) => {
             console.log("** User is not JR **")
         }
     }
+
+    // Call bd
+    const isRegisterAPI = async (number, errorResponse) => {
+
+        console.log(' Login - Is register ****** : ' + errorResponse)
+
+        let result = false;
+        setLoading(true)
+        const response = await userIsRegisterAPI(number)
+            .then(function (response) {
+
+                // Manejar errores
+                console.log(' Login - Is register : ' + response)
+                result = response
+                setIsRegister(result)
+                validateIsJr(number, errorResponse, result)
+
+            })
+            .catch(function (error) {
+                console.info("Login isRegister error : " + error);
+                //throw new Error ('Error - ' + error.message)
+            }).finally(() => {
+                setLoading(false)  
+                console.log("Login Isregister final")
+            });
+
+            return result
+    };
 
     // Consulta handler
     const iconActionHandler = (intent) => {
@@ -354,7 +391,7 @@ const LoginBody = ({ nav }) => {
                                     <PassOrRegister
                                         setIsPwdOk={setIsPwdOk}
                                         idSubscriber={idSubscriber}
-                                        numberFlag={isNumberRegister}
+                                        numberFlag={isRegister}
                                         navigation={nav}
                                     />
                                     :

@@ -2,8 +2,8 @@ import React, { useReducer } from 'react';
 
 import PaquetesReducer from './PaquetesReducer';
 import PaquetesContext from './PaquetesContext';
-import firebase from '../../firebase/index'
-import { getFirestore, collection, getDocs, firestore, addDoc } from 'firebase/firestore';
+//import firebase from '../../firebase/index'
+//import { getFirestore, collection, getDocs, firestore, addDoc } from 'firebase/firestore';
 import {getPaquetesApi} from '../../app/utils/services/get_services'
 
 import { GET_PAQUETES } from "../../types";

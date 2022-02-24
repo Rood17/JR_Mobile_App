@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import type { Node } from 'react';
 import StatusBarHandler from './app/utils/StatusBarHandler';
 
@@ -33,19 +33,19 @@ import Faqs from './app/components/pages/Faqs';
 import DetailLogOut from './app/components/Details/DetailLogOut';
 import RegisterSuccess from './app/components/auth/RegisterSuccess';
 
-import { isUserLog } from './app/context/AuthProvider';
-
 // React navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import FirebaseState from './context/firebase/FirebaseState';
+//import FirebaseState from './context/firebase/FirebaseState';
 import UserState from './context/user/UserState';
 import RecargasState from './context/recargas/RecargasState';
 import PaquetesState from './context/paquetes/PaquetesState';
+import AuthState from './context/auth/AuthState'
+import AuthContext from './context/auth/AuthContext';
+import UserContext from './context/user/UserContext'
+
 import NetInfo from "@react-native-community/netinfo";
-
-
 
 import { MAIN_CONTAINER_STYLE } from './app/res/values/styles/StylesConstants'
 import {
@@ -57,80 +57,75 @@ import {
 
 const Stack = createNativeStackNavigator();
 
-// IUserRegister?
-const UserLogged = () => {
+const App = () => {
   return (
     <>
-      <Stack.Screen name={initRoute} component={initComponent} options={{
-        // When logging out, a pop animation feels intuitive
-        // You can remove this if you want the default 'push' animation
-        animationTypeForReplace: 'pop',
-      }} />
+
+    <AuthState>
+    <UserState>
+      <AppWrapper />
+    </UserState>
+    </AuthState>
     </>
   )
 }
+export default App;
+
 
 // Intro
-const App = () => {
-
+const AppWrapper = () => {
+  
+  const [isUserLogin, setIsUserLogin] = useState();
+  const { authData, isUserLogged } = useContext(AuthContext);
   const [showIntro, setShowIntro] = useState(true);
+
+
+  // Intro Time/*
+ 
 
   // Subscribe
   const unsubscribe = NetInfo.addEventListener(state => {
     console.log("Connection type", state.type);
-    console.log("Is connected?", state.isConnected);
     if (!state.isConnected)
-      alert("Favor de revisar su conexión a internet.")
+      console.log("Favor de revisar su conexión a internet.")
 
   });
 
-  // Unsubscribe
+  // Check connection
   unsubscribe();
 
-  setTimeout(() => {
-    setShowIntro(false)
-  }, 3000);
 
+const isLogged = false
 
-  // Auth
-  //<Login/>
-  //<Register/>
-  //<RegisterSms/>
-  //<Register_2/>
-  //<ForgottenPwd/>
+useEffect(() => {
+  isUserLogged().then((response) => {
+     console.log("0000000 : ", response)
+     if (response == false || response == true) {
+      setIsUserLogin(response)
+      setTimeout(() => {
+       setShowIntro(false) 
+      }, 3000);
+     }
+   });
+   console.log('************************ authData 222222222222  ****** : ',authData)
 
-  // Sections
-  //<Asistance/>
-  //<Main/>
-  //<Intro/>
+}, [authData])
 
-  // Perfil
-  //<MiPerfil>
-  //<MiPerfil_2>
-
-  // Pagos
-  //<Recharge />
-  //<Recharge_2 />
-  //<Recharge_3 />
-
-  // Details
-  // Is User logeIn
-  const userLogged = isUserLog()
-  console.log('userLogged : ' + userLogged)
-
+  
+console.log('************************ authData 99  ****** : ',isUserLogin)
   return (
     <>
-      <UserState>
         <PaquetesState>
           <RecargasState>
             <NavigationContainer>
               <SafeAreaView style={MAIN_CONTAINER_STYLE}>
                 <StatusBarHandler hideBar={true} />
                 <Stack.Navigator initialRouteName={'Intro'} screenOptions={{ headerShown: false }}>
-
-                  {userLogged ?
+                {showIntro ?
+                <Stack.Screen name="Intro" component={Intro} />
+                : null}
+                  {isUserLogin ?
                     <>
-
                       <Stack.Screen name="RegisterSuccess" component={RegisterSuccess} />
                       <Stack.Screen name="Main" component={Main} />
                       <Stack.Screen name="MiPerfil" component={MiPerfil} />
@@ -139,9 +134,6 @@ const App = () => {
                     </>
                     :
                     <>
-                      {showIntro ?
-                        <Stack.Screen name="Intro" component={Intro} />
-                        : null}
                       <Stack.Screen name='Login' component={Login} options={{
                         // When logging out, a pop animation feels intuitive
                         // You can remove this if you want the default 'push' animation
@@ -173,7 +165,6 @@ const App = () => {
             </NavigationContainer>
           </RecargasState>
         </PaquetesState>
-      </UserState>
     </>
   );
 };
@@ -181,4 +172,4 @@ const App = () => {
 const styles = StyleSheet.create({
 });
 
-export default App;
+
