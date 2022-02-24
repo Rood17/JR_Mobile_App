@@ -33,6 +33,7 @@ export const getUserData = async () => {
             // value previously stored
             jsonValue = JSON.parse(jsonValue)
             console.log( "AsyncStorgae > getData : " + jsonValue[0].name)
+            console.log( "AsyncStorgae > getData : " + jsonValue[0].idSubscriber)
             setUserName(jsonValue[0].name)
             setUserLastName(jsonValue[0].lastName)
             setUserEmail(jsonValue[0].email)

@@ -7,84 +7,39 @@ import Auth, {
     updatePassword,
     getAdditionalUserInfo
 } from "firebase/auth";
-import {clearStorage, getUserData,getUserEmail, getUserId, getUserLastName, getSecret } from '../utils/Storage'
-import {getUserAuth, registerAPIUser} from '../utils/services/get_services'
-import {isUserActive} from '../../App'
+import {storeUserString, clearStorage, getUserData,getUserEmail, getUserId, storeUserData, getSecret } from '../utils/Storage'
+import {getUserAuth, registerAPIUser, editAPIUser} from '../utils/services/get_services'
+import RNRestart from 'react-native-restart';
+import AuthContext from "../../context/auth/AuthContext"; 
+import { AppState } from "react-native";
+import App from "../../App";
 
-const auth = getAuth();
+export const isUserLogged = (authFlag) => {
+    console.log(" ** isUserLogged: 1 authFlag :" + authFlag)
+    // Use flag
+    if( authFlag != undefined ) return authFlag;
+    console.log(" ** isUserLogged: 2 ")
+    const [isUserLogin, setIsUserLogin] = useState();
+    
 
+    console.log(" ** buenos días precioso : 1 " + getUserId())
+    getUserData().then( () => {
+        console.log(" ** buenos días precioso 2 : " + getUserId())
+        if (getUserId() != undefined && getUserId().length == 10){
+            console.log(' estamos pasando no se hagan --- true')
+            setIsUserLogin(true)
+ 
+        }
+    })
+        
 
-
-function AuthProvider() {
-    const [loading, setLoading] = useState(true);
-    const [currentUser, setCurrentUser] = useState();
-
-    const signup = (email, password) => {
-        return auth.createUserWithEmailAndPassword(email, password);
-    };
-
-    const login = (email, password) => {
-        return auth.signInWithEmailAndPassword(email, password);
-    };
-
-    const logout = () => {
-        return auth.signOut();
-    };
-
-    const resetPassword = (email) => {
-        return auth.sendPasswordResetEmail(email);
-    };
-
-    const updatePassword = (password) => {
-        return currentUser.updatePassword(password);
-    };
+    console.log(" ** buenos días precioso :3A  " + isUserLogin)
+    return isUserLogin;
 }
 
-export default AuthProvider;
-
-export const createUser = (email, phoneNumber, name, lastName, pwd, setRegisterSuccess, setError) => {
-
-    const completeName = name + ' ' + lastName;
-
-    getAuth().createUser({
-        email: email,
-        emailVerified: false,
-        phoneNumber: phoneNumber,
-        password: pwd,
-        displayName: completeName,
-        photoURL: 'http://www.example.com/12345678/photo.png',
-        disabled: false,
-    }).then((userRecord) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully created new user:', userRecord.uid);
-        setRegisterSuccess(true)
-    }).catch((error) => {
-        console.log('Error creating new user:', error);
-        setError(error)
-    });
-}
-
-export const isFireUserLog = () => {
-    // Set an initializing state whilst Firebase connects
-    const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState();
-    // Handle user state changes
-    function onAuthStateChanged(user) {
-        setUser(user);
-        if (initializing) setInitializing(false);
-    }
-
-    const subscriber = getAuth().onAuthStateChanged(onAuthStateChanged);
-
-    if (user)
-        return true;
-    else
-        return false; // unsubscribe on unmount
-
-}
 
 // JR API
-export const login = async (idSubscriber, pwd, setError, setLoginSuccess) => {
+export const login = async (navigation, idSubscriber, pwd, setError, setLoginSuccess) => {
     // Set an initializing state whilst Firebase connects
     let result = false;
     
@@ -112,19 +67,26 @@ export const login = async (idSubscriber, pwd, setError, setLoginSuccess) => {
                 if ( result.toString().indexOf('Contraseña inválida') != -1) {
                     setError(500)
                 } else {
+
+                    let dataArray = [{ 
+                        idSubscriber: idSubscriber, 
+                        name: response.first_name, 
+                        email: response.email, 
+                        lastName: response.last_name, 
+                        pwd: pwd }]
+
                     // antes de activar este es necesario
                     // que la api ed login regrese los datos del usuario
                     // y los mande al storge = 9999
                     // setLoginSuccess(true
                     // Clear Storage
-                    clearStorage();
                     // Store New Data
-                    storeUserData(dataArray);
+                    storageUpdate(dataArray, 'login');
                     // User Just Register
-                    storeUserString('lastView', 'login')
                     setError()
                     console.log("calling user !!! ")
-                    isUserActive()
+                    
+                    RNRestart.Restart();
                 }
 
             }).catch((error) => console.log("Error in isUserLogin : " + error))
@@ -137,76 +99,29 @@ export const login = async (idSubscriber, pwd, setError, setLoginSuccess) => {
     });
 
     console.log("*************************** AUTH PROVIDER 4444 ****   : ",result);
-    return  await myPromise;
+    result = await myPromise
+    return  result;
 
 }
+export const logout = (navigation) => {
 
-export const Firelogin = (email, pwd, setError, setLoginSuccess) => {
+    console.log("*************************** Login out ****    ");
+    const user = false;
 
 
-    signInWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
-        console.log('User is log in!');
-        // This one yes
-        setLoginSuccess(true)
-        //setSuccess(true)
-        // Finalizar
+    //const auth = auth();
+    //const userc = auth.currentUser;
 
-    }).catch(error => {
-        if (error.code === 'auth/user-not-found') {
-            setError(500)
-            alert('El usuario no existe');
+    // Hcer pruebas al usuario -- lograr guardar más datos en el auth
 
-        }
-
-        if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
-            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
-        }
-
-        console.error(error);
-    }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-    });
-
-}
-
-export const logout = () => {
-    let unsubscribe = true
-    /*
-    getAuth().signOut().then(() => {
-        console.log('User is log out!');
-        return true;
-    }).catch(error => {
-        console.error(error);
-    });*/
-    // Clear Storeg
+    //console.log("user : " + user.id)
+    //console.log("user : " + user.name)
+    
     clearStorage()
-    isUserActive()
-    console.log('User is log out!');
+    //RNRestart.Restart();
+
 }
-
-export const registerFireUser = (email, pwd, setRegisterResponse) => {
-
-    email = email.toLowerCase();
-    console.log('setRegisterResponse : ' +setRegisterResponse)
-    try {
-        createUserWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
-            console.log('User account created & signed in!');
-            // Response
-            setRegisterResponse('success')
-
-        }).catch(error => {
-            setRegisterResponse(error)
-            console.error("Register error - " + error);
-        });
-    } catch {
-        alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
-
-    }
-}
-
-export const registerUser = (dataArray) => {
+export const registerUser = async (dataArray) => {
 
     console.log("**************** Register  ")
     console.log("****************  ")
@@ -220,9 +135,72 @@ export const registerUser = (dataArray) => {
     let result;
 
     const email = dataArray[0].email.toLowerCase();
+    let myPromise = new Promise( (resolve) => {
+
+
+        try {
+            registerAPIUser(dataArray, email).then((response) => {
+                
+                // Response
+                // Storage
+                result = response.data
+        
+                
+                console.log('User account created & signed in! ' + response );
+                console.log('User account created & signed in! ' + response.data );
+                  
+                resolve(storageUpdate(dataArray, 'register'))
+                RNRestart.Restart();
+                
+            }).catch(error => {
+                result = error
+                console.error("Register error - " + error);
+            });
+        } catch {
+            alert('El Mail ya existe.')
+
+        }
+    });
+
+    // necesit saber por que result es indefinido???
+
+    result = await myPromise
+    return result
+    
+}
+export const editUser = ( navigation, idSubscriber, editName, editLastName, editEmail, editPwd ) => {
+
+    console.log("*** idSubscriber : " + idSubscriber)
+    console.log("*** editName : " + editName)
+    console.log("*** editLastName : " + editLastName)
+    console.log("*** editEmail : " + editEmail)
+    console.log("*** editPwd : " + editPwd)
+    console.log("****************  ")
+    console.log("****************  ")
+    let dataArray = [{ 
+        idSubscriber: idSubscriber, 
+        name: editName, 
+        email: editEmail, 
+        lastName: editLastName, 
+        pwd: editPwd }]
+
+
+
+    let result;
+
     try {
-        registerAPIUser(dataArray, email, dataArray[0].pwd).then((response) => {
-            console.log('User account created & signed in!');
+        editAPIUser(idSubscriber, editName, editLastName, editEmail, editPwd)
+            .then((response) => {
+            console.log('User actualization!!');
+            storageUpdate(dataArray, 'main')
+            navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Main',
+                  },
+                ],
+              })
             // Response
             result = response.data
 
@@ -235,10 +213,38 @@ export const registerUser = (dataArray) => {
 
     }
 
-    console.log('Qué esta pasando??? ');
     return result;
 }
 
+const storageUpdate = (dataArray, view) => {
+    // Clear Storage
+    clearStorage();
+    // Store New Data
+    storeUserData(dataArray);
+    // User Just Register
+    storeUserString('lastView', view)
+    return true;
+}
+
+// OLD REGISTER MACHINERY
+export const isFireUserLog = () => {
+    // Set an initializing state whilst Firebase connects
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
+    // Handle user state changes
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    const subscriber = getAuth().onAuthStateChanged(onAuthStateChanged);
+
+    if (user)
+        return true;
+    else
+        return false; // unsubscribe on unmount
+
+}
 export function updateUserEmail(navigation, newEmail, currentPassword, newSecret, oldEmail, setRegisterResponse ) {
     console.log("Updating User")
 
@@ -274,7 +280,6 @@ export function updateUserEmail(navigation, newEmail, currentPassword, newSecret
     
     return result; 
 }
-
 export const updateUserPwd = (newSecret) => {
         console.log("Auth - UpdateingSecret")
         console.log("Auth - getUserEmail : " + getUserEmail())
@@ -298,8 +303,7 @@ export const updateUserPwd = (newSecret) => {
         }
 
 
-    }
-
+}
 export const reauthenticate = (currentPassword, oldEmail) => {
     var user = getAuth();
     var cred = EmailAuthProvider.credential(
@@ -307,4 +311,52 @@ export const reauthenticate = (currentPassword, oldEmail) => {
             console.log("Error reauthenticate : " + error)
         });
     return reauthenticateWithCredential(user, cred);
+}
+export const registerFireUser = (email, pwd, setRegisterResponse) => {
+
+    email = email.toLowerCase();
+    console.log('setRegisterResponse : ' +setRegisterResponse)
+    try {
+        createUserWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
+            console.log('User account created & signed in!');
+            // Response
+            setRegisterResponse('success')
+
+        }).catch(error => {
+            setRegisterResponse(error)
+            console.error("Register error - " + error);
+        });
+    } catch {
+        alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
+
+    }
+}
+export const Firelogin = (email, pwd, setError, setLoginSuccess) => {
+
+
+    signInWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
+        console.log('User is log in!');
+        // This one yes
+        setLoginSuccess(true)
+        //setSuccess(true)
+        // Finalizar
+
+    }).catch(error => {
+        if (error.code === 'auth/user-not-found') {
+            setError(500)
+            alert('El usuario no existe');
+
+        }
+
+        if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+        }
+
+        console.error(error);
+    }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+    });
+
 }

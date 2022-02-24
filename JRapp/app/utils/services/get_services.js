@@ -136,35 +136,34 @@ export const getAPI = async (idSubscriber, action, offeringId) => {
     },
     data: data
   };
+    let myPromise = new Promise(function (resolve) {
+      axios(config)
+        .then((response) => {
+          const secret = BEARER + response.data.accessToken
 
-  let myPromise = new Promise(function (resolve) {
-    axios(config)
-      .then((response) => {
-        const secret = BEARER + response.data.accessToken
+          // Get UF API
+          if (action == GET_UF) {
+            resolve(getPerfilUfAPI(idSubscriber, secret))
+          }
+          if (action == ACTIVATE) {
+            // Aqui api para activate
+            resolve(activate(idSubscriber, offeringId, secret))
+          }
 
-        // Get UF API
-        if (action == GET_UF) {
-          resolve(getPerfilUfAPI(idSubscriber, secret))
-        }
-        if (action == ACTIVATE) {
-          // Aqui api para activate
-          resolve(activate(idSubscriber, offeringId, secret))
-        }
+        })
+        .catch((error) => {
+          console.error("GetApi : ", error.message);
+          //throw new Error ('Error - ' + error.message)
+          resolve(error.message)
 
-      })
-      .catch((error) => {
-        console.error("GetApi : ", error.message);
-        //throw new Error ('Error - ' + error.message)
-        resolve(error.message)
+        }).finally(() => {
 
-      }).finally(() => {
+          console.log("Perfil UF Listo")
 
-        console.log("Perfil UF Listo")
+        });
 
-      });
-
-  });
-
+    });
+  console.log("Flujo getAPI final 1 ")
   result = await myPromise
   return result;
 };
@@ -238,34 +237,79 @@ export const registerAPIUser = async (dataArray, email) => {
   console.log("****************  ")
 
 
+
+  let myPromise = new Promise(function (resolve, reject) {
+    const axios = require('axios');
+    let data = JSON.stringify({
+      "first_name": dataArray[0].name,
+      "last_name": dataArray[0].lastName,
+      "user_number": dataArray[0].idSubscriber,
+      "email": email,
+      "password": dataArray[0].pwd
+    });
+  
+    let config = {
+      method: 'post',
+      url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/register_user/',
+      headers: { 
+          'Content-Type': 'application/json'
+      },
+      data : data
+    };
+      axios(config)
+      .then((response) => {
+        console.log("Services - registration : ", JSON.stringify(response.data));
+        resolve(response.data)
+      })
+      .catch((error) => {
+        console.log("Services - Error : ", error.message);
+        reject(error)
+      })
+
+  });
+
+  const result2 = await myPromise
+  return result2;
+}
+
+export const editAPIUser = async (idSubscriber, editName, editLastName, editEmail, editPwd) => {
+
+  console.log("**************** SERVICES !!!   ")
+  console.log("****************  ")
+  
+  
+  console.log("*** idSubscriber : " + idSubscriber)
+  console.log("*** editName : " + editName)
+  console.log("*** editLastName : " + editLastName)
+  console.log("*** editEmail : " + editEmail)
+  console.log("*** editPwd : " + editPwd)
+  console.log("****************  ")
+  console.log("****************  ")
+
+
   const axios = require('axios');
   let result;
   let data = JSON.stringify({
-    "first_name": dataArray[0].name,
-    "last_name": dataArray[0].lastName,
-    "user_number": dataArray[0].idSubscriber,
-    "email": email,
-    "password": dataArray[0].pwd
+    "first_name": editName,
+    "last_name": editLastName,
+    "user_number": idSubscriber,
+    "email": editEmail,
+    "password": editPwd
   });
 
   let config = {
-    method: 'post',
-    url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/register_user/',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
+		method: 'post',
+		url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/edit_user/',
+		headers: { 
+				'Content-Type': 'application/json'
+		},
+		data : data
   };
   let myPromise = new Promise(function (resolve) {
+    console.log("**************** SERVICES !!!   22 ")
     axios(config)
       .then((response) => {
         console.log("Services - registration : ", JSON.stringify(response.data));
-        // Clear Storage
-        clearStorage();
-        // Open Modal            // Store New Data
-        storeUserData(dataArray);
-        // User Just Register
-        storeUserString('lastView', 'register')
         resolve(response.data)
       })
       .catch((error) => {
@@ -310,12 +354,15 @@ export const userIsRegisterAPI = async (idSubscriber) => {
           console.log('userIsRegisterAPI : ' +  result)
           resolve(result)
         })
-        .catch(error => console.log('error', error))
+        .catch(error => {
+          console.log('userIsRegisterAPI error', error)
+        })
+        .finally(() => console.log('userIsRegisterAPI Final'))
       
   
   
     });
-  
+    console.log('userIsRegisterAPI FLUJO 2')
     result = await myPromise
     return result;
   }

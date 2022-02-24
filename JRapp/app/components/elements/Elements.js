@@ -209,7 +209,7 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
     requireWifi = require1;
 
     // Porcent
-    if (porcent < 10) {
+    if (porcent < 10 || porcent == undefined) {
         requireWifi = require0;
         mbAlert = true
     }
@@ -444,7 +444,7 @@ const SocialSimpleCard = StyleSheet.create({
 // END Card
 
 // Retorn Header
-export const ReturnHeader = ({ title, navigation, clear, isRegister, idSubscriber }) => {
+export const ReturnHeader = ({ title, navigation, clear, isRegister, idSubscriber, logout }) => {
 
     const handleIntent = () => {
         if (isRegister)
@@ -458,7 +458,14 @@ export const ReturnHeader = ({ title, navigation, clear, isRegister, idSubscribe
                 ],
             })
         else
-            navigation.popToTop()
+            navigation.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: 'Login',
+                    },
+                ],
+            })
     }
     return (
         <>
@@ -821,13 +828,13 @@ const warningStyles = StyleSheet.create({
 });
 
 // Loader
-export const Loader = (color) => {
-
+export const Loader = ({color, marginBottom}) => {
+    if (!marginBottom) marginBottom = 0
     if (!color) color = styleConst.MAINCOLORS[0]
 
     return (
         <>
-            <View style={loaderStyles.container}>
+            <View style={[loaderStyles.container, {marginBottom : marginBottom}]}>
                 <ActivityIndicator size="large" color={color} />
                 <Text style={loaderStyles.text}>Cargando...</Text>
             </View>

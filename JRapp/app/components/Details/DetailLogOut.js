@@ -166,9 +166,11 @@ const DetailLogOut = ({ navigation, route }) => {
                                     a tu "Cuenta".
                                 </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigation.navigate('Register', {
+                                                idSubscriber: idSubscriber,
+                                                })}>
                                 <Text style={{ textAlign: 'center' }}>
-                                    O<Text style={{ color: styleConst.MAINCOLORS[0] }}> Registrate Aquí. </Text>
+                                    O<Text style={{ color: styleConst.MAINCOLORS[0] }}> Regístrate Aquí. </Text>
                                     ¡Es gratuito!
                                 </Text>
                             </TouchableOpacity>

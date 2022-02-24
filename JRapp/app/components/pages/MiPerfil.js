@@ -30,6 +30,7 @@ import {
 
 // Card
 export const CardPerfil = ({ navigation }) => {
+    const letter = getUserName().slice(0, 1 - getUserName().length);
     return (
 
         <View style={stylesCardPerfil.boxShadow}>
@@ -39,6 +40,7 @@ export const CardPerfil = ({ navigation }) => {
             <View style={stylesCardPerfil.infoContainer}>
                 <View style={stylesCardPerfil.iconContainer}>
                     <UserImg 
+                    txt={letter}
                     backColor={styleConst.MAINCOLORS[2]}
                     colorTxt='white'/>
                 </View>

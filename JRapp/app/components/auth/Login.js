@@ -19,9 +19,10 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
-import { login } from '../../context/AuthProvider';
+//import { login } from '../../context/AuthProvider';
 import { storeUserString } from '../../utils/Storage'
 import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
+import AuthContext from '../../../context/auth/AuthContext';
 
 
 import {
@@ -59,10 +60,13 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [loginSuccess, setLoginSuccess] = useState(false)
     const [secret, setSecret] = useState()
 
+    const { login } = useContext(AuthContext);
+
     let pwdInput = React.createRef();
 
     // Se verifica el PWD
     const onChangeText = (pwd) => {
+        setError('')
         if (pwd.length > 0) {
             setDisabledBtn(false);
             setIsPwdOk(true)
@@ -78,7 +82,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         // Se almacena en el storage el view anterior.
         storeUserString('lastView', 'login')
         // Aquí se llama al login
-        login(idSubscriber, secret, setError, setLoginSuccess)
+        login(nav, idSubscriber, secret, setError, setLoginSuccess)
     }
 
 
@@ -154,7 +158,7 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                     <Text style={{ textAlign: 'center', marginBottom:20 }}>¡Es totalmente gratuito!</Text>
                     <Button
                         //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                        onPress={() => navigation.navigate('RegisterSms', { idSubscriber: idSubscriber })}
+                        onPress={() => navigation.navigate('Register', { idSubscriber: idSubscriber })}
                         color={styleConst.MAINCOLORS[0]}
                         title='Registrarse'
                     />
@@ -228,8 +232,14 @@ const LoginBody = ({ nav }) => {
                         //throw new Error ('Error - ' + error.message)
                     }).finally(() => {
                         // Finalizando - está registrado??
-                        isRegisterAPI(number, errorResponse)
-                                             
+                        console.log('999 error ?? ' + errorResponse)
+                        if (errorResponse != undefined && errorResponse.length > 2) {
+                            validateIsJr(number, errorResponse, null)
+                            setLoading(false)
+                        } else {
+                            console.log('Llamando is register?? ')
+                            isRegisterAPI(number, errorResponse)
+                        }                                             
                 });                
             };       
             fetchData();
@@ -299,6 +309,8 @@ const LoginBody = ({ nav }) => {
 
     // Call bd
     const isRegisterAPI = async (number, errorResponse) => {
+
+        console.log(' Login - Is register ****** : ' + errorResponse)
 
         let result = false;
         setLoading(true)

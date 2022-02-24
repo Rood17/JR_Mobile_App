@@ -28,3 +28,6 @@ export const TYPE_URLENCODED = 'application/x-www-form-urlencoded';
 
 export const ACTIVATE = 'Activate';
 export const GET_UF = 'UF'
+
+export const IS_USER_LOGGED = 'isUserLogged'
+export const REGISTER_SUCCESS = 'registerSuccess'
