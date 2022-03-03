@@ -206,10 +206,9 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
     let porcent = (dataTwo * 100) / dataOne;
 
     // Default
-    requireWifi = require1;
-
+    requireWifi = require0;
     // Porcent
-    if (porcent < 10 || porcent == undefined) {
+    if (porcent < 10 || porcent == undefined || isNaN(porcent)) {
         requireWifi = require0;
         mbAlert = true
     }
@@ -233,9 +232,9 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
     if (mbAlert)
         mbColor = 'red'
 
-
     // If nothing
-    if (!title && !showDetalles) {
+    if (!title && !showDetalles
+        || isNaN(porcent)) {
         requireWifi = require0;
         mbAlert = true
         title = 'Sin Recarga'

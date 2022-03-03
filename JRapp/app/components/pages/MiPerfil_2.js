@@ -50,7 +50,10 @@ export const CardPerfil = ({ navigation }) => {
 
     // Switch
     const [newPwdOn, setnewPwdOn] = useState(false);
-    const toggleSwitch = () => setnewPwdOn(previousState => !previousState);
+    const toggleSwitch = () => {
+        setAllData()
+        setnewPwdOn(previousState => !previousState)
+    }
 
     // Current Data
     const letter = newName.slice(0, 1 - newName.length);
@@ -79,26 +82,36 @@ export const CardPerfil = ({ navigation }) => {
         disabledBtn = true
     }
 
+    console.log("**************** editName | " + editName)
+    console.log("**************** editLastName  | " + editLastName)
+    console.log("**************** editEmail |  " + editEmail)
+
+    const setAllData = () => {
+
+        currentPassword = oldPwd
+
+        setNewEmail(newEmail.toLowerCase());
+
+        if ( oldName != newName)
+            editName = newName
+        if ( oldLastName != newLastName)
+            editLastName = newLastName;
+
+        if ( oldEmail != newEmail)
+            editEmail = newEmail
+        if ( currentPassword != newPwd)
+            editPwd = newName;
+
+
+        setEditNameToSend(editName)
+        setEditLastNameToSend(editLastName)
+        setEditEmailToSend(editEmail)
+    }
+
     const updateHandler = () => {
 
         // Ash  
-        currentPassword = oldPwd
-
-    setNewEmail(newEmail.toLowerCase());
-
-    if ( oldName != newName)
-        editName = newName
-    if ( oldLastName != newLastName)
-        editLastName = newLastName;
-
-    if ( oldEmail != newEmail)
-        editEmail = newEmail
-    if ( currentPassword != newPwd)
-        editPwd = newName;
-
-    setEditNameToSend(editName)
-    setEditLastNameToSend(editLastName)
-    setEditEmailToSend(editEmail)
+        setAllData()
     
     if (!newPwdOn && !disabledBtn) {
         if (oldName != newName || oldLastName != newLastName || 
@@ -166,6 +179,7 @@ export const CardPerfil = ({ navigation }) => {
 
                     {newPwdOn ?
                         <NewPwd
+                            navigation={navigation}
                             emailPass={true}
                             dataArray={dataArray}
                             goToIntent='guardar'

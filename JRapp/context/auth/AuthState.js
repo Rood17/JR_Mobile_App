@@ -194,3 +194,52 @@ return (
 }
 
 export default AuthState;
+
+
+export const editUser = ( navigation, idSubscriber, editName, editLastName, editEmail, editPwd ) => {
+
+    console.log("*** idSubscriber : " + idSubscriber)
+    console.log("*** editName : " + editName)
+    console.log("*** editLastName : " + editLastName)
+    console.log("*** editEmail : " + editEmail)
+    console.log("*** editPwd : " + editPwd)
+    console.log("****************  ")
+    console.log("**************** editUser AUTH  ")
+    let dataArray = [{ 
+        idSubscriber: idSubscriber, 
+        name: editName, 
+        email: editEmail, 
+        lastName: editLastName, 
+        pwd: editPwd }]
+
+
+
+    let result;
+
+    try {
+        editAPIUser(idSubscriber, editName, editLastName, editEmail, editPwd)
+            .then((response) => {
+            console.log('User actualization!!');
+            storageUpdate(dataArray, 'main')
+            navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Main',
+                  },
+                ],
+              })
+            // Response
+            result = response.data
+
+        }).catch(error => {
+            result = error
+            console.error("Register error - " + error);
+        });
+    } catch {
+        alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
+
+    }
+
+    return result;
+}
