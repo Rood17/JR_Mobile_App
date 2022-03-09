@@ -366,3 +366,39 @@ export const userIsRegisterAPI = async (idSubscriber) => {
     result = await myPromise
     return result;
   }
+
+export const get_api_preference = async (dataPorduct) => {
+
+    console.log(' ***** idSubscriber ' + dataPorduct.idSubscriber)
+    console.log(' ***** name ' + dataPorduct.title)
+    console.log(' ***** price ' + dataPorduct.price)
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({
+      "title": "JR Básico",
+      "unit_price": 99.55,
+      "idSubscriber": 9999999999,
+      "email": "dsfsdf@ff.ff"
+    });
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    let myPromise = new Promise(function (resolve) {
+    fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_api_preference/", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        console.log("[Result] get_api_preference : " + result)
+        resolve(JSON.parse(result))
+      })
+      .catch(error => console.log('error', error));
+    });
+
+    const superResult = await myPromise
+    return superResult;
+  };

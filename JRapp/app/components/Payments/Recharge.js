@@ -116,7 +116,6 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
 
     console.log("Recharge > payloadArray : " + payloadArray.name)
 
-
     return (
 
         <View style={stylesMainCard.boxShadow}>
@@ -151,7 +150,6 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
                     intent={['Recharge_2', {
                         sendPayload: payloadArray,
                         idSubscriber: initNumber,
-                        payloadArray:payloadArray
                     }]}
                     navigation={navigation}
                     btnText='Continuar' />
@@ -667,7 +665,7 @@ const Recharge = ({ navigation, chargeResume, route }) => {
     else
         payloadArray = setProductType(gbProduct)
 
-    payload = payloadArray.name
+    payload = payloadArray.title
 
     return (
         <>

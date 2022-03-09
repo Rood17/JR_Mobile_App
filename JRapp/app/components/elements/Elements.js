@@ -827,15 +827,18 @@ const warningStyles = StyleSheet.create({
 });
 
 // Loader
-export const Loader = ({color, marginBottom}) => {
+export const Loader = ({color, marginBottom, marginTop, isText}) => {
     if (!marginBottom) marginBottom = 0
     if (!color) color = styleConst.MAINCOLORS[0]
+    if (!marginTop) marginTop = '50%'
 
     return (
         <>
-            <View style={[loaderStyles.container, {marginBottom : marginBottom}]}>
+            <View style={[loaderStyles.container, {marginBottom : marginBottom, marginTop: marginTop}]}>
                 <ActivityIndicator size="large" color={color} />
-                <Text style={loaderStyles.text}>Cargando...</Text>
+                { !isText && isText != null
+                ? null
+                : <Text style={loaderStyles.text}>Cargando...</Text> }
             </View>
         </>
     );
@@ -845,7 +848,7 @@ const loaderStyles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         alignContent: 'center',
-        marginTop: '50%'
+        
     },
     text: {
         paddingTop: 10

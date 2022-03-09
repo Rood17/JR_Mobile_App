@@ -124,13 +124,13 @@ function CustomDrawerContent(props) {
                 </TouchableOpacity>
                 <View style={stylesNav.line}></View>
                 <View style={{ marginTop: 100 }}>
-                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Terminos')}>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => goToIntent('Terminos')}>
                         <Text style={stylesNav.txtA}>Terminos y Condiciones</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Privacidad')}>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => goToIntent('Privacidad')}>
                         <Text style={stylesNav.txtA}>Aviso de Privacidad</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => navigation.navigate('Contacto')}>
+                    <TouchableOpacity style={stylesNav.navBtn2} onPress={() => goToIntent('Contacto')}>
                         <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
@@ -374,11 +374,11 @@ const MainContent = ({ navigation, route }) => {
 
     // Payload select
     useEffect(() => {
-
+        console.log('****** searching gbProduct : ' + gbProduct)
         if (gbProduct) {
             // Set product
             let charge = setProductType(gbProduct)
-
+            console.log('****** searching payload : ' + charge)
             // Intent to Recharge_2
             navigation.navigate('Recharge_2', {
                 idSubscriber: userId,

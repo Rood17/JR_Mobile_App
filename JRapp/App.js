@@ -32,6 +32,7 @@ import Contacto from './app/components/pages/Contacto'
 import Faqs from './app/components/pages/Faqs';
 import DetailLogOut from './app/components/Details/DetailLogOut';
 import RegisterSuccess from './app/components/auth/RegisterSuccess';
+import MercadoP from './app/components/Payments/MercadoP'
 
 // React navigation
 import { NavigationContainer } from '@react-navigation/native';
@@ -43,7 +44,8 @@ import RecargasState from './context/recargas/RecargasState';
 import PaquetesState from './context/paquetes/PaquetesState';
 import AuthState from './context/auth/AuthState'
 import AuthContext from './context/auth/AuthContext';
-import UserContext from './context/user/UserContext'
+import UserContext from './context/user/UserContext';
+
 
 import NetInfo from "@react-native-community/netinfo";
 
@@ -148,6 +150,7 @@ console.log('************************ authData 99  ****** : ',isUserLogin)
                     </>
                   }
 
+                  <Stack.Screen name="MercadoP" component={MercadoP} />
 
                   <Stack.Screen name="Asistance" component={Asistance} />
 

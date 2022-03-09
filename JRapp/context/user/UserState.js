@@ -10,6 +10,7 @@ import { GET_USER_DATA, USER_INFO, SIM_DATA, SIM_SMS, SIM_MIN, SIM_DATA_EXTRA} f
 
 const userArray = {userInfo:{}, simData:{}, simSMS:{}, simMIN:{} }
 const paquetes = getPaquetesApi()
+let expireDateFinal= 0;
 
 const filterArray = (userData) => {
     // Get User Data
@@ -27,28 +28,43 @@ const filterArray = (userData) => {
         if (userData.responseSubscriber != undefined ){
             Object.values(userData.responseSubscriber.freeUnits).map((item) => {
                 // Freeeunits
+                
                 if ( item != undefined){
-    
+
+                    // Data
+                    // freeunit info
                     if ( item.name == SIM_DATA){
                         expireDate = item.detailOfferings[0].expireDate;
-                        initialAmt = item.detailOfferings[0].initialAmt;
-                        unusedAmt = parseInt(item.detailOfferings[0].unusedAmt);
                         offeringId = item.detailOfferings[0].offeringId
+                        initialAmt = item.freeUnit.totalAmt;
+                        unusedAmt = parseInt(item.freeUnit.unusedAmt);
                     } else {
                         dataFlag = true
                     }
     
-                    console.log(' ======= 0 ' + initialAmt)
                     if ( item.name == SIM_DATA_EXTRA){
                         console.log('******* EXTRA **** ')
-                        
-                        initialAmtExtra = item.detailOfferings[0].initialAmt;
-                        unusedAmtExtra = parseInt(item.detailOfferings[0].unusedAmt);
-                        console.log(' ======= 1 ' + initialAmtExtra)
                         if (dataFlag) {
-                            expireDate = item.detailOfferings[0].expireDate;
-                            offeringId = item.detailOfferings[0].offeringId;
+                            //console.log(' ======= 1 data extra ' + dataFlag)
                             
+                            offeringId = item.detailOfferings[0].offeringId;
+                            initialAmtExtra = item.freeUnit.totalAmt;
+                            unusedAmtExtra = parseInt(item.freeUnit.unusedAmt);
+
+                            // fechas
+                            Object.values(item.detailOfferings).map((data) => {
+                                console.log('******* data **** ' + data)
+                                console.log('******* data.expireDate2 ****  '+ data.expireDate)
+                                console.log( 20220403000000 > 20220311000000)
+                                if (parseInt(data.expireDate) > expireDateFinal )
+                                    expireDateFinal = parseInt(data.expireDate)
+
+                                console.log('******* expireDateFinal4 2 ****  '+ expireDateFinal)
+                            })
+
+                            // set
+                            expireDate = expireDateFinal.toString();
+                            console.log('******* expireDateFinal final finañl ****  '+ expireDateFinal)
                         }
                     }
     
@@ -77,8 +93,9 @@ const filterArray = (userData) => {
     })
 
     // SET DAT AMOUNT
+    console.log(' ======= 0 ' + initialAmt)
     if (initialAmt == undefined ) {
-        console.log(' ======= 2 ' + initialAmtExtra)
+        //console.log(' ======= 2 ' + initialAmtExtra)
 
         initialAmt = initialAmtExtra;
     }
@@ -86,10 +103,12 @@ const filterArray = (userData) => {
         console.log(' ======= ANTES initialAmt ' + initialAmt)
         initialAmt =  parseInt(initialAmt) + parseInt(initialAmtExtra);
         
-        console.log(' ======= DESPUÉS initialAmt ' + parseInt(initialAmt))
+        //console.log(' ======= DESPUÉS initialAmt ' + parseInt(initialAmt))
     }
+    console.log(' ======= 0B ' + unusedAmt)
     if (unusedAmt == undefined ) {
         unusedAmt = unusedAmtExtra;
+        //console.log(' ======= 0B ' + unusedAmt)
     } else {
         console.log(' =======  unusedAmt ' + parseInt(unusedAmt))
         console.log(' ======= unusedAmtExtra ' + parseInt(unusedAmtExtra))

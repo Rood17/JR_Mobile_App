@@ -31,3 +31,5 @@ export const GET_UF = 'UF'
 
 export const IS_USER_LOGGED = 'isUserLogged'
 export const REGISTER_SUCCESS = 'registerSuccess'
+
+export const PREFERENCE_ID = 'preference_id'
