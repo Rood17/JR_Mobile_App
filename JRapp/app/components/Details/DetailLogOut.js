@@ -159,7 +159,7 @@ const DetailLogOut = ({ navigation, route }) => {
 
 
                         <View style={styles.infoNoRegisterTxt}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigation.goBack()}>
                                 <Text style={{ textAlign: 'center' }}>
                                     Para más información
                                     <Text style={{ color: styleConst.MAINCOLORS[0] }}> Ingresa </Text>

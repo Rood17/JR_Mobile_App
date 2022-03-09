@@ -7,12 +7,16 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
-import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
+import React, { useState, useEffect, useContext } from 'react';
+import { LetterCircle, Loader, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
+import RecargasContext from '../../../context/recargas/RecargasContext';
+import { getUserEmail } from '../../utils/Storage';
+import {get_api_preference} from '../../utils/services/get_services'
+
 
 import {
     Button,
@@ -141,7 +145,7 @@ const modalStyle = StyleSheet.create({
 });
 
 // MainCard
-export const RechargeTwoCard = ({ payloadArray, isRegister, payload, idSubscriber, navigation }) => {
+export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload, idSubscriber, navigation }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
     const [errorMsg, setErrorMsg] = useState('');
@@ -156,11 +160,82 @@ export const RechargeTwoCard = ({ payloadArray, isRegister, payload, idSubscribe
     const [cardMonth, setCardMonth] = useState(false)
     const [cardYear, setCardYear] = useState(false)
     const [cardSeret, setCardSecret] = useState(false)
+    const [disabledEmail, setDisabledEmail] = useState(false)
+    const [realeseLoader, setRealeseLoader] = useState(false);
 
     const materCard = 888
     const visa = 777
     const american = 666
     let detailPass;
+
+    // If MERCADO PAGO
+    const [mercadoEmail, setMercadoEmail] = useState();
+
+    const { recargas, get_preference } = useContext(RecargasContext);
+    const productArray = {
+        'idSubscriber': idSubscriber,
+        'title': payloadArray.title,
+        'price': payloadArray.price,
+        'email': mercadoEmail,
+    }
+    // si el usuario ya esta loggeado se saca el email de storgae
+    useEffect( () => {
+        if (isRegister){
+            setMercadoEmail(getUserEmail())
+            setDisabledEmail(true);
+            setEmailFlag(true); 
+        }
+
+    })
+    
+    // si no se le pide antes de pasar a esta pantalla
+
+    // si el mail está listo se llama a get preference
+    // preference deve ser llamada en el último state
+
+    useEffect(() => {
+        // so preference esta lista se avanza
+        setRealeseLoader(true)
+        console.log(" ***** 01s ")
+        const mercadoUrl = get_preference(productArray)
+        
+
+    }, [])
+
+    useEffect( () => {
+        console.log(" ***** result final 000 recargas " + recargas.init_point)
+        if ( recargas != undefined && recargas.init_point ){
+            setRealeseLoader(false);
+            setEmailFlag(true);
+        }
+    }, [recargas])
+
+    // New mercado pago validations 
+    const mercadoEmailValidation = (email) => {
+        if (email.length > 2 && email.indexOf('@') != -1 ) {
+            // Validations 
+            setMercadoEmail(email); 
+            setEmailFlag(true); 
+            setDisabledEmail(false);
+            setShowError(false); 
+            SetErrorTxt('');
+            
+        }
+        else { 
+            // Validations
+            setEmailFlag(false); 
+            setDisabledEmail(true)
+            setShowError(true); 
+            SetErrorTxt('El mail no es correcto.') 
+        }
+    }
+
+    // Mercado Handler
+    const mercadoHandler = () => {
+        console.log(' what in the hell of god is happening?? ')
+        if ( recargas != undefined && recargas.init_point && !realeseLoader )
+            navigation.navigate('MercadoP', {'init_point' : recargas.init_point})
+    }
 
     // Validate if Number account exist
     const onChangeCard = (card) => {
@@ -319,96 +394,123 @@ export const RechargeTwoCard = ({ payloadArray, isRegister, payload, idSubscribe
                 </View>
                 :
                 null
-            }
-            <View>
-                <View style={stylesMainCard.boxShadow}>
-
-                    <View style={stylesMainCard.inputContainer}>
-                        <Text>Introduce el número a recargar</Text>
+                }
+                {mercadoPago 
+                ?
+                <>
+                <View style={[stylesMainCard.boxShadow, {padding:30}]}>
+                        <Text>Email de Verificación</Text>
                         <Input
-                            placeholder="Tarjeta (16 dígitos)"
-                            keyboardType='number-pad'
-                            textContentType='telephoneNumber'
-                            errorMessage={errorMsg}
-                            leftIcon={{ type: 'font-awesome', name: 'credit-card', size: 18, color: displayColor }}
-                            maxLength={16}
-                            onChangeText={card => onChangeCard(card)}
+                            placeholder="Email de verificación"
+                            textContentType='emailAddress'
+                            keyboardType='email-address'
+                            secureTextEntry={false}
+                            value={mercadoEmail}
+                            disabled={disabledEmail}
+                            onChangeText={email => mercadoHandler(email)}
                         />
-                        {cardData ?
-                            <View style={[stylesMainCard.dataUserContainer, { paddingLeft: 15, paddingRight: 15 }]}>
-                                <View style={{ flex: 1 }}>
-                                    <Input
-                                        placeholder="MM"
-                                        keyboardType='number-pad'
-                                        maxLength={2}
-                                        style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
-                                        onChangeText={month => monthVal(month)}
-                                    />
-
-                                </View>
-                                <View style={{ flex: 0, alignItems: 'center', alignContent: 'center' }}>
-                                    <Text style={{ fontSize: 25, marginBottom: 25 }}>/</Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Input
-                                        placeholder="YYYY"
-                                        keyboardType='number-pad'
-                                        maxLength={4}
-                                        style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
-                                        onChangeText={year => yearVal( year)}
-                                    />
-
-                                </View>
-                                <View style={{ flex: 1.5 }}>
-                                    <Input
-                                        placeholder="CVV"
-                                        keyboardType='number-pad'
-                                        secureTextEntry={true}
-                                        maxLength={3}
-                                        style={{ borderBottomColor: displayColor, color: displayColor }}
-                                        onChangeText={secret => secretVal(secret)}
-                                    />
-                                </View>
-                            </View>
-                            : null}
-
-                        <View style={stylesMainCard.dataUserContainer}>
-                            <View style={stylesMainCard.inputsRow}>
+                        {realeseLoader
+                    ? <Loader isText={false} marginTop='0%' marginBottom={20} />
+                    : <Button disabled={!emailFlag} title="Realizar Pago" onPress={() => mercadoHandler()}/>         
+                    }
+              
+                    </View>
+                </>       
+                :
+                    <View>
+                        <View style={stylesMainCard.boxShadow}>
+                        {/** Aquí un spinner en lo que esta listo el iframe */}
+                        <>
+                            <View style={stylesMainCard.inputContainer}>
+                                <Text>Introduce el número a recargar</Text>
                                 <Input
-                                    placeholder="Código Postal"
+                                    placeholder="Tarjeta (16 dígitos)"
                                     keyboardType='number-pad'
-                                    maxLength={6}
-                                    style={{ borderBottomColor: displayColor, color: displayColor }}
+                                    textContentType='telephoneNumber'
+                                    errorMessage={errorMsg}
+                                    leftIcon={{ type: 'font-awesome', name: 'credit-card', size: 18, color: displayColor }}
+                                    maxLength={16}
+                                    onChangeText={card => onChangeCard(card)}
+                                />
+                                {cardData ?
+                                    <View style={[stylesMainCard.dataUserContainer, { paddingLeft: 15, paddingRight: 15 }]}>
+                                        <View style={{ flex: 1 }}>
+                                            <Input
+                                                placeholder="MM"
+                                                keyboardType='number-pad'
+                                                maxLength={2}
+                                                style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
+                                                onChangeText={month => monthVal(month)}
+                                            />
+
+                                        </View>
+                                        <View style={{ flex: 0, alignItems: 'center', alignContent: 'center' }}>
+                                            <Text style={{ fontSize: 25, marginBottom: 25 }}>/</Text>
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Input
+                                                placeholder="YYYY"
+                                                keyboardType='number-pad'
+                                                maxLength={4}
+                                                style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
+                                                onChangeText={year => yearVal( year)}
+                                            />
+
+                                        </View>
+                                        <View style={{ flex: 1.5 }}>
+                                            <Input
+                                                placeholder="CVV"
+                                                keyboardType='number-pad'
+                                                secureTextEntry={true}
+                                                maxLength={3}
+                                                style={{ borderBottomColor: displayColor, color: displayColor }}
+                                                onChangeText={secret => secretVal(secret)}
+                                            />
+                                        </View>
+                                    </View>
+                                    : null}
+
+                                <View style={stylesMainCard.dataUserContainer}>
+                                    <View style={stylesMainCard.inputsRow}>
+                                        <Input
+                                            placeholder="Código Postal"
+                                            keyboardType='number-pad'
+                                            maxLength={6}
+                                            style={{ borderBottomColor: displayColor, color: displayColor }}
+                                        />
+                                    </View>
+                                    <View style={stylesMainCard.inputsRow}>
+                                        <Input
+                                            placeholder="Email"
+                                            textContentType='emailAddress'
+                                            keyboardType='email-address'
+                                            secureTextEntry={false}
+                                            onChangeText={email => setEmail(email)}
+                                        />
+                                    </View>
+                                </View>
+                                {showError ?
+                                    <WarningAdvice type={2} warningText={errorTxt} />
+                                    : null}
+                            </View>
+                            <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
+                                <OverlayModal
+                                    navigation={navigation}
+                                    idSubscriber={idSubscriber}
+                                    payload={payload}
+                                    safeCard={safeCard}
+                                    fail={setSafeCard}
+                                    disabledBtn={disabledBtn}
+                                    isRegister={isRegister}
+                                    payloadArray={payloadArray}
                                 />
                             </View>
-                            <View style={stylesMainCard.inputsRow}>
-                                <Input
-                                    placeholder="Email"
-                                    textContentType='emailAddress'
-                                    keyboardType='email-address'
-                                    secureTextEntry={false}
-                                    onChangeText={email => setEmail(email)}
-                                />
-                            </View>
+                        </>
                         </View>
-                        {showError ?
-                            <WarningAdvice type={2} warningText={errorTxt} />
-                            : null}
                     </View>
-                    <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
-                        <OverlayModal
-                            navigation={navigation}
-                            idSubscriber={idSubscriber}
-                            payload={payload}
-                            safeCard={safeCard}
-                            fail={setSafeCard}
-                            disabledBtn={disabledBtn}
-                            isRegister={isRegister}
-                            payloadArray={payloadArray}
-                        />
-                    </View>
-                </View>
-            </View>
+                }
+            
+            
         </>
     );
 }
@@ -468,9 +570,9 @@ const stylesMainCard = StyleSheet.create({
 // Main
 const Recharge_2 = ({ navigation, route }) => {
 
-    const { idSubscriber, sendPayload, isRegister, payloadArray } = route.params;
-    const payload = sendPayload.name;
-
+    const { idSubscriber, sendPayload, isRegister } = route.params;
+    const payload = sendPayload.title;
+    const mercadoPago = true;
 
     return (
         <>
@@ -512,10 +614,11 @@ const Recharge_2 = ({ navigation, route }) => {
                         payload={payload}
                         idSubscriber={idSubscriber}
                         navigation={navigation}
-                        payloadArray={payloadArray}
+                        payloadArray={sendPayload}
+                        mercadoPago={mercadoPago}
                     />
                     <View style={styles.registerContainer}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <TouchableOpacity style={{marginTop:10}} onPress={() => navigation.goBack()}>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>Ir Atras</Text>
                         </TouchableOpacity>
                     </View>
@@ -543,7 +646,7 @@ const styles = StyleSheet.create({
     },
     registerContainer: {
         alignItems: 'center',
-        margin: 10
+        margin: 20
     },
     logo: {
         flex: 1,

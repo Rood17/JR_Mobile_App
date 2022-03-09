@@ -61,29 +61,33 @@ export const formatApiDate = (expireDate) => {
 // Compute recharge type
 export const setProductType = (payloadCode) => {
     const paquetes = getPaquetesApi();
-    let payloadDays, expireDate, payloadType; 
-    let result = {'name' : '', 'expireDate' : '', 'startDate':''}   
+    console.log(' ****** payloadCode : 33333' + payloadCode)
+    let payloadDays, expireDate, payloadType, payloadPrice; 
+    let result = {'title' : '', 'expireDate' : '', 'startDate':'', 'price' : ''}   
     let toMatch
     
     //offeringId
     if (!payloadCode ) payloadCode = '1809901178';
 
     Object.values(paquetes).map((item) => {
-        
-        
-   
-
+        console.log(' ****** searching name : ' + item.name)
+        console.log(' ******payloadCode : ' + item.name)
         if (payloadCode == item.offerId){
             payloadType = item.name
+            
             payloadDays = item.days
+            payloadPrice = item.precio
             expireDate = expireDateHandler(DATE_NOW_CODE,item.days)
         }
         
     })
 
-    result.name = payloadType;
+    result.title = payloadType;
     result.expireDate = expireDate;
     result.startDate = DATE_NOW_CODE;
+    result.price = payloadPrice;
+    console.log(' ****** searching title : ' + payloadType)
+    console.log(' ****** searching title : ' + result.title)
     return result;
 }
 

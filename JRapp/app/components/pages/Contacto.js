@@ -27,6 +27,16 @@ const Contacto = ({ navigation }) => {
                 onLoad={() => setIsLoading(false)}
                 source={{ uri: 'https://jrmovil.com/contact/' }}
                 style={{ marginTop: 20 }}
+                startInLoadingState={true}
+                mixedContentMode={"always"}
+                allowsBackForwardNavigationGestures={true}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                
+                renderLoading={() => 
+                <>
+                <Loader marginTop={1}/>
+                </>}
             />
             <ReturnHeader title='Regresar' navigation={navigation} />
         </SafeAreaView>

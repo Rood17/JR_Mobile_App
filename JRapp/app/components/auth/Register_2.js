@@ -62,7 +62,11 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
     const [chackColor3, setChackColor3] = useState('grey');
     const [btnDisabled, setbtnDisabled] = useState(true);
     const [pwd, setPwd] = useState()
-    
+    console.log("****************  ")
+    console.log("**************** setNewPwd  " + setNewPwd)
+    console.log("**************** editName  " + editName)
+    console.log("**************** editLastName   " + editLastName)
+    console.log("**************** editEmail   " + editEmail)
     useEffect(() => {
         !emailPass
         ? setbtnDisabled(true)

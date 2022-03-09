@@ -176,7 +176,7 @@ export const editUser = ( navigation, idSubscriber, editName, editLastName, edit
     console.log("*** editEmail : " + editEmail)
     console.log("*** editPwd : " + editPwd)
     console.log("****************  ")
-    console.log("****************  ")
+    console.log("**************** editUser AUTH  ")
     let dataArray = [{ 
         idSubscriber: idSubscriber, 
         name: editName, 
@@ -191,7 +191,7 @@ export const editUser = ( navigation, idSubscriber, editName, editLastName, edit
     try {
         editAPIUser(idSubscriber, editName, editLastName, editEmail, editPwd)
             .then((response) => {
-            console.log('User actualization!!');
+            console.log('User actualization!! + ');
             storageUpdate(dataArray, 'main')
             navigation.reset({
                 index: 0,

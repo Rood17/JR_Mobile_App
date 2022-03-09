@@ -4,7 +4,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native';
 
 import { WebView } from 'react-native-webview';
-import { ReturnHeader } from '../elements/Elements';
+import { ReturnHeader, Loader } from '../elements/Elements';
 
 const Faqs = ({ navigation }) => {
 
@@ -13,6 +13,16 @@ const Faqs = ({ navigation }) => {
             <WebView
                 source={{ uri: 'https://jrmovil.com/preguntas-frecuentes/' }}
                 style={{ marginTop: 20 }}
+                startInLoadingState={true}
+                mixedContentMode={"always"}
+                allowsBackForwardNavigationGestures={true}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                
+                renderLoading={() => 
+                <>
+                <Loader marginTop={1}/>
+                </>}
             />
             <ReturnHeader title='Regresar' navigation={navigation} />
         </SafeAreaView>
