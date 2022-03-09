@@ -34,10 +34,24 @@ const filterArray = (userData) => {
                     // Data
                     // freeunit info
                     if ( item.name == SIM_DATA){
-                        expireDate = item.detailOfferings[0].expireDate;
                         offeringId = item.detailOfferings[0].offeringId
                         initialAmt = item.freeUnit.totalAmt;
                         unusedAmt = parseInt(item.freeUnit.unusedAmt);
+
+                        // fechas
+                        Object.values(item.detailOfferings).map((data) => {
+                            console.log('******* data **** ' + data)
+                            console.log('******* data.expireDate2 ****  '+ data.expireDate)
+                            console.log( 20220403000000 > 20220311000000)
+                            if (parseInt(data.expireDate) > expireDateFinal )
+                                expireDateFinal = parseInt(data.expireDate)
+
+                            console.log('******* expireDateFinal4 2 ****  '+ expireDateFinal)
+                        })
+
+                        // set
+                        expireDate = expireDateFinal.toString();
+                        console.log('******* expireDateFinal final finañl ****  '+ expireDateFinal)
                     } else {
                         dataFlag = true
                     }
