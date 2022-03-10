@@ -172,11 +172,12 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
     const [mercadoEmail, setMercadoEmail] = useState();
 
     const { recargas, get_preference } = useContext(RecargasContext);
+    const price = clearPrice(payloadArray.price)
     const productArray = {
         'idSubscriber': idSubscriber,
         'title': payloadArray.title,
-        'price': payloadArray.price,
-        'email': mercadoEmail,
+        'price': price,
+        'email': mercadoEmail == undefined ? getUserEmail() : mercadoEmail,
     }
     // si el usuario ya esta loggeado se saca el email de storgae
     useEffect( () => {
@@ -677,3 +678,7 @@ const styles = StyleSheet.create({
 });
 
 export default Recharge_2;
+
+const clearPrice = (price) => {
+    return parseInt(price.slice(1, price.length))
+}

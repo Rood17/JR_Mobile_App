@@ -196,9 +196,9 @@ function MyDrawer({ userData }) {
 
 // Product card va a lements 999
 // Card
-export const ProductCard = ({ navigation, idSubscriber, isRegister }) => {
+export const ProductCard = ({ navigation, idSubscriber, isRegister, setGbProduct }) => {
 
-    const productCardHandler = (charge) => {
+    const productHandler = (charge) => {
         let intent
 
         // Is Register?
@@ -208,46 +208,84 @@ export const ProductCard = ({ navigation, idSubscriber, isRegister }) => {
             intent = 'Recharge'
 
         // Set product
+        setGbProduct(charge)
         charge = setProductType(charge)
 
         // Go to
-        navigation.navigate(intent, {
+        // Manejado por GBproduct
+        /*navigation.navigate(intent, {
             idSubscriber: userId,
             isRegister: isRegister,
             isJr: true,
             sendPayload: charge
-        })
+        })*/
     }
 
     return (
         <ScrollView horizontal >
             <TouchableHighlight
-                onPress={() => productCardHandler('A')}
+                onPress={() => productHandler('1879901017')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../res/drawable/products/1.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901178')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/2.jpg')}
                 />
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => productCardHandler('B')}
-                style={stylesProductCard.boxShadow}>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901013')}
+                style={stylesProductCard.boxShadow}
+            >
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/3.jpg')}
                 />
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => productCardHandler('C')}
+            <TouchableHighlight
+                onPress={() => productHandler('1809901179')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/4.jpg')}
                 />
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => productCardHandler('D')}
+            <TouchableHighlight
+                onPress={() => productHandler('1879901018')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../res/drawable/products/5.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901014')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../res/drawable/products/6.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1879901019')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../res/drawable/products/7.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901016')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../res/drawable/products/8.jpg')}
                 />
             </TouchableHighlight>
         </ScrollView>
@@ -374,7 +412,7 @@ const MainContent = ({ navigation, route }) => {
 
     // Payload select
     useEffect(() => {
-        console.log('****** searching gbProduct : ' + gbProduct)
+        console.log('****** tracking gbProduct : ' + gbProduct)
         if (gbProduct) {
             // Set product
             let charge = setProductType(gbProduct)
@@ -387,7 +425,7 @@ const MainContent = ({ navigation, route }) => {
                 sendPayload: charge
             })
         }
-    });
+    }, [gbProduct]);
 
 
     return (
@@ -448,6 +486,7 @@ const MainContent = ({ navigation, route }) => {
                                 navigation={navigation}
                                 idSubscriber={userId}
                                 isRegister={true}
+                                setGbProduct={setGbProduct}
                             />
                         </View>
                     </View>

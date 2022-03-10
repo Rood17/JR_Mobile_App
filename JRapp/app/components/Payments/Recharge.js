@@ -417,9 +417,11 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
     const productHandler = (payload) => {
         // Set charge
         setGbProduct(payload)
+        console.log('*** tracking - productHandler : ' + payload)
         // Close Modal
         togglePlans()
     }
+
 
     return (
         <ScrollView vertical >

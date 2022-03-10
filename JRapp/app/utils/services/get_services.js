@@ -369,18 +369,26 @@ export const userIsRegisterAPI = async (idSubscriber) => {
 
 export const get_api_preference = async (dataPorduct) => {
 
+    
+    let email;
+
+    dataPorduct.email == undefined 
+    ? email = 'undefined@gmail.com'
+    : email = dataPorduct.email
+
     console.log(' ***** idSubscriber ' + dataPorduct.idSubscriber)
     console.log(' ***** name ' + dataPorduct.title)
     console.log(' ***** price ' + dataPorduct.price)
+    console.log(' ***** email ' + email)
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     
     var raw = JSON.stringify({
-      "title": "JR Básico",
-      "unit_price": 99.55,
-      "idSubscriber": 9999999999,
-      "email": "dsfsdf@ff.ff"
+      "title": dataPorduct.title,
+      "unit_price": dataPorduct.price,
+      "idSubscriber": dataPorduct.idSubscriber,
+      "email": email
     });
     
     var requestOptions = {

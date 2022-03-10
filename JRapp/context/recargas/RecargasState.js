@@ -22,9 +22,10 @@ const RecargasState = props => {
         console.log("**************** get_preference  ")
         console.log("****************  ")
         console.log("*** idSubscriber : " + dataProduct.idSubscriber)
-        console.log("*** idSubscriber : " + dataProduct.email)
+        console.log("*** email : " + dataProduct.email)
         console.log('*** name ' + dataProduct.title)
         console.log('*** price ' + dataProduct.price)
+        
         console.log("****************  ")
         console.log("****************   ")
         let result;
