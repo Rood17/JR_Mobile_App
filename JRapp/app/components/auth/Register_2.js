@@ -18,10 +18,11 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input, Overlay } from 'react-native-elements'
-import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
-import { createUser, registerUser, updateUserPwd } from '../../context/AuthProvider';
+import { clearStorage, getUserId, storeUserData, storeUserString } from '../../utils/Storage';
+import { createUser, registerUser, editUser } from '../../context/AuthProvider';
 import FirebaseContext from '../../../context/firebase/FirebaseContext';
-
+import RNRestart from 'react-native-restart'; 
+import AuthContext from '../../../context/auth/AuthContext';
 import {
     Button,
     SafeAreaView,
@@ -46,22 +47,34 @@ import {
 
 // Btn Disabled Flaf Team
 let pass1, pass2, pass3, i;
-let { isBold1, isBold2, isBold3 } = 'normal'
+let { isBold1, isBold2, isBold3 } = '500'
 
-export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btnTxt, label, navigation, dataArray }) => {
+export const NewPwd = ({ setOnPwdChange,setNewPwd, 
+    update, setError, emailPass, goToIntent, btnTxt, 
+    label, navigation, dataArray,
+    editName, editLastName, editEmail }) => {
+
+    const { registerResponse, registerUser } = useContext(AuthContext);
+
 
     const [chackColor, setChackColor] = useState('grey');
     const [chackColor2, setChackColor2] = useState('grey');
     const [chackColor3, setChackColor3] = useState('grey');
     const [btnDisabled, setbtnDisabled] = useState(true);
     const [pwd, setPwd] = useState()
-    const [registerResponse, setRegisterResponse] = useState(false);
-
-    // Context firebase
-    const {getUserData} = useContext(FirebaseContext)
-
+    console.log("****************  ")
+    console.log("**************** setNewPwd  " + setNewPwd)
+    console.log("**************** editName  " + editName)
+    console.log("**************** editLastName   " + editLastName)
+    console.log("**************** editEmail   " + editEmail)
+    useEffect(() => {
+        !emailPass
+        ? setbtnDisabled(true)
+        : setbtnDisabled(false)
+    }, [emailPass])
+    
     const onChangeText = (text) => {
-
+        setOnPwdChange(true)
         i = text.length;
         console.log(text.length)
         if (utils.CheckUppercase(text)) {
@@ -123,14 +136,12 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
 
     // Register
     // User Register??
-    function register() {
+    async function register () {
         let email = dataArray[0].email
-
-
-
 
         console.log("****************  ")
         console.log("*** pwd : " + pwd)
+        dataArray[0].pwd = pwd
         console.log("*** email : " + email)
         console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
         console.log("*** name : " + dataArray[0].name)
@@ -140,40 +151,35 @@ export const NewPwd = ({ setNewPwd, update, setError, emailPass, goToIntent, btn
         let newSecret = pwd
 
         // Handle type of action
+        let registerResponse2;
         if ( !update){
-            registerUser(email, pwd, setRegisterResponse);
+            let myPromiseCreate = new Promise( ( resolve ) => {
+                //resolve(registerUser(dataArray,))
+                
+                resolve(registerUser(dataArray))
+            })
+            const create = await myPromiseCreate.finally(
+                () => {
+                    console.log("Finally myPromiseCreate")
+                }
+            )
+            registerResponse2 = create
+            console.log('****************************************************')
+            console.log("create 22 - " + create)
+            console.log("registerResponse - " + registerResponse)
+
+            
+            
         } else {
-            updateUserPwd(newSecret, setRegisterResponse)
-            setNewPwd(newSecret)
+            const edit = editUser(navigation, dataArray[0].idSubscriber, editName, editLastName, editEmail, newSecret)
         }
 
-        console.log("registerResponse -  " + registerResponse)
-        // Clear Storage
-        clearStorage();
-        // Open Modal            // Store New Data
-        storeUserData(dataArray);
-        // User Just Register
-        storeUserString('lastView', 'register')
-
-            // Handled by Auth
-            //navigation.navigate('Main')
-
-        
-
-        if (registerResponse.code === 'auth/email-already-in-use') {
-            console.log('That email address is already in use!');
-            setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
+        if (registerResponse2 =='Error: Request failed with status code 400' ) {
+            setError(<WarningAdvice type={2} warningText='Este mail ya se encuentra registrado.' />)
         }
-
-        if (registerResponse.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
-            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
+        else if (registerResponse2 =='Error: Network Error') {
+            setError(<WarningAdvice type={2} warningText='Favor de revisar su conexión.' />)
         }
-
-
-
-
-
 
     }
 
@@ -247,7 +253,7 @@ const modalStyle = StyleSheet.create({
         margin: 10
     },
     headTxt: {
-        fontWeight: 'bold',
+        fontWeight: '600',
         color: styleConst.MAINCOLORS[1]
     },
 });
@@ -256,27 +262,42 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
 
     // Params
     const { idSubscriber, name, lastName } = route.params;
-
     const dataArray = [{ idSubscriber: idSubscriber, name: name, lastName: lastName, email: null }]
 
     const [emailIsCorrect, setEmailIsCorrect] = useState(false);
-    const [email, setEmail] = useState();
+    const [email, setEmail] = useState('none');
     const [error, setError] = useState();
+    const [onPwdChange, setOnPwdChange] = useState(false);
 
     const [keyBoardIsOpen, setKeyBoardIsOpen] = useState();
 
-    const onChangeEmail = (inputEmail) => {
+    // Just one time
+    useEffect(() => {
+        if (onPwdChange) validateEmail()
+    }, [onPwdChange])
+    
+    const validateEmail = () => {
         setError('')
-        setEmailIsCorrect(false)
-        if (inputEmail.indexOf('@') != -1 && inputEmail.indexOf('.') != -1) {
-            setEmailIsCorrect(true)
-            setEmail(inputEmail)
-            setError('')
-
+        if (onPwdChange && email != undefined && email.length > 1){
+            if (email.indexOf('@') != -1 && email.indexOf('.') != -1) {
+                setEmailIsCorrect(true)
+                setError('')
+    
+            } else {
+                setError('')
+                setError(<WarningAdvice type={2} warningText='Introduzca un email válido.' />)
+                setEmailIsCorrect(false)
+            }
         } else {
             setEmailIsCorrect(false)
-            setError(<WarningAdvice type={2} warningText='Introduzca un email válido.' />)
         }
+    }
+
+    const onChangeEmail = (inputEmail) => {
+        setEmailIsCorrect(false)
+        setError('')
+        setEmail(inputEmail)
+        validateEmail()
     }
     // Set email
     dataArray[0].email = email
@@ -306,7 +327,7 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                         {!recovery ?
                             <>
                                 <Text>
-                                    Para entrar a tu portal "JR movil" es necesario que
+                                    Para entrar a tu portal "JRmóvil" es necesario que
                                     introduzcas tus datos.
                                 </Text>
                                 <View>
@@ -325,19 +346,20 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
                             </>
                             :
                             <Text style={{ marginBottom: 20 }}>
-                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JR Movil.
+                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JRmóvil.
                             </Text>
                         }
 
 
                         <NewPwd
-                            label='Ingresar Nueva Contraseña'
+                            label='Ingresar Contraseña'
                             goToIntent='Register_Sms'
                             btnTxt='Registrarse'
                             navigation={navigation}
                             emailPass={emailIsCorrect}
                             dataArray={dataArray}
                             setError={setError}
+                            setOnPwdChange={setOnPwdChange}
                         />
 
                     </View>
@@ -377,7 +399,7 @@ const styles = StyleSheet.create({
     phoneTxt: {
         color: styleConst.MAINCOLORS[1],
         fontSize: 15,
-        fontWeight: 'bold',
+        fontWeight: '600',
         margin: 10
     }
 });

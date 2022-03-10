@@ -7,17 +7,17 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import type { Node } from 'react';
 
 import DisplayLogo from './elements/DisplayLogo';
 import IntentBtn from './elements/IntentBtn';
 
 import {
-  Button,
+  Animated,
   SafeAreaView,
   ScrollView,
-  StatusBar,
+  Easing,
   StyleSheet,
   Text,
   useColorScheme,
@@ -37,9 +37,17 @@ const Intro: () => Node = () => {
     backgroundColor: isDarkMode ? 'Colors.blu': 'Colors.lighter',
   };
 
-  const goToIntent = () => {
-    console.log("holaaaa 123")
-  }
+  const [ animacion ] = useState( new Animated.Value(-500) );
+
+    useEffect(() => {
+        Animated.timing(
+            animacion, {
+                toValue: 0,  // al valor al que llega
+                duration: 700, // cantidad de tiempo en llegar
+                easing: Easing.ease
+            }
+        ).start(); // iniciar la animación
+    }, []);
 
   return (
     <>
@@ -47,10 +55,18 @@ const Intro: () => Node = () => {
       source={require('../res/drawable/background/bg_2.jpg')}
       style={{width: '100%', height: '100%'}} >
       <View style={styles.logoContainer}>
-       <DisplayLogo stylesLogo={styles.logo}/> 
+       {/*<DisplayLogo stylesLogo={styles.logo}/>*/}
+       <Animated.Image
+            source={require('../res/drawable/logo/jrlogo_2.png')}
+            style={[{
+                left: animacion,
+            }, styles.logo]}
+        >
+        </Animated.Image>
+
       </View>
       <View style={styles.btnActionContainer}>
-        <Text style={{fontWeight:'normal', fontSize:20}}>Cambiate de CHIP</Text>
+        <Text style={{fontWeight:'600', fontSize:30, color:'black'}}></Text>
       </View>
     </ImageBackground>
     </> 
@@ -65,17 +81,18 @@ const styles = StyleSheet.create({
     padding: 20,
     flex:6,
     flexDirection:'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   logo : {
     flex:1,
     height:100,
-    margin: 20
+    margin: 20,
+    marginTop:80
 
   },
   btnActionContainer : {
     padding: 20,
-    flex:2,
+    flex:3,
     alignItems:'flex-start',
     alignItems:'center'
   },

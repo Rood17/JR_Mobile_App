@@ -29,11 +29,11 @@ import {
 
 
 // MainCard
-export const PwdRecoveryCard = ({ title, subtitle, subtitleColor }) => {
+export const PwdRecoveryCard = ({ navigation, title, subtitle, subtitleColor }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
     const [errorMsg, setErrorMsg] = useState('');
-
+    const [idSubscriber, setIdSubscriber] = useState();
     const numberExist = 888
 
     // Validate if Number account exist
@@ -43,6 +43,7 @@ export const PwdRecoveryCard = ({ title, subtitle, subtitleColor }) => {
                 setDisabledBtn(false)
                 setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
                 setErrorMsg('')
+                setIdSubscriber(number)
             } else {
                 setDisplayColor('red')
                 setDisabledBtn(true)
@@ -62,7 +63,7 @@ export const PwdRecoveryCard = ({ title, subtitle, subtitleColor }) => {
 
         <View style={stylesMainCard.boxShadow}>
             <View style={{ paddingLeft: 15, paddingRight: 15, marginTop: 35 }}>
-                <Text>Ingresa tu nùmero JR Movil, para enviarte un còdigo de autentificaciòn.</Text>
+                <Text>Ingresa tu nùmero JRmóvil, para enviarte un còdigo de autentificaciòn.</Text>
             </View>
             <View style={stylesMainCard.inputContainer}>
                 <Input
@@ -79,8 +80,11 @@ export const PwdRecoveryCard = ({ title, subtitle, subtitleColor }) => {
             <View style={{ marginBottom: 30, width:'80%' }}>
                 <IntentBtn
                     isDisabled={disabledBtn}
-                    intent='goToEnterCode'
-                    btnText='Enviar' />
+                    intent='RegisterSms'
+                    btnParams={{idSubscriber:idSubscriber}}
+                    btnText='Enviar'
+                    navigation={navigation}
+                />
             </View>
         </View>
 
@@ -136,11 +140,13 @@ const ForgottenPwd = ({navigation}) => {
             <View style={styles.container} >
                 <ReturnHeader title='Recuperar contraseña' navigation={navigation}/>
                 <View style={{ flex: 1 }}>
-                    <PwdRecoveryCard />
+                    <PwdRecoveryCard 
+                    navigation={navigation}
+                    />
                     <View style={styles.registerContainer}>
-                        <Text>Si ya estás registrado,</Text>
-                        <TouchableOpacity>
-                            <Text style={{color: styleConst.MAINCOLORS[0]}}>Inicia Sesión.</Text>
+                        <Text>Si aún no estás registrado,</Text>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Text style={{color: styleConst.MAINCOLORS[0]}}>¿Qué esperas?... ¡Es gratis!</Text>
                         </TouchableOpacity>
 
                     </View>

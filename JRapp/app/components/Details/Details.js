@@ -7,13 +7,16 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Card, ReturnHeader, UserDataCard, DetailCard } from "../elements/Elements";
 import { getPerfilUf } from '../../utils/services/get_services'
 import * as data from '../../utils/services/perfil_uf.json';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
-import axios from 'axios';
+import UserContext from '../../../context/user/UserContext'
+import { formatApiDate, setProductType } from '../../utils/Utils'
+
+
 import {
     Button,
     SafeAreaView,
@@ -30,35 +33,42 @@ const Details = ({ navigation, route }) => {
     const [userInfo, setUserInfo] = useState([]);
     const userIsActive = data.responseSubscriber.status.subStatus;
     const { idSubscriber } = route.params;
-    // FU_Tethering - please wit /** */
-    /**useEffect(() => {
-        const fetchData = async () => {
-            const response = await getPerfilUf();
-            //console.info("LeagueCatalog > Response >> "+JSON.stringify(response))
-            if (response.statusResponse) {
-                setUserInfo(response.dataPerfilUf);
-                console.log("holaa : " + esponse.dataPerfilUf)
-            }
-        };
-        fetchData();
-    }, []);
-    // I don´t fucking know yet
-    useEffect(() => {
-        const consultarApi = () => {
-            const url = './perfil_uf.json'
-            const resultados = axios.get(url)
-            console.log(resultados)
-        }
-        consultarApi()
-    }, []); **/
-    //setUserInfo(data.responseSubscriber)
-    useEffect(() => {
-        const consultarApi = () => {
-            setUserInfo(data.responseSubscriber)
-        }
-        consultarApi()
-    }, []);
-    console.log(idSubscriber)
+
+     // get userData Context
+     const { userData, getAPIUserData } = useContext(UserContext);
+
+     useEffect(() => {
+        getAPIUserData(idSubscriber);
+     }, [])
+ 
+ 
+     // Open the package
+     if (userData.simData != undefined)
+         var simData = Object.values(userData.simData)
+ 
+     // Open the package
+     if (userData.simSMS != undefined)
+         var simSMS = Object.values(userData.simSMS)
+ 
+     // Open the package
+     if (userData.simMIN != undefined)
+         var simMIN = Object.values(userData.simMIN)
+ 
+ 
+ 
+     // Oferta actual
+    const oferta = !simData[4] ? 'Sin Carga' : simData[4]
+    const expireMBData = !simData[0] ? '-' : formatApiDate(simData[0])
+    
+    // MB
+    const unsuedMBData = !simData ? 'NaN' : simData[2]
+    const totalMBData = !simData ? 'NaN' : simData[1]
+    //SMS
+    const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
+    const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
+    //SMS
+    const totalMINData = !simMIN ? 'NaN' : simMIN[1]
+    const unsuedMINData = !simMIN ? 'NaN' : simMIN[2]
 
 
     // header, text, icon
@@ -69,7 +79,7 @@ const Details = ({ navigation, route }) => {
                 <ReturnHeader title='Detalles de tu Saldo' navigation={navigation} />
 
                 <View style={{ paddingLeft: 15, marginTop: 35 }}>
-                    <Text>Consulta los datos de tu número JR Movil.</Text>
+                    <Text>Consulta los datos de tu número JRmóvil.</Text>
                 </View>
                 {userIsActive ?
                     <>
@@ -109,31 +119,35 @@ const Details = ({ navigation, route }) => {
                                     data={[
                                         {
                                             campo : 'Plan Actual',
-                                            campoD : '[Info]'
+                                            campoD : oferta
                                         },
                                         {
                                             campo : 'Saldo Actual',
-                                            campoD : '[Info]'
+                                            campoD : unsuedMBData + ' mb'
                                         },
                                         {
                                             campo : 'Total Contratado',
-                                            campoD : '[Info]'
+                                            campoD : totalMBData + ' mb'
                                         },
                                         {
                                             campo : 'Total SMS',
-                                            campoD : '[Info]'
+                                            campoD : totalSMSData
                                         },
                                         {
-                                            campo : 'Total Tiempo V',
-                                            campoD : '[Info]'
+                                            campo : 'Sms restantes',
+                                            campoD : unsuedSMSData
                                         },
                                         {
-                                            campo : 'Última Fecha de Pago',
-                                            campoD : '[Info]'
+                                            campo : 'Minutos VoWifi',
+                                            campoD : totalMINData
+                                        },
+                                        {
+                                            campo : 'Minutos VoWifi Restantes',
+                                            campoD : unsuedMINData
                                         },
                                         {
                                             campo : 'Fecha de Vencimiento',
-                                            campoD : '[Info]'
+                                            campoD : expireMBData
                                         },
                                     ]} 
                             />
@@ -144,12 +158,12 @@ const Details = ({ navigation, route }) => {
                                     icon='file'
                                     data={[
                                         {
-                                            campo : 'Servicio 1',
-                                            campoD : '[Info]'
+                                            campo : 'Buzón de voz',
+                                            campoD : 'No contratado'
                                         },
                                         {
-                                            campo : 'Servicio 2',
-                                            campoD : '[Info]'
+                                            campo : 'Llamada en espera',
+                                            campoD : 'Sí'
                                         },
                                     ]}
                                 />

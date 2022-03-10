@@ -11,7 +11,7 @@
         "subStatus": "Active"
       },
       "primaryOffering": {
-        "offeringId": "1789900002",
+        "offeringId": "1879901019",
         "excessiveProductSpeed": "Best Effort"
       },
       "freeUnits": [
@@ -28,7 +28,7 @@
               "initialAmt": "0.0009765625",
               "unusedAmt": "0.0009765625",
               "effectiveDate": "20200608153148",
-              "expireDate": "20200608235959"
+              "expireDate": "20210608235959"
             }
           ]
         },
@@ -40,12 +40,12 @@
           },
           "detailOfferings": [
             {
-              "offeringId": "1889900002",
+              "offeringId": "1809901178",
               "purchaseSecuence": "520013634587",
               "initialAmt": "3765",
-              "unusedAmt": "3765",
+              "unusedAmt": "2490",
               "effectiveDate": "20200608152707",
-              "expireDate": "20200608235959"
+              "expireDate": "20220503235959"
             }
           ]
         },

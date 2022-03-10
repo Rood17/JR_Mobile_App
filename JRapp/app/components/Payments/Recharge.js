@@ -8,13 +8,13 @@
  */
 
 import React, { useContext, useState, useEffect } from 'react';
-import type { Node } from 'react';
-import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
+import { JrBtnCircle,DisplayLogo, LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
-import {setProductType} from '../../utils/Utils'
+import { setProductType } from '../../utils/Utils'
+import { Avatar } from 'react-native-elements';
 import PaquetesContext from '../../../context/paquetes/PaquetesContext';
 
 import {
@@ -30,15 +30,29 @@ import {
 } from 'react-native';
 
 let payload;
+let payloadArray;
 // MainCard
-export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle, subtitleColor, navigation, setGbProduct }) => {
+export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [errorMsg, setErrorMsg] = useState('');
     const [errorMsg2, setErrorMsg2] = useState('');
-    const [initNumber, setInitNumber] = useState();
+    const [initNumber, setInitNumber] = useState(idSubscriber);
     const [pass1, setPass1] = useState(false);
+
+    /**
+     * Si se bloquea el idSubscriber
+     * llamar change number 1
+     */
+    const [autoFlag, setAutoFlag] = useState(true);
+
+    useEffect(() => {
+        autoFlag 
+        ? setPass1(true) 
+        : null
+    }, [autoFlag])
+    
 
     const numberExist = 888
     let phoneValue;
@@ -94,14 +108,13 @@ export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle,
     }
 
     // IsRegister
-    if ( isJr ) {
+    if (isJr) {
         // Set input value
         phoneValue = initNumber
     }
-        
 
-    console.log("Recharge > idSubscriber : "+ idSubscriber)
 
+    console.log("Recharge > payloadArray : " + payloadArray.name)
 
     return (
 
@@ -115,6 +128,7 @@ export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle,
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
                     value={phoneValue}
+                    disabled={autoFlag}
                     leftIcon={{ type: 'font-awesome', name: 'mobile', size: 18, color: displayColor1 }}
                     maxLength={constants.MAX_NUMBER_LENGTH}
                     onChangeText={number => onChangeNumber(number)}
@@ -134,7 +148,7 @@ export const RechargeOneCard = ({ isJr,idSubscriber, isRegister,title, subtitle,
                 <IntentBtn
                     isDisabled={disabledBtn}
                     intent={['Recharge_2', {
-                        sendPayload: payload,
+                        sendPayload: payloadArray,
                         idSubscriber: initNumber,
                     }]}
                     navigation={navigation}
@@ -190,7 +204,7 @@ const stylesMainCard = StyleSheet.create({
 // END MainCard
 
 // Money List
-export const MoneyCard = ({ setGbProduct, togglePrices }) => {
+export const MifiMoneyCard = ({ setGbProduct, togglePrices }) => {
 
     // handle money bby
     const moneyHandler = (payloadCode) => {
@@ -201,72 +215,72 @@ export const MoneyCard = ({ setGbProduct, togglePrices }) => {
     }
 
     return (
-        <View style={stylesMoneyCard.boxShadow} >
-            <View style={stylesMoneyCard.horizontalCard}>
+        <View style={stylesMifiMoneyCard.boxShadow} >
+            <View style={stylesMifiMoneyCard.horizontalCard}>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(20)}
                 >
-                    <Text>$20</Text>
+                    <Text>8GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(30)}
                 >
-                    <Text>$30</Text>
+                    <Text>10GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(50)}
                 >
-                    <Text>$50</Text>
+                    <Text>13GB</Text>
                 </TouchableOpacity>
             </View>
-            <View style={stylesMoneyCard.horizontalCard}>
+            <View style={stylesMifiMoneyCard.horizontalCard}>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(100)}
                 >
-                    <Text>$100</Text>
+                    <Text>20GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(150)}
                 >
-                    <Text>$150</Text>
+                    <Text>23GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(200)}
                 >
-                    <Text>$200</Text>
+                    <Text>33GB</Text>
                 </TouchableOpacity>
             </View>
-            <View style={stylesMoneyCard.horizontalCard}>
+            <View style={stylesMifiMoneyCard.horizontalCard}>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(300)}
                 >
-                    <Text style={{ alignItems: 'center' }}>$300</Text>
+                    <Text style={{ alignItems: 'center' }}>50GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(400)}
                 >
-                    <Text>$400</Text>
+                    <Text>53GB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={stylesMoneyCard.box}
+                    style={stylesMifiMoneyCard.box}
                     onPress={() => moneyHandler(500)}
                 >
-                    <Text>$500</Text>
+                    <Text>100GB</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
 
-const stylesMoneyCard = StyleSheet.create({
+const stylesMifiMoneyCard = StyleSheet.create({
     container: {
 
     },
@@ -303,15 +317,9 @@ const stylesMoneyCard = StyleSheet.create({
 });
 
 // Products List
-export const ProductCard = ({ setGbProduct, togglePlans }) => {
+export const MifiCard = ({ setGbProduct, togglePlans }) => {
 
-    // get Paquetes Context
-    const {paquetes, getPaquetes} = useContext(PaquetesContext);
-
-    useEffect(() => {
-        getPaquetes();
-        //console.log("paquetes : " + paquetes)
-    }, [])
+    // get Paquetes Contex
 
     //console.log("paquetes : " + paquetes)
 
@@ -324,9 +332,109 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
     }
 
     return (
-        <ScrollView horizontal >
+        <ScrollView vertical >
             <TouchableHighlight
-                onPress={() => productHandler('A')}
+                onPress={() => productHandler('1509901006')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/mifi_1.png')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901007')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/mifi_2.png')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901008')}
+                style={stylesMifiCard.boxShadow}
+            >
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/mifi_3.png')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901009')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/mifi_4.png')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1509901010')}
+                style={stylesMifiCard.boxShadow}>
+                <Image
+                    style={stylesMifiCard.imageProduct}
+                    source={require('../../res/drawable/products/mifi_5.png')}
+                />
+            </TouchableHighlight>
+        </ScrollView>
+    );
+}
+
+const stylesMifiCard = StyleSheet.create({
+    container: {
+
+    },
+    imageProduct: {
+        width: 300,
+        height: 300,
+        padding: 5,
+        borderBottomWidth: .8,
+        //borderBottomColor: styleConst.MAINCOLORSLIGHT[1],
+        margin: 0,
+    },
+    boxShadow: {
+        marginTop: 0,
+        margin: 20,
+        backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+
+        elevation: 6,
+    }
+});
+
+// Products List
+export const ProductCard = ({ setGbProduct, togglePlans }) => {
+
+    // get Paquetes Contex
+
+    //console.log("paquetes : " + paquetes)
+
+    // 999 seguro aquí se va a neceistar un ref
+    const productHandler = (payload) => {
+        // Set charge
+        setGbProduct(payload)
+        console.log('*** tracking - productHandler : ' + payload)
+        // Close Modal
+        togglePlans()
+    }
+
+
+    return (
+        <ScrollView vertical >
+            <TouchableHighlight
+                onPress={() => productHandler('1879901017')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/1.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901178')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
@@ -334,28 +442,52 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => productHandler('B')}
-                style={stylesProductCard.boxShadow}>
+                onPress={() => productHandler('1809901013')}
+                style={stylesProductCard.boxShadow}
+            >
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../../res/drawable/products/3.jpg')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => productHandler('C')}
-                style={stylesProductCard.boxShadow}
-            >
+                onPress={() => productHandler('1809901179')}
+                style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../../res/drawable/products/4.jpg')}
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={() => productHandler('D')}
+                onPress={() => productHandler('1879901018')}
                 style={stylesProductCard.boxShadow}>
                 <Image
                     style={stylesProductCard.imageProduct}
                     source={require('../../res/drawable/products/5.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901014')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/6.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1879901019')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/7.jpg')}
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => productHandler('1809901016')}
+                style={stylesProductCard.boxShadow}>
+                <Image
+                    style={stylesProductCard.imageProduct}
+                    source={require('../../res/drawable/products/8.jpg')}
                 />
             </TouchableHighlight>
         </ScrollView>
@@ -415,60 +547,61 @@ export const OverlayModal = ({ setGbProduct, main }) => {
         <View>
             <View style={{ alignItems: 'center' }}>
                 <View style={modalStyle.iconContainer}>
+
+
                     <View style={modalStyle.icon}>
-                        <Icon
-                            raised
-                            name='dropbox'
-                            type='font-awesome'
-                            color={iconColor}
-                            onPress={togglePlans} />
-                        <Text>Planes JR</Text>
+                        <JrBtnCircle 
+                            onPress={togglePlans} 
+                        />
+                        <Text style={{ marginTop: 10 }}>Planes de Recarga</Text>
                     </View>
                     <View style={modalStyle.icon}>
-                        <Icon
-                            raised
-                            name='dollar'
-                            type='font-awesome'
-                            color={iconColor}
-                            onPress={togglePrices} />
-                        <Text>Cargar saldo</Text>
+                    <JrBtnCircle 
+                        icon='signal' 
+                        onPress={togglePrices} 
+                    />
+                        <Text style={{ marginTop: 10 }}>¡Recarga por GB!</Text>
                     </View>
                 </View>
             </View>
 
-            <Overlay isVisible={visible1} onBackdropPress={togglePlans}>
+            <Overlay fullScreen={true} isVisible={visible1} onBackdropPress={togglePlans}>
                 <View style={modalStyle.headContainer}>
-                    <Text style={modalStyle.headTxt}>Planes JR</Text>
-                </View>
-
-                <View style={modalStyle.bodyContainer}>
-                    <Text style={{ margin: 15 }}>Slecciona una compra</Text>
-                    <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
-                </View>
-
-                <View style={modalStyle.footer}>
-                    <Button
-                        //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                        onPress={togglePlans}
-                        color={styleConst.MAINCOLORS[0]}
-                        title='Cerrar'
-                    />
+                    <View style={[{ flex: 1, }, modalStyle.headTextContainer]}>
+                        <Text style={modalStyle.headTxt}>Recargar Saldo</Text>
+                        <Text style={{ margin: 0 }}>Selecciona una compra</Text>
+                    </View>
+                    <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
+                        <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
+                    </View>
+                    <View style={[modalStyle.footer, { width: '100%', flex: 1 }]}>
+                        <View style={{ marginTop: 30 }}>
+                            <Button
+                                onPress={togglePlans}
+                                color={styleConst.MAINCOLORS[0]}
+                                title='Cerrar'
+                            />
+                        </View>
+                    </View>
                 </View>
             </Overlay>
-            <Overlay isVisible={visible2} onBackdropPress={togglePrices}>
+            <Overlay fullScreen={true} isVisible={visible2} onBackdropPress={togglePrices}>
                 <View style={modalStyle.headContainer}>
-                    <Text style={modalStyle.headTxt}>Recarga Saldo</Text>
-                    <View style={[modalStyle.bodyContainer, { width: '100%', marginTop: 20 }]}>
-                        <Text style={{ margin: 15, width: '100%' }}>Selecciona una compra</Text>
-                        <MoneyCard setGbProduct={setGbProduct} togglePrices={togglePrices} />
+                    <View style={[{ flex: 1, }, modalStyle.headTextContainer]}>
+                        <Text style={modalStyle.headTxt}>Recargar Saldo</Text>
+                        <Text style={{ margin: 0 }}>Selecciona una compra</Text>
                     </View>
-                    <View style={[modalStyle.footer, { width: '100%' }]}>
-                        <Button
-                            //style={stylesBtn == null ? btnNormal() : stylesBtn}
-                            onPress={togglePrices}
-                            color={styleConst.MAINCOLORS[0]}
-                            title='Cerrar'
-                        />
+                    <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
+                        <MifiCard setGbProduct={setGbProduct} togglePlans={togglePrices} />
+                    </View>
+                    <View style={[modalStyle.footer, { width: '100%', flex: 1 }]}>
+                        <View style={{ marginTop: 30 }}>
+                            <Button
+                                onPress={togglePrices}
+                                color={styleConst.MAINCOLORS[0]}
+                                title='Cerrar'
+                            />
+                        </View>
                     </View>
                 </View>
             </Overlay>
@@ -477,19 +610,29 @@ export const OverlayModal = ({ setGbProduct, main }) => {
 };
 const modalStyle = StyleSheet.create({
     headContainer: {
-        margin: 20,
+        flex: 1,
+        margin: 0,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        textAlign: 'center'
+    },
+    headTextContainer: {
+        marginBottom: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
+
     },
     bodyContainer: {
-        width: '80%',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center'
 
 
     },
     footer: {
-        margin: 20
+        margin: 20,
+        paddingTop: 0
     },
     headTxt: {
         fontWeight: 'bold',
@@ -513,17 +656,24 @@ const Recharge = ({ navigation, chargeResume, route }) => {
     const { idSubscriber, isRegister, isJr, sendPayload } = route.params;
 
     // Set the prodcut type
-    console.log("Recharge - sendPayload : " + sendPayload)
-    if ( sendPayload )
-        payload = setProductType(sendPayload)
+    /**
+     * Aquí debe llamarse a paquetes state para
+     * alimentar los paquetes
+     */
+    // console.log("Recharge - sendPayload : " + sendPayload)
+    // console.log("Recharge - gbProduct : " + gbProduct)
+    if (sendPayload)
+        payloadArray = setProductType(sendPayload)
     else
-        payload = setProductType(gbProduct)
+        payloadArray = setProductType(gbProduct)
+
+    payload = payloadArray.title
 
     return (
         <>
-        <ReturnHeader title='Recarga de saldo' navigation={navigation} />
+            <ReturnHeader title='Recarga de saldo' navigation={navigation} />
             <ScrollView style={styles.container} >
-                
+
                 <View style={{ flex: 1 }}>
                     <View style={styles.promoContainer}>
                         <Text style={{ fontWeight: 'bold', color: styleConst.MAINCOLORS[1] }}>Los mejores paquetes y opciones en telefonía para ti.</Text>
@@ -531,14 +681,14 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                     <View style={styles.headContainer}>
                         <LetterCircle insightData={1} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
+                            <Text>Ingresa tu número JRmóvil y el tipo de compra.</Text>
                         </View>
                     </View>
-                    <RechargeOneCard 
-                    idSubscriber={idSubscriber}
-                    isRegister={isRegister}
-                    isJr={isJr}
-                    navigation={navigation} setGbProduct={setGbProduct} />
+                    <RechargeOneCard
+                        idSubscriber={idSubscriber}
+                        isRegister={isRegister}
+                        isJr={isJr}
+                        navigation={navigation} setGbProduct={setGbProduct} />
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>

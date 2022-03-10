@@ -7,13 +7,16 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
-import type { Node } from 'react';
-import { LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
+import React, { useState, useEffect, useContext } from 'react';
+import { LetterCircle, Loader, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
+import RecargasContext from '../../../context/recargas/RecargasContext';
+import { getUserEmail } from '../../utils/Storage';
+import {get_api_preference} from '../../utils/services/get_services'
+
 
 import {
     Button,
@@ -28,26 +31,36 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-let monthFlag, yearFlag, secretFlag, postalFlag, emailFlag;
+let monthFlag, yearFlag, secretFlag, postalFlag;
 
 // Modal
-const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
+const OverlayModal = ({ payloadArray, isRegister, payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
     const [visible, setVisible] = useState(false);
     const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
-
+    console.log('disabledbtn 1 : ' + disabledBtn)
     const toggleResume = () => {
         setVisible(!visible);
     };
 
+    // All data ready for API
+    //console.log('payloadArray :  ' + payloadArray.startDate)
     // Set safe card
     safeCard = 'xxxx xxxx xxxx ' + safeCard.toString().slice(12);
 
     const safePaymentHandler = () => {
         if (safePaymentSuccess) {
-            navigation.navigate('Recharge_3', {
-                payload: payload,
-                idSubscriber: idSubscriber,
-                isRegister:isRegister
+            navigation.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: 'Recharge_3',
+                        params: { 
+                            idSubscriber: idSubscriber, 
+                            isRegister: isRegister,
+                            payload: payload,
+                        },
+                    },
+                ],
             })
         } else {
             toggleResume()
@@ -55,8 +68,11 @@ const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, 
         }
     }
 
-
-
+    /**
+     * Aquí debe llamarse a paquetes
+     * obtener el ofertid y las fechas
+     * y llamar a la API EN POST
+     */
 
     return (
         <View>
@@ -68,7 +84,7 @@ const OverlayModal = ({ isRegister,payload, idSubscriber, navigation, safeCard, 
                     onPress={toggleResume}
                     color={styleConst.MAINCOLORS[0]}
                     title='Continuar'
-                    disabled={false}
+                    disabled={disabledBtn}
                 />
             </View>
 
@@ -129,19 +145,98 @@ const modalStyle = StyleSheet.create({
 });
 
 // MainCard
-export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation }) => {
+export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload, idSubscriber, navigation }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
     const [errorMsg, setErrorMsg] = useState('');
     const [cardDisplay, setCardDisplay] = useState();
     const [cardData, setCardData] = useState(false);
     const [safeCard, setSafeCard] = useState(5555);
+    const [showError, setShowError] = useState(false)
+    const [cardDetailData, setCardDetailData] = useState()
+    const [errorTxt, SetErrorTxt] = useState('');
+    const [emailFlag, setEmailFlag] = useState(false)
     let { displayMaster, displayVisa, displayAmerican } = 'flex';
+    const [cardMonth, setCardMonth] = useState(false)
+    const [cardYear, setCardYear] = useState(false)
+    const [cardSeret, setCardSecret] = useState(false)
+    const [disabledEmail, setDisabledEmail] = useState(false)
+    const [realeseLoader, setRealeseLoader] = useState(false);
 
     const materCard = 888
     const visa = 777
     const american = 666
+    let detailPass;
 
+    // If MERCADO PAGO
+    const [mercadoEmail, setMercadoEmail] = useState();
+
+    const { recargas, get_preference } = useContext(RecargasContext);
+    const price = clearPrice(payloadArray.price)
+    const productArray = {
+        'idSubscriber': idSubscriber,
+        'title': payloadArray.title,
+        'price': price,
+        'email': mercadoEmail == undefined ? getUserEmail() : mercadoEmail,
+    }
+    // si el usuario ya esta loggeado se saca el email de storgae
+    useEffect( () => {
+        if (isRegister){
+            setMercadoEmail(getUserEmail())
+            setDisabledEmail(true);
+            setEmailFlag(true); 
+        }
+
+    })
+    
+    // si no se le pide antes de pasar a esta pantalla
+
+    // si el mail está listo se llama a get preference
+    // preference deve ser llamada en el último state
+
+    useEffect(() => {
+        // so preference esta lista se avanza
+        setRealeseLoader(true)
+        console.log(" ***** 01s ")
+        const mercadoUrl = get_preference(productArray)
+        
+
+    }, [])
+
+    useEffect( () => {
+        console.log(" ***** result final 000 recargas " + recargas.init_point)
+        if ( recargas != undefined && recargas.init_point ){
+            setRealeseLoader(false);
+            setEmailFlag(true);
+        }
+    }, [recargas])
+
+    // New mercado pago validations 
+    const mercadoEmailValidation = (email) => {
+        if (email.length > 2 && email.indexOf('@') != -1 ) {
+            // Validations 
+            setMercadoEmail(email); 
+            setEmailFlag(true); 
+            setDisabledEmail(false);
+            setShowError(false); 
+            SetErrorTxt('');
+            
+        }
+        else { 
+            // Validations
+            setEmailFlag(false); 
+            setDisabledEmail(true)
+            setShowError(true); 
+            SetErrorTxt('El mail no es correcto.') 
+        }
+    }
+
+    // Mercado Handler
+    const mercadoHandler = () => {
+        console.log(' what in the hell of god is happening?? ')
+        if ( recargas != undefined && recargas.init_point && !realeseLoader )
+            navigation.navigate('MercadoP', {'init_point' : recargas.init_point})
+    }
 
     // Validate if Number account exist
     const onChangeCard = (card) => {
@@ -165,58 +260,56 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
             setCardDisplay(9)
         }
     }
-
-    function setMonth(month) {
-        if (month.length == 2)
-            monthFlag = true;
-        else
-            monthFlag = false;
-
+    const monthVal = (month) => {
+        if (month.length == 2) {
+            setShowError(false); 
+            SetErrorTxt('') 
+        }
+        else { 
+            setShowError(true); 
+            SetErrorTxt('Favor de introducir el mes.') 
+        }
         runVerification()
     }
-    function setYear(year) {
-        if (year.length == 4)
-            yearFlag = true;
-        else
-            yearFlag = false;
-
+    const yearVal = (year) => {
+        if (year.length == 4) { 
+            setShowError(false); 
+            SetErrorTxt('') 
+        }
+        else { detailPass = false;
+             setShowError(true); 
+             SetErrorTxt('Favor de introducir el año.'); 
+        }
         runVerification()
     }
-    function setSecret(secret) {
-        if (secret.length === 3)
-            secretFlag = true;
-        else
-            secretFlag = false;
-
-        runVerification()
-    }
-    function setPostal(postal) {
-        if (postal.length > 5)
-            postalFlag = true;
-        else
-            postalFlag = false;
-
+    const secretVal = (secret) => {
+        if (secret.length == 3) { 
+            setShowError(false); 
+            SetErrorTxt('') 
+        }
+        else {
+            setShowError(true); 
+            SetErrorTxt('Favor de introducir el CVV.') 
+        }
         runVerification()
     }
     function setEmail(email) {
-        if (email.length > 5 && email.indexOf('@') != -1 && email.lastIndexOf('.') != -1)
-            emailFlag = true;
-        else
-            emailFlag = false;
+        if (email.length > 2 && email.indexOf('@') != -1 ) { setEmailFlag(true); setShowError(false); SetErrorTxt('') }
+        else { setEmailFlag(false); setDisabledBtn(true);setShowError(true); SetErrorTxt('El mail no es correcto.') }
 
         runVerification();
     }
-    function runVerification() {
-        if (monthFlag && yearFlag && secretFlag && postalFlag && emailFlag) {
-            setDisabledBtn(false)
 
+    function runVerification() {
+        if (!showError && emailFlag) {
+            
+            setDisabledBtn(false)
         }
         else {
+            console.log('disabledbtn true : ' + disabledBtn)
             setDisabledBtn(true)
         }
     }
-
-
     const isMasterCard = (card) => {
         if (card.toString().indexOf(materCard) != -1) {
             console.log('pasando')
@@ -297,99 +390,128 @@ export const RechargeTwoCard = ({ isRegister, payload, idSubscriber, navigation 
 
             </View>
             {safeCard === 'Error' ?
-                <View style={{marginLeft:20, marginRight:20}}>
+                <View style={{ marginLeft: 20, marginRight: 20 }}>
                     <WarningAdvice type={1} warningText='No se pudo realizar el pago, favor de intentar de nuevo.' />
                 </View>
                 :
                 null
-            }
-            <View>
-                <View style={stylesMainCard.boxShadow}>
-
-                    <View style={stylesMainCard.inputContainer}>
-                        <Text>Introduce el número a recargar</Text>
+                }
+                {mercadoPago 
+                ?
+                <>
+                <View style={[stylesMainCard.boxShadow, {padding:30}]}>
+                        <Text>Email de Verificación</Text>
                         <Input
-                            placeholder="Tarjeta (16 dígitos)"
-                            keyboardType='number-pad'
-                            textContentType='telephoneNumber'
-                            errorMessage={errorMsg}
-                            leftIcon={{ type: 'font-awesome', name: 'credit-card', size: 18, color: displayColor }}
-                            maxLength={16}
-                            onChangeText={card => onChangeCard(card)}
+                            placeholder="Email de verificación"
+                            textContentType='emailAddress'
+                            keyboardType='email-address'
+                            secureTextEntry={false}
+                            value={mercadoEmail}
+                            disabled={disabledEmail}
+                            onChangeText={email => mercadoHandler(email)}
                         />
-                        {cardData ?
-                            <View style={[stylesMainCard.dataUserContainer, { paddingLeft: 15, paddingRight: 15 }]}>
-                                <View style={{ flex: 1 }}>
-                                    <Input
-                                        placeholder="MM"
-                                        keyboardType='number-pad'
-                                        maxLength={2}
-                                        style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
-                                        onChangeText={month => setMonth(month)}
-                                    />
-
-                                </View>
-                                <View style={{ flex: 0, alignItems: 'center', alignContent: 'center' }}>
-                                    <Text style={{ fontSize: 25, marginBottom: 25 }}>/</Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Input
-                                        placeholder="YYYY"
-                                        keyboardType='number-pad'
-                                        maxLength={4}
-                                        style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
-                                        onChangeText={year => setYear(year)}
-                                    />
-
-                                </View>
-                                <View style={{ flex: 1.5 }}>
-                                    <Input
-                                        placeholder="CVV"
-                                        keyboardType='number-pad'
-                                        secureTextEntry={true}
-                                        maxLength={3}
-                                        style={{ borderBottomColor: displayColor, color: displayColor }}
-                                        onChangeText={secret => setSecret(secret)}
-                                    />
-                                </View>
-                            </View>
-                            : null}
-
-                        <View style={stylesMainCard.dataUserContainer}>
-                            <View style={stylesMainCard.inputsRow}>
+                        {realeseLoader
+                    ? <Loader isText={false} marginTop='0%' marginBottom={20} />
+                    : <Button disabled={!emailFlag} title="Realizar Pago" onPress={() => mercadoHandler()}/>         
+                    }
+              
+                    </View>
+                </>       
+                :
+                    <View>
+                        <View style={stylesMainCard.boxShadow}>
+                        {/** Aquí un spinner en lo que esta listo el iframe */}
+                        <>
+                            <View style={stylesMainCard.inputContainer}>
+                                <Text>Introduce el número a recargar</Text>
                                 <Input
-                                    placeholder="Código Postal"
+                                    placeholder="Tarjeta (16 dígitos)"
                                     keyboardType='number-pad'
-                                    maxLength={7}
-                                    style={{ borderBottomColor: displayColor, color: displayColor }}
-                                    onChangeText={postal => setPostal(postal)}
+                                    textContentType='telephoneNumber'
+                                    errorMessage={errorMsg}
+                                    leftIcon={{ type: 'font-awesome', name: 'credit-card', size: 18, color: displayColor }}
+                                    maxLength={16}
+                                    onChangeText={card => onChangeCard(card)}
+                                />
+                                {cardData ?
+                                    <View style={[stylesMainCard.dataUserContainer, { paddingLeft: 15, paddingRight: 15 }]}>
+                                        <View style={{ flex: 1 }}>
+                                            <Input
+                                                placeholder="MM"
+                                                keyboardType='number-pad'
+                                                maxLength={2}
+                                                style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
+                                                onChangeText={month => monthVal(month)}
+                                            />
+
+                                        </View>
+                                        <View style={{ flex: 0, alignItems: 'center', alignContent: 'center' }}>
+                                            <Text style={{ fontSize: 25, marginBottom: 25 }}>/</Text>
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Input
+                                                placeholder="YYYY"
+                                                keyboardType='number-pad'
+                                                maxLength={4}
+                                                style={{ borderBottomColor: displayColor, color: displayColor, textAlign: 'center' }}
+                                                onChangeText={year => yearVal( year)}
+                                            />
+
+                                        </View>
+                                        <View style={{ flex: 1.5 }}>
+                                            <Input
+                                                placeholder="CVV"
+                                                keyboardType='number-pad'
+                                                secureTextEntry={true}
+                                                maxLength={3}
+                                                style={{ borderBottomColor: displayColor, color: displayColor }}
+                                                onChangeText={secret => secretVal(secret)}
+                                            />
+                                        </View>
+                                    </View>
+                                    : null}
+
+                                <View style={stylesMainCard.dataUserContainer}>
+                                    <View style={stylesMainCard.inputsRow}>
+                                        <Input
+                                            placeholder="Código Postal"
+                                            keyboardType='number-pad'
+                                            maxLength={6}
+                                            style={{ borderBottomColor: displayColor, color: displayColor }}
+                                        />
+                                    </View>
+                                    <View style={stylesMainCard.inputsRow}>
+                                        <Input
+                                            placeholder="Email"
+                                            textContentType='emailAddress'
+                                            keyboardType='email-address'
+                                            secureTextEntry={false}
+                                            onChangeText={email => setEmail(email)}
+                                        />
+                                    </View>
+                                </View>
+                                {showError ?
+                                    <WarningAdvice type={2} warningText={errorTxt} />
+                                    : null}
+                            </View>
+                            <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
+                                <OverlayModal
+                                    navigation={navigation}
+                                    idSubscriber={idSubscriber}
+                                    payload={payload}
+                                    safeCard={safeCard}
+                                    fail={setSafeCard}
+                                    disabledBtn={disabledBtn}
+                                    isRegister={isRegister}
+                                    payloadArray={payloadArray}
                                 />
                             </View>
-                            <View style={stylesMainCard.inputsRow}>
-                                <Input
-                                    placeholder="Email"
-                                    textContentType='emailAddress'
-                                    keyboardType='email-address'
-                                    autoComplete='email'
-                                    secureTextEntry={false}
-                                    onChangeText={email => setEmail(email)}
-                                />
-                            </View>
+                        </>
                         </View>
                     </View>
-                    <View style={{ marginBottom: 30, width: '100%', flex: 1 }}>
-                        <OverlayModal
-                            navigation={navigation}
-                            idSubscriber={idSubscriber}
-                            payload={payload}
-                            safeCard={safeCard}
-                            fail={setSafeCard}
-                            disabledBtn={disabledBtn}
-                            isRegister={isRegister}
-                        />
-                    </View>
-                </View>
-            </View>
+                }
+            
+            
         </>
     );
 }
@@ -450,7 +572,8 @@ const stylesMainCard = StyleSheet.create({
 const Recharge_2 = ({ navigation, route }) => {
 
     const { idSubscriber, sendPayload, isRegister } = route.params;
-    const payload = sendPayload;
+    const payload = sendPayload.title;
+    const mercadoPago = true;
 
     return (
         <>
@@ -464,7 +587,7 @@ const Recharge_2 = ({ navigation, route }) => {
                     <View style={styles.headContainer}>
                         <LetterCircle insightData={1} color={1} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Ingresa tu número JR Movil y el tipo de compra.</Text>
+                            <Text>Ingresa tu número JRmóvil y el tipo de compra.</Text>
                         </View>
                     </View>
                     <View style={styles.registerContainer}>
@@ -472,7 +595,7 @@ const Recharge_2 = ({ navigation, route }) => {
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{JSON.stringify(payload)}</Text>
                         </TouchableOpacity>
-                        <Text>Número JR Movil:</Text>
+                        <Text>Número JRmóvil:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>{JSON.stringify(idSubscriber)}</Text>
                         </TouchableOpacity>
@@ -487,14 +610,16 @@ const Recharge_2 = ({ navigation, route }) => {
                             <Text>Realiza tu pago.</Text>
                         </View>
                     </View>
-                    <RechargeTwoCard 
-                        isRegister={isRegister} 
-                        payload={payload} 
-                        idSubscriber={idSubscriber} 
-                        navigation={navigation} 
+                    <RechargeTwoCard
+                        isRegister={isRegister}
+                        payload={payload}
+                        idSubscriber={idSubscriber}
+                        navigation={navigation}
+                        payloadArray={sendPayload}
+                        mercadoPago={mercadoPago}
                     />
                     <View style={styles.registerContainer}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <TouchableOpacity style={{marginTop:10}} onPress={() => navigation.goBack()}>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>Ir Atras</Text>
                         </TouchableOpacity>
                     </View>
@@ -522,7 +647,7 @@ const styles = StyleSheet.create({
     },
     registerContainer: {
         alignItems: 'center',
-        margin: 10
+        margin: 20
     },
     logo: {
         flex: 1,
@@ -553,3 +678,7 @@ const styles = StyleSheet.create({
 });
 
 export default Recharge_2;
+
+const clearPrice = (price) => {
+    return parseInt(price.slice(1, price.length))
+}

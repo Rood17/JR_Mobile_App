@@ -14,7 +14,7 @@ const DisplayLogo = ({stylesLogo, mini}) => {
             : 
             <Image
             style={stylesLogo}
-            source={require('../../res/drawable/logo/jr_mov.png')}
+            source={require('../../res/drawable/logo/jrlogo_2.png')}
         />
         }
         

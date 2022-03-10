@@ -53,7 +53,6 @@ function RegisterSms2() {
   if (!confirm) {
     return (
       <>
-      <Text>Holaaaaa</Text>
       <Button
         title="Phone Number Sign In"
         onPress={() => signInWithPhoneNumber('+1 650-555-3434')}

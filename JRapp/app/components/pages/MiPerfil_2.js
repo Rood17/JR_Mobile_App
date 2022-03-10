@@ -13,7 +13,7 @@ import { UserImg, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import { Icon, Input } from 'react-native-elements'
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import IntentBtn from '../elements/IntentBtn'
-import { updateUserEmail, updateUserPwd } from '../../context/AuthProvider'; '../../context/AuthProvider';
+import { editUser } from '../../context/AuthProvider';
 import * as constants from '../../utils/constants/Constants'
 import { NewPwd } from '../auth/Register_2';
 import {
@@ -40,12 +40,20 @@ export const CardPerfil = ({ navigation }) => {
     const [newLastName, setNewLastName] = useState(getUserLastName());
     const [newEmail, setNewEmail] = useState(getUserEmail());
     const [newPwd, setNewPwd] = useState(false);
+    const [onPwdChange, setOnPwdChange] = useState(false);
+    const [editNameToSend, setEditNameToSend] = useState(false);
+    const [editLastNameToSend, setEditLastNameToSend] = useState(false);
+    const [editEmailToSend, setEditEmailToSend] = useState(false);
+
 
     const [error, setError] = useState('');
 
     // Switch
     const [newPwdOn, setnewPwdOn] = useState(false);
-    const toggleSwitch = () => setnewPwdOn(previousState => !previousState);
+    const toggleSwitch = () => {
+        setAllData()
+        setnewPwdOn(previousState => !previousState)
+    }
 
     // Current Data
     const letter = newName.slice(0, 1 - newName.length);
@@ -53,10 +61,15 @@ export const CardPerfil = ({ navigation }) => {
     const oldLastName = getUserLastName();
     const oldEmail = getUserEmail().toString();
     const oldPwd = 'Prueba123';
+    const idSubscriber = getUserId();
 
-    let dataArray = [{ idSubscriber: getUserId(), name: newName, email: newEmail, lastName: newLastName, pwd: newPwd }]
+    let dataArray = [{ idSubscriber: idSubscriber, name: newName, email: newEmail, lastName: newLastName, pwd: newPwd }]
     let currentPassword;
     let disabledBtn = true;
+    let editName = oldName;
+    let editLastName = oldLastName;
+    let editEmail = oldEmail;
+    let editPwd = oldPwd;
 
     // Name Validations
     if ((newName.length > 3 && (oldName !== newName)) ||
@@ -69,84 +82,46 @@ export const CardPerfil = ({ navigation }) => {
         disabledBtn = true
     }
 
+    console.log("**************** editName | " + editName)
+    console.log("**************** editLastName  | " + editLastName)
+    console.log("**************** editEmail |  " + editEmail)
+
+    const setAllData = () => {
+
+        currentPassword = oldPwd
+
+        setNewEmail(newEmail.toLowerCase());
+
+        if ( oldName != newName)
+            editName = newName
+        if ( oldLastName != newLastName)
+            editLastName = newLastName;
+
+        if ( oldEmail != newEmail)
+            editEmail = newEmail
+        if ( currentPassword != newPwd)
+            editPwd = newName;
 
 
+        setEditNameToSend(editName)
+        setEditLastNameToSend(editLastName)
+        setEditEmailToSend(editEmail)
+    }
 
     const updateHandler = () => {
 
-        // Ash
-        currentPassword = oldPwd
-
-        if (!newPwdOn && !disabledBtn) {
-            if (oldName !== newName || oldLastName !== newLastName) {
-                console.log("Names updated!");
-            }
-            console.log(oldEmail == email)
-            if (oldEmail != newEmail) {
-                updateUserEmail(navigation, newEmail,
-                    currentPassword, oldEmail)
-            }
-
-            if (oldEmail != email && oldPwd != newPwd) {
-                updateEmail()
-            }
-
-
-            // Always Storage
-            storgaeUpdate()
-            //navigation.popToTop()
-            navigation.reset({
-                index: 0,
-                routes: [
-                    {
-                        name: 'Main',
-                    },
-                ],
-            })
-        }
-
-    }
-
-
-    const storgaeUpdate = () => {
-        // Clear Storage
-        clearStorage();
-        // Store New Data
-        storeUserData(dataArray);
-        // User Just Register
-        storeUserString('lastView', 'Main')
-    }
-
-    const errorHandler = (errorMsg) => {
-        console.error("Errror !!! : " + errorMsg);
-        if (errorMsg === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
-            setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
-            setIsBtnDisable(true);
-        }
-        if (errorMsg === 'auth/user-not-found') {
-            console.log('No existe el usuario!');
-            setError(<WarningAdvice type={2} warningText='Este email ya está registrado.' />)
-            setIsBtnDisable(true);
+        // Ash  
+        setAllData()
+    
+    if (!newPwdOn && !disabledBtn) {
+        if (oldName != newName || oldLastName != newLastName || 
+            oldEmail != newEmail || currentPassword !=  newPwd || onPwdChange) {
+                editUser(navigation, idSubscriber, 
+                    editName, editLastName, editEmail, editPwd)
         }
     }
 
-    // From register
-    if (newPwd) {
-        // Always Storage
-        dataArray[0].pwd = newPwd;
-        storgaeUpdate()
-        //navigation.popToTop()
-        navigation.reset({
-            index: 0,
-            routes: [
-                {
-                    name: 'Main',
-                },
-            ],
-        })
     }
-
 
     return (
 
@@ -167,6 +142,7 @@ export const CardPerfil = ({ navigation }) => {
                         placeholder="Nombre del Titular"
                         autoComplete='name'
                         value={newName}
+                        disabled={newPwdOn ? true : false}
                         secureTextEntry={false}
                         leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
                         onChangeText={name => setNewName(name)}
@@ -174,6 +150,7 @@ export const CardPerfil = ({ navigation }) => {
                     <Input
                         placeholder="Apellido(s)"
                         secureTextEntry={false}
+                        disabled={newPwdOn ? true : false}
                         value={newLastName}
                         leftIcon={{ type: 'font-awesome', name: 'user', size: 18, color: 'grey' }}
                         onChangeText={lastname => setNewLastName(lastname)}
@@ -182,6 +159,7 @@ export const CardPerfil = ({ navigation }) => {
                         placeholder="Email"
                         textContentType='emailAddress'
                         keyboardType='email-address'
+                        disabled={newPwdOn ? true : false}
                         value={newEmail}
                         secureTextEntry={false}
                         autoComplete='email'
@@ -201,6 +179,7 @@ export const CardPerfil = ({ navigation }) => {
 
                     {newPwdOn ?
                         <NewPwd
+                            navigation={navigation}
                             emailPass={true}
                             dataArray={dataArray}
                             goToIntent='guardar'
@@ -208,6 +187,10 @@ export const CardPerfil = ({ navigation }) => {
                             label='Ingrese Nueva Contraseña'
                             update
                             setNewPwd={setNewPwd}
+                            setOnPwdChange={setOnPwdChange}
+                            editName={editNameToSend}
+                            editLastName = {editLastNameToSend}
+                            editEmail = {editEmailToSend}
                         />
                         :
                         <Button

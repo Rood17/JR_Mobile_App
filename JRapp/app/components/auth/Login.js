@@ -19,8 +19,10 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
-import { login, isUserLog } from '../../context/AuthProvider';
-import {  storeUserString } from '../../utils/Storage'
+//import { login } from '../../context/AuthProvider';
+import { storeUserString } from '../../utils/Storage'
+import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
+import AuthContext from '../../../context/auth/AuthContext';
 
 
 import {
@@ -32,8 +34,8 @@ import {
     Text,
     useColorScheme,
     View,
-    TextInput,
-    TouchableHighlight,
+    TouchableOpacity,
+    ActivityIndicator,
     TouchableWithoutFeedback,
     Keyboard,
 } from 'react-native';
@@ -49,7 +51,6 @@ import { WarningAdvice } from '../elements/Elements';
 
 
 // Global Vars
-let isNumberRegister = false;
 let numberInput = React.createRef();
 
 const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
@@ -57,13 +58,19 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [disabledBtn, setDisabledBtn] = useState(true)
     const [error, setError] = useState()
     const [loginSuccess, setLoginSuccess] = useState(false)
+    const [secret, setSecret] = useState()
+
+    const { login } = useContext(AuthContext);
 
     let pwdInput = React.createRef();
 
+    // Se verifica el PWD
     const onChangeText = (pwd) => {
+        setError('')
         if (pwd.length > 0) {
             setDisabledBtn(false);
             setIsPwdOk(true)
+            setSecret(pwd)
         }
         else {
             setDisabledBtn(true)
@@ -72,9 +79,10 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     }
 
     const loginHandler = () => {
-        // Let´s see
+        // Se almacena en el storage el view anterior.
         storeUserString('lastView', 'login')
-        login('bameetr@gu.bhj', 'Prueba123', setError, setLoginSuccess)
+        // Aquí se llama al login
+        login(nav, idSubscriber, secret, setError, setLoginSuccess)
     }
 
 
@@ -86,9 +94,6 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         if (loginSuccess) {
             nav.navigate('Main',
                 { idSubscriber: idSubscriber, isRegister: true });
-
-            // Set LastView
-            storeUserString('lastView', 'login')
 
             // Reset values
             setDisabledBtn(true);
@@ -124,7 +129,9 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
                 color={styleConst.MAINCOLORS[0]}
             />
             <View style={{ alignItems: 'center' }}>
-                <Text style={styles.phoneTxt}>¿Olvidaste tu contraseña?</Text>
+                <TouchableOpacity onPress={() => nav.navigate('ForgottenPwd')}>
+                    <Text style={[styles.phoneTxt, {marginTop:10}]}>¿Olvidaste tu contraseña?</Text>
+                </TouchableOpacity>
             </View>
 
         </>
@@ -148,12 +155,13 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                         si gustas puedes registrarte para aglizar tus consultas
                         y recargas.
                     </Text>
-                    <Text style={{ textAlign: 'center', }}>¡Es totalmente gratuito!</Text>
-                    <IntentBtn
-                        intent='Register'
-                        btnParams={{ idSubscriber: idSubscriber, isRegister: true }}
-                        navigation={navigation}
-                        btnText='Registrarse' />
+                    <Text style={{ textAlign: 'center', marginBottom:20 }}>¡Es totalmente gratuito!</Text>
+                    <Button
+                        //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                        onPress={() => navigation.navigate('Register', { idSubscriber: idSubscriber })}
+                        color={styleConst.MAINCOLORS[0]}
+                        title='Registrarse'
+                    />
                 </View>
             }
         </>
@@ -181,43 +189,67 @@ const LoginBody = ({ nav }) => {
     const [idSubscriber, setIdSubscriber] = useState(0)
     const [isPwdOk, setIsPwdOk] = useState(false)
     const [dinamicColor, setDinamicColor] = useState(styleConst.MAINCOLORSLIGHT[1])
-    const [clear, setClear] = useState(null)
+    const [clear, setClear] = useState(null);
+    const [UFuserData, setUFUserData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [isRegister, setIsRegister] = useState(false)
 
-
-    const isJR = '888'
-    const isRegister = '56'
-
+    // ****** API999 24917335
+    // esta constante deberá llamar al backend para verificar si el usuario ya existe.
+    let responseUserData = [];
     // Auth handler
     const onChangeNumber = (number) => {
         setIdSubscriber(number)
+        setUFUserData('');
 
-        // Validate if is Jr Movil
+
+        // Validar si el número ingrsado es JR.
         if (number.length == constants.MAX_NUMBER_LENGTH) {
+
+            // Se llama a la API
+            
+            const fetchData = async () => {
+                let errorResponse;
+
+                setLoading(true)
+                
+                const response = await getPerfilUf(number)
+                    .then(function (response) {
+
+                        // Manejar errores
+                        errorResponse = response.error;
+                        if (response.indexOf('Error') != -1 ){
+                            errorResponse = response;
+                        }
+                        
+                        // Data user
+                        responseUserData.array = response.userData
+                        
+                    })
+                    .catch(function (error) {
+                        responseUserData = error.message
+                        console.info("Login error");
+                        //throw new Error ('Error - ' + error.message)
+                    }).finally(() => {
+                        // Finalizando - está registrado??
+                        console.log('999 error ?? ' + errorResponse)
+                        if (errorResponse != undefined && errorResponse.length > 2) {
+                            validateIsJr(number, errorResponse, null)
+                            setLoading(false)
+                        } else {
+                            console.log('Llamando is register?? ')
+                            isRegisterAPI(number, errorResponse)
+                        }                                             
+                });                
+            };       
+            fetchData();
 
             // Clear input error
             setErrorStr('')
 
-            // Validate if es JR
-            if (number.toString().indexOf(isJR) != -1) {
-                setJrAlert(false)
-                setPhoneIsCorrect(true)
-                setIconFlex(4)
-                // Is register??
-                if (number.toString().indexOf(isRegister) != -1) {
-                    isNumberRegister = true
-                    setIconFlex(5)
-                }
-                else {
-                    isNumberRegister = false
-                }
-            } else {
-                setJrAlert(true)
-                setErrorStr('Este no es un número JR Móvil.')
-                setIconFlex(1.5)
-            }
-
-
         }
+
+
         // Clear
         if (number.length < constants.MAX_NUMBER_LENGTH) {
             setPhoneIsCorrect(false)
@@ -241,20 +273,84 @@ const LoginBody = ({ nav }) => {
         },
     );
 
+
+    // Función de validación
+    const validateIsJr = async (number, error, result) => {
+        if (error == null) {
+            //Log
+            console.log("** User is JR **")
+
+            // Set data
+            setUFUserData(responseUserData);
+            //console.log("userData >>>> ", responseUserData)
+
+            // Setters
+            setJrAlert(false)
+            setPhoneIsCorrect(true)
+            setIconFlex(4)
+            // Is register??
+            if (result == 'true') {
+                setIsRegister(true)
+                setIconFlex(5)
+            }
+            else {
+                setIsRegister(false)
+            }
+        } else {
+            setJrAlert(true)
+            if (error == 'Network Error')
+                setErrorStr('No hay conexión a internet.')
+            else
+                setErrorStr('Este no es un número JRmóvil.')
+            setIconFlex(1.5)
+            console.log("** User is not JR **")
+        }
+    }
+
+    // Call bd
+    const isRegisterAPI = async (number, errorResponse) => {
+
+        console.log(' Login - Is register ****** : ' + errorResponse)
+
+        let result = false;
+        setLoading(true)
+        const response = await userIsRegisterAPI(number)
+            .then(function (response) {
+
+                // Manejar errores
+                console.log(' Login - Is register : ' + response)
+                result = response
+                setIsRegister(result)
+                validateIsJr(number, errorResponse, result)
+
+            })
+            .catch(function (error) {
+                console.info("Login isRegister error : " + error);
+                //throw new Error ('Error - ' + error.message)
+            }).finally(() => {
+                setLoading(false)  
+                console.log("Login Isregister final")
+            });
+
+            return result
+    };
+
     // Consulta handler
     const iconActionHandler = (intent) => {
         // If is JR Movil
-        console.log("Login > isRegister : " + isPwdOk)
-        if (intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH) {
-
+        //console.log("Login > isRegister : " + isPwdOk)
+        if (intent !== 'Recharge' && !jrAlert && idSubscriber.length == constants.MAX_NUMBER_LENGTH
+            && !loading) {
             nav.navigate(intent, {
                 idSubscriber: idSubscriber,
                 isRegister: isPwdOk,
-                isJr: phoneIsCorrect
+                isJr: phoneIsCorrect,
             })
             setErrorStr('')
 
-        } else if (intent === 'Recharge') {
+        } else if (intent === 'Recharge' && !jrAlert
+                    && idSubscriber.length == constants.MAX_NUMBER_LENGTH
+                    && !loading) {
             console.log("Login > inside else if iconactionhandler idSubscriber : " + idSubscriber)
             console.log(isPwdOk)
 
@@ -270,7 +366,6 @@ const LoginBody = ({ nav }) => {
 
     }
 
-
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={utils.quitKeyboard}>
@@ -280,7 +375,7 @@ const LoginBody = ({ nav }) => {
                     </View>
                     <View style={styles.btnActionContainer}>
                         <Input
-                            ref={input => {numberInput = input}}
+                            ref={input => { numberInput = input }}
                             placeholder="Número JRmovil (10 dígitos)"
                             keyboardType='number-pad'
                             textContentType='telephoneNumber'
@@ -288,15 +383,21 @@ const LoginBody = ({ nav }) => {
                             maxLength={constants.MAX_NUMBER_LENGTH}
                             onChangeText={number => onChangeNumber(number)}
                         />
-                        {phoneIsCorrect ?
-                            <PassOrRegister
-                                setIsPwdOk={setIsPwdOk}
-                                idSubscriber={idSubscriber}
-                                numberFlag={isNumberRegister}
-                                navigation={nav}
-                            />
+                        {loading ?
+                            <ActivityIndicator size="large" color={styleConst.MAINCOLORS[0]} />
                             :
-                            <PhoneIsNotJr flag={jrAlert} errorText={errorStr} />
+                            <>
+                                {phoneIsCorrect ?
+                                    <PassOrRegister
+                                        setIsPwdOk={setIsPwdOk}
+                                        idSubscriber={idSubscriber}
+                                        numberFlag={isRegister}
+                                        navigation={nav}
+                                    />
+                                    :
+                                    <PhoneIsNotJr flag={jrAlert} errorText={errorStr} />
+                                }
+                            </>
                         }
 
                     </View>
@@ -361,8 +462,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         flex: 1,
-        height: 60,
-        margin: 90
+        height: 90,
+        margin: 30,
+        marginTop:80,
+        marginBottom:80
 
     },
     btnActionContainer: {

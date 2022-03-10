@@ -1,20 +1,22 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 //import all the components we are going to use
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View} from 'react-native';
 
 import { WebView } from 'react-native-webview';
-import { ReturnHeader } from '../elements/Elements';
+import { ReturnHeader, Loader } from '../elements/Elements';
 import NetInfo from "@react-native-community/netinfo";
 
 const Contacto = ({ navigation }) => {
+
+    const [loading, setIsLoading] = useState(true);
     // Subscribe
     const unsubscribe = NetInfo.addEventListener(state => {
         console.log("Connection type", state.type);
         console.log("Is connected?", state.isConnected);
 
         if ( !state.isConnected )
-            alert("Favor de revisar su conexión a internet.")
+            console.info("Favor de revisar su conexión a internet.")
     });
 
     // Unsubscribe
@@ -22,8 +24,19 @@ const Contacto = ({ navigation }) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <WebView
+                onLoad={() => setIsLoading(false)}
                 source={{ uri: 'https://jrmovil.com/contact/' }}
                 style={{ marginTop: 20 }}
+                startInLoadingState={true}
+                mixedContentMode={"always"}
+                allowsBackForwardNavigationGestures={true}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                
+                renderLoading={() => 
+                <>
+                <Loader marginTop={1}/>
+                </>}
             />
             <ReturnHeader title='Regresar' navigation={navigation} />
         </SafeAreaView>

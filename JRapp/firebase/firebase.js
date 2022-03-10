@@ -12,13 +12,10 @@ class Firebase {
 
         const app = initializeApp(firebaseConfig);
 
-        console.log("app  : " + app)
         this.db = getFirestore(app);
         console.log("db length!!! : " + this.db.length)
 
         console.log("Firebase Init")
-
-        // Get a list of cities from your database
 
 
 
