@@ -629,7 +629,7 @@ const styleHeadMain = StyleSheet.create({
 // END MainHeader
 
 // MainFooter
-export const MainFooter = ({ name, navigation, idSubscriber }) => {
+export const MainFooter = ({ name, navigation, idSubscriber, canChangeNumber }) => {
 
     const onPress = () => {
         //  console.log("goToAyuda")
@@ -650,7 +650,8 @@ export const MainFooter = ({ name, navigation, idSubscriber }) => {
                     onPress={() => navigation.navigate('Recharge', {
                         idSubscriber: idSubscriber,
                         isRegister: true,
-                        isJr: true
+                        isJr: true,
+                        canChangeNumber : canChangeNumber
                     })}>
                     <Icon
                         name='mobile'

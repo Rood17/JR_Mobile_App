@@ -16,6 +16,7 @@ import IntentBtn from '../elements/IntentBtn';
 import { setProductType } from '../../utils/Utils'
 import { Avatar } from 'react-native-elements';
 import PaquetesContext from '../../../context/paquetes/PaquetesContext';
+import UserContext from '../../../context/user/UserContext';
 
 import {
     Button,
@@ -28,11 +29,12 @@ import {
     View,
     TouchableOpacity,
 } from 'react-native';
+import { get_api_isJr } from '../../utils/services/get_services';
 
 let payload;
 let payloadArray;
 // MainCard
-export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
+export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
@@ -47,24 +49,48 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
      */
     const [autoFlag, setAutoFlag] = useState(true);
 
-    useEffect(() => {
-        autoFlag 
-        ? setPass1(true) 
-        : null
-    }, [autoFlag])
-    
+    // UserState
+    const { userData, userIsJr } = useContext(UserContext);
+
+    // El número es Jr y la carga es móvil 
+ 
+
+    // MIFI
+    useEffect( () => {
+        if( isMifi ){
+            setAutoFlag(false)
+            onChangeNumber(initNumber)
+        }
+    }, [isMifi])
+
+    // CAN CHANGE NUMBER
+    useEffect( () => {
+        if( canChangeNumber ){
+            setAutoFlag(false)
+            onChangeNumber(initNumber)
+        }
+    }, [])
+
+    // IsRegister
+    if (isJr) {
+        // Set input value
+        phoneValue = initNumber
+    }
 
     const numberExist = 888
     let phoneValue;
 
     // Validate if Number account exist
     const onChangeNumber = (number) => {
-
         // Set number
         setInitNumber(number);
 
         if (number.length === constants.MAX_NUMBER_LENGTH) {
-            if (number.toString().indexOf(numberExist) != -1) {
+            console.log(' * ************************************')
+            console.log(' * *******userIsJr(number) ****    : ' + number )
+            console.log(' * *******userIsJr(number) ****    : ' + userIsJr(number) )
+            console.log(' * ************************************')
+            if (number.toString().indexOf(numberExist) != -1 || userIsJr(number) ) {
                 setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
                 setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
                 setPass1(true);
@@ -107,21 +133,17 @@ export const RechargeOneCard = ({ isJr, idSubscriber, isRegister, title, subtitl
 
     }
 
-    // IsRegister
-    if (isJr) {
-        // Set input value
-        phoneValue = initNumber
-    }
 
-
-    console.log("Recharge > payloadArray : " + payloadArray.name)
 
     return (
 
         <View style={stylesMainCard.boxShadow}>
 
             <View style={stylesMainCard.inputContainer}>
-                <Text>Introduce el número a recargar</Text>
+                {isMifi 
+                ? <Text>Introduce el número MIFI a recargar</Text>
+                : <Text>Introduce el número móvil a recargar</Text>
+                }
                 <Input
                     placeholder="Número JRmovil (10 dígitos)"
                     keyboardType='number-pad'
@@ -416,8 +438,9 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
     // 999 seguro aquí se va a neceistar un ref
     const productHandler = (payload) => {
         // Set charge
-        setGbProduct(payload)
         console.log('*** tracking - productHandler : ' + payload)
+        setGbProduct(payload)
+        
         // Close Modal
         togglePlans()
     }
@@ -652,9 +675,12 @@ const modalStyle = StyleSheet.create({
 
 const Recharge = ({ navigation, chargeResume, route }) => {
 
+    
+    const { idSubscriber, isRegister, isJr, sendPayload, canChangeNumber } = route.params;
+    
+    const [isMifi, setIsMifi] = useState()
     const [gbProduct, setGbProduct] = useState()
-    const { idSubscriber, isRegister, isJr, sendPayload } = route.params;
-
+    let payload;
     // Set the prodcut type
     /**
      * Aquí debe llamarse a paquetes state para
@@ -662,12 +688,31 @@ const Recharge = ({ navigation, chargeResume, route }) => {
      */
     // console.log("Recharge - sendPayload : " + sendPayload)
     // console.log("Recharge - gbProduct : " + gbProduct)
-    if (sendPayload)
-        payloadArray = setProductType(sendPayload)
-    else
-        payloadArray = setProductType(gbProduct)
 
+    useEffect(() => {
+        console.log(' Recharge > sendPayload !! ' + typeof sendPayload)
+        if (sendPayload){
+            console.log(' Recharge > sendPayload dentroo  !! ' + sendPayload)
+            setGbProduct(sendPayload)
+        }
+    }, [])
+    
+    /**
+     *  Se pone fuera del useEffect y en esta posición 
+     *  para que se pueda actualizar.
+     */
+    payloadArray = setProductType(gbProduct)
     payload = payloadArray.title
+
+
+    // Verify if it´s MIFI
+    useEffect( () => {
+        if (payload.indexOf('MiFi') != -1){
+            setIsMifi(true)
+        } else {
+            setIsMifi(false)
+        }
+    }, [payload])
 
     return (
         <>
@@ -687,8 +732,12 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                     <RechargeOneCard
                         idSubscriber={idSubscriber}
                         isRegister={isRegister}
+                        isMifi={isMifi}
                         isJr={isJr}
-                        navigation={navigation} setGbProduct={setGbProduct} />
+                        navigation={navigation} 
+                        setGbProduct={setGbProduct}
+                        canChangeNumber={canChangeNumber} 
+                    />
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>

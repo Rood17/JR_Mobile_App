@@ -1,0 +1,270 @@
+import React, { useEffect, useState, useContext } from 'react';
+import { Card, ReturnHeader, WarningAdvice} from "../elements/Elements";
+import * as styleConst from '../../res/values/styles/StylesConstants'
+import { Icon, Input } from 'react-native-elements'
+import * as constants from '../../utils/constants/Constants'
+import IntentBtn from '../elements/IntentBtn';
+import UserContext from '../../../context/user/UserContext';
+import {send_recovery_email} from '../../utils/services/get_services'
+
+import {
+    Button,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    useColorScheme,
+    View,
+    TouchableOpacity,
+} from 'react-native';
+
+
+// MainCard
+export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
+    const [disabledBtn, setDisabledBtn] = useState(true);
+    const [displayColor, setDisplayColor] = useState(styleConst.MAINCOLORSLIGHT[1]);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [rcvryEmail, setRcvryEmail] = useState();
+    const [rcvryResponse, setRecvryResponse] = useState()
+    const [countPass, setCountPass] = useState(0)
+    const [countDown, setCountDown] = useState();
+    
+
+    // Validate if Number account exist
+    const onChangeEmail = (email) => {
+
+        if (email == userData) {
+            
+            if (email == userData) {
+                setDisabledBtn(false)
+                setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
+                setErrorMsg('')
+                setRcvryEmail(email)
+            } else {
+                setDisplayColor('red')
+                setDisabledBtn(true)
+                setErrorMsg('Este no es el mail con el que te registraste.')
+            }
+
+        }
+        else {
+            setDisabledBtn(true)
+            setDisplayColor(styleConst.MAINCOLORSLIGHT[1])
+            setErrorMsg('')
+        }
+
+    }
+
+    const rcvry_btn_handler = () => {
+
+        const myPromise = new Promise(function (resolve) {
+            resolve(send_recovery_email(idSubscriber, rcvryEmail)
+            .then((response) => {
+                console.log('onChangeEmail  - send_recovery_email : '+ response)
+                    if(response){
+                        setDisabledBtn(true)
+                        setRecvryResponse(<WarningAdvice type={3} warningText='El mail se envió con éxito.' />)
+                        // Counting
+                        
+                        console.log(" countpass **** " + countPass)
+                        if (countPass == 0){
+                            setCountDown(55)
+                            setCountPass(1)
+                        }
+                        if (countPass > 0){
+                            setCountDown(156)
+                            setCountPass(2)
+                        }
+                        if (countPass > 1){
+                            setCountDown(null)
+                            setCountPass(3)
+                        }
+                    } else {
+                        setRecvryResponse(<WarningAdvice type={2} warningText='Favor de probar más tarde.' />)
+                    }
+                }
+            ))
+        })
+    }
+
+    const { userData, getUserEmail } = useContext(UserContext);
+    const [secretEmail, setSecretEmail] = useState()
+    let secretString = '*';
+
+    useEffect( () => {
+        const userEmailD = getUserEmail(idSubscriber)
+        console.log('Recovery PWD - get email: '+ userEmailD)
+    }, [])
+
+    useEffect( () => {
+        if (userData) {
+            let aIndex = userData.indexOf('@')
+            let mainEmail = userData.slice(aIndex -3 ,aIndex.length);
+            for (var i=0; i < aIndex; i++ ) {
+                secretString += '*'
+            }
+            setSecretEmail(secretString + mainEmail)
+        }
+    }, [userData])
+
+
+    // CountDown
+    // Count Down
+    
+    useEffect( () => {
+        // Count Down
+        setTimeout(() => {
+
+            // Finish
+            if (countDown === 99)
+                return
+
+            // If count is valid
+            if (countDown > 0) {
+                setCountDown(countDown - 1);
+            }
+
+            // Set color btn send sms txt
+            if (countDown == 0) {
+                setCountDown(null);
+                setDisabledBtn(false)
+            }
+
+        }, 1000);
+    }, [countDown])
+
+
+
+    return (
+
+        <View style={stylesMainCard.boxShadow}>
+            <View style={{ paddingLeft: 15, paddingRight: 15, marginTop: 35 }}>
+                <Text>Ingresa el mail con el que te registraste, con terminación "{secretEmail}".</Text>
+            </View>
+            <View style={stylesMainCard.inputContainer}>
+                <Input
+                    placeholder="Email"
+                    textContentType='emailAddress'
+                    keyboardType='email-address'
+                    autoComplete='email'
+                    errorMessage={errorMsg}
+                    secureTextEntry={false}
+                    leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: 'grey' }}
+                    onChangeText={email => onChangeEmail(email)}
+                />
+                {rcvryResponse 
+                ? <Text>{rcvryResponse}</Text>
+                : null}
+                
+            </View>
+            <View style={{ marginBottom: 30, width:'80%' }}>
+                <Button
+                    //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                    disabled={disabledBtn}
+                    onPress={() => rcvry_btn_handler()}
+                    color={styleConst.MAINCOLORS[0]}
+                    title={countDown ? 'volver a enviar en ('+countDown.toString()+')' : 'Enviar'}
+                />
+            </View>
+        </View>
+
+    );
+}
+const stylesMainCard = StyleSheet.create({
+    inputContainer: {
+        width: '100%',
+        padding: 20
+    },
+    headContainer: {
+        padding: 5,
+        flexDirection: 'column',
+        borderBottomWidth: 0,
+        margin: 25,
+        flex: 1,
+        alignItems: 'center'
+    },
+    bodyContainer: {
+        flexDirection: 'row',
+        flex: 1,
+    },
+    bodyTitle: {
+        marginLeft: 20,
+    },
+    cardTitleTxt: {
+        color: styleConst.MAINCOLORSLIGHT[1],
+        fontSize: 25
+    },
+    boxShadow: {
+        marginTop: 30,
+        marginLeft: styleConst.CARD_MARGIN,
+        marginRight: styleConst.CARD_MARGIN,
+        marginBottom: 15,
+        backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 6,
+        alignItems: 'center',
+    },
+});
+// END MainCard
+
+const RecoveryEmail = ({navigation, route}) => {
+
+    const { idSubscriber } = route.params;
+    // header, text, icon
+    return (
+        <>
+            <View style={styles.container} >
+                <ReturnHeader title='Recuperar contraseña' navigation={navigation}/>
+                <View style={{ flex: 1 }}>
+                    <PwdRecoveryCard 
+                    navigation={navigation}
+                    idSubscriber={idSubscriber}
+                    />
+                    <View style={styles.registerContainer}>
+                        <Text>Espera un momento a que te llegue el mail,</Text>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Text style={{color: styleConst.MAINCOLORS[0]}}>¿Ya recibiste el correo?... Regresa.</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                </View>
+            </View>
+        </>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    logoContainer: {
+        padding: 20,
+        flex: 6,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    registerContainer: {
+        alignItems: 'center',
+        margin: 10
+    },
+    logo: {
+        flex: 1,
+        height: 100,
+        margin: 20
+
+    },
+    btnActionContainer: {
+        padding: 20,
+        flex: 2,
+        alignItems: 'center'
+    },
+});
+
+export default RecoveryEmail;

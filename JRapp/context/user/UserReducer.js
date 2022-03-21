@@ -1,4 +1,4 @@
-import { GET_USER_DATA } from "../../types";
+import { GET_USER_DATA, GET_IS_JR, GET_USER_EMAIL } from "../../types";
 
 export default (state, action) => {
 
@@ -6,6 +6,19 @@ export default (state, action) => {
         case GET_USER_DATA:
             return {
                 
+                ...state,
+                userData: action.payload
+            }
+        case GET_IS_JR:
+            return {
+                
+                ...state,
+                userData: action.payload
+            }
+        case GET_USER_EMAIL:
+            console.log('***    reducer : ' + action.payload)
+            return {
+
                 ...state,
                 userData: action.payload
             }

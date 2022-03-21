@@ -61,17 +61,15 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
     const [chackColor2, setChackColor2] = useState('grey');
     const [chackColor3, setChackColor3] = useState('grey');
     const [btnDisabled, setbtnDisabled] = useState(true);
+    const [leftIcon, setLeftIcon] = useState('eye')
+    const [secureText, setSecureText] = useState(false)
     const [pwd, setPwd] = useState()
     console.log("****************  ")
     console.log("**************** setNewPwd  " + setNewPwd)
     console.log("**************** editName  " + editName)
     console.log("**************** editLastName   " + editLastName)
     console.log("**************** editEmail   " + editEmail)
-    useEffect(() => {
-        !emailPass
-        ? setbtnDisabled(true)
-        : setbtnDisabled(false)
-    }, [emailPass])
+
     
     const onChangeText = (text) => {
         setOnPwdChange(true)
@@ -104,7 +102,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
             if (i === pass2 - 1)
                 pass2 = undefined
         }
-        if (text.length > 7) {
+        if (text.length > 4 && text.length < 13) {
             setChackColor3(styleConst.MAINCOLORS[0]);
             isBold3 = 'bold'
             if (pass3 === undefined)
@@ -120,7 +118,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
         // Open the portal
         if (pass1 != undefined && pass2 != undefined && pass3 != undefined && emailPass) {
             setbtnDisabled(false)
-
+            setLeftIcon('eye-slash')
             // set pwd
             console.log("text - " + text)
             dataArray[0].pwd = text;
@@ -187,11 +185,14 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
         <>
             <View>
                 <Input
+                    onEndEditing={() => {setSecureText(true); setLeftIcon('eye-slash')}}
+                    onTextInput={() => {setSecureText(false); setLeftIcon('eye')}}
                     placeholder={label}
                     textContentType='password'
-                    maxLength={constants.MAX_NUMBER_LENGTH}
-                    secureTextEntry={true}
+                    maxLength={12}
+                    secureTextEntry={secureText}
                     leftIcon={{ type: 'font-awesome', name: 'lock', size: 18, color: styleConst.MAINCOLORSLIGHT[1] }}
+                    rightIcon={{ type: 'font-awesome', name: leftIcon, size: 18, color: styleConst.MAINCOLORSLIGHT[1] }}
                     color={styleConst.MAINCOLORS[1]}
                     onChangeText={text => onChangeText(text)}
                 />
@@ -216,7 +217,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
                         <Text style={{
                             flex: 1, paddingLeft: 5,
                             color: chackColor3, fontWeight: isBold3
-                        }}>8 caracteres</Text>
+                        }}>5 a 12 caracteres</Text>
                     </View>
                 </View>
 
@@ -224,7 +225,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
                     //style={stylesBtn == null ? btnNormal() : stylesBtn}
                     onPress={registerHandler}
                     color={styleConst.MAINCOLORS[0]}
-                    title='Continuar'
+                    title='Registrarse'
                     disabled={btnDisabled}
                 />
             </View>

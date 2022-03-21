@@ -22,6 +22,7 @@ import Main from './app/components/Main'
 import MiPerfil from './app/components/pages/MiPerfil'
 import MiPerfil_2 from './app/components/pages/MiPerfil_2'
 import ForgottenPwd from './app/components/pages/ForgottenPwd'
+import RecoveryEmail from './app/components/pages/RecoveryEmail'
 import Recharge from './app/components/Payments/Recharge';
 import Recharge_2 from './app/components/Payments/Recharge_2'
 import Recharge_3 from './app/components/Payments/Recharge_3'
@@ -146,7 +147,7 @@ console.log('************************ authData 99  ****** : ',isUserLogin)
 
                       <Stack.Screen name="Register_2" component={Register_2} />
                       <Stack.Screen name="DetailLogOut" component={DetailLogOut} />
-                      <Stack.Screen name="ForgottenPwd" component={ForgottenPwd} />
+                      <Stack.Screen name="RecoveryEmail" component={RecoveryEmail} />
                     </>
                   }
 

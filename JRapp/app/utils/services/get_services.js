@@ -410,3 +410,109 @@ export const get_api_preference = async (dataPorduct) => {
     const superResult = await myPromise
     return superResult;
   };
+
+export const get_api_isJr = async (idSubscriber) => {
+
+
+  console.log(' *****  get_api_isJr' )
+  console.log(' ***** idSubscriber ' + idSubscriber)
+  let result;
+  const axios = require('axios');
+
+  let config = {
+      method: 'get',
+      url: 'http://127.0.0.1:8000/jr_api/cm/1.0/get_isjr/'+idSubscriber.toString(),
+      headers: { }
+  };
+  let myPromise = new Promise(function (resolve) {
+
+    
+    axios(config)
+    .then((response) => {
+        console.log(JSON.stringify(response.data));
+        result = response.data
+    })
+    .catch((error) => {
+        console.log(error);
+        result = error
+    });
+  });
+
+  const superResult = await myPromise
+  return result;
+};
+
+export const get_user_email = async (idSubscriber) => {
+
+
+  console.log(' *****  get_user_email' )
+  console.log(' ***** idSubscriber ' + idSubscriber)
+  let result;
+  const axios = require('axios');
+
+
+let config = {
+		method: 'get',
+		url: 'https://jrmovil.pythonanywhere.com//jr_api/cm/1.0/get_user_email/'+idSubscriber,
+		headers: { }
+};
+
+
+  let myPromise = new Promise(function (resolve) {
+
+    
+    resolve(axios(config)
+    .then((response) => {
+        console.log("Get services - get_user_email : " + JSON.stringify(response.data));
+        result = response.data
+    })
+    .catch((error) => {
+        console.log("get_user_email error : " + error);
+        result = error
+    }).finally(() => {
+      console.log('************************ getUserEmail final result  ' + result)
+  }))
+  });
+
+  const superResult = await myPromise
+  return result;
+};
+
+export const send_recovery_email = async (idSubscriber, rcvry_email) => {
+
+
+  console.log(' *****  get_user_email' )
+  console.log(' ***** idSubscriber ' + idSubscriber)
+  let resultApi;
+ 
+  
+  var formdata = new FormData();
+  formdata.append("user_number", idSubscriber);
+  formdata.append("email_test", rcvry_email);
+
+  var requestOptions = {
+    method: 'POST',
+    body: formdata,
+    redirect: 'follow'
+  };
+
+  let myPromise = new Promise(function (resolve) {
+    resolve(
+      fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/pwd_recovery_email/", requestOptions)
+      .then(response => response.text())
+      .then(
+        (result) =>
+        {
+          console.log("Services - send_recovery_email - "+ result)
+          resultApi = result
+        }
+        )
+      .catch(error => console.log('error', error)).
+        finally(() => console.log("Services - send_recovery_email final "))
+
+        )
+      });
+
+  const superResult = await myPromise
+  return resultApi;
+};
