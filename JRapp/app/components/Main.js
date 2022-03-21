@@ -371,6 +371,8 @@ const MainContent = ({ navigation, route }) => {
     //SMS
     const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
     const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
+    // Min
+    const unsuedMINData = !simMIN ? 'NaN' : simMIN[2]
 
 
 
@@ -475,9 +477,9 @@ const MainContent = ({ navigation, route }) => {
 
                         <SocialMainCard />
                         <MainCard
-                            bodyHeadOne='Min Consumidos'
-                            bodyHeadTwo='SMS Consumidos'
-                            dataOne={totalSMSData}
+                            bodyHeadOne='Min Restantes'
+                            bodyHeadTwo='SMS Restantes'
+                            dataOne={unsuedMINData}
                             dataTwo={unsuedSMSData}
                             showDetalles
                             navigation={navigation}
