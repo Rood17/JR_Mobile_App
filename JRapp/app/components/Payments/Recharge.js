@@ -583,7 +583,7 @@ export const OverlayModal = ({ setGbProduct, main }) => {
                         icon='signal' 
                         onPress={togglePrices} 
                     />
-                        <Text style={{ marginTop: 10 }}>¡Recarga por GB!</Text>
+                        <Text style={{ marginTop: 10 }}>¡Recarga tu MiFi!</Text>
                     </View>
                 </View>
             </View>
