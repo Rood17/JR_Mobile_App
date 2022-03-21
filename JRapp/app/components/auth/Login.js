@@ -103,7 +103,6 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
         }
     })
 
-
     return (
         <>
             <Input
@@ -129,7 +128,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
                 color={styleConst.MAINCOLORS[0]}
             />
             <View style={{ alignItems: 'center' }}>
-                <TouchableOpacity onPress={() => nav.navigate('ForgottenPwd')}>
+                <TouchableOpacity onPress={() => nav.navigate('RecoveryEmail', {idSubscriber:idSubscriber})}>
                     <Text style={[styles.phoneTxt, {marginTop:10}]}>¿Olvidaste tu contraseña?</Text>
                 </TouchableOpacity>
             </View>

@@ -63,7 +63,7 @@ function CustomDrawerContent(props) {
                 idSubscriber: getUserId(),
                 isRegister: true,
                 isJr: true,
-
+                canChangeNumber: true, 
             })
         }
         else if (intent === 'Cerrar') {
@@ -416,14 +416,30 @@ const MainContent = ({ navigation, route }) => {
         if (gbProduct) {
             // Set product
             let charge = setProductType(gbProduct)
-            console.log('****** searching payload : ' + charge)
-            // Intent to Recharge_2
-            navigation.navigate('Recharge_2', {
-                idSubscriber: userId,
-                isRegister: true,
-                isJr: true,
-                sendPayload: charge
-            })
+            console.log('****** searching payload : ' + charge.title)
+
+            /**
+             * Identificar si el usuario escoje MIfi
+             */
+            if (charge.title.toString().indexOf('MiFi') != -1){
+                // Intent to Recharge_2
+                navigation.navigate('Recharge', {
+                    idSubscriber: userId,
+                    isRegister: true,
+                    isJr: true,
+                    sendPayload: gbProduct,
+                })
+
+            } else {
+                // Intent to Recharge_2
+                navigation.navigate('Recharge_2', {
+                    idSubscriber: userId,
+                    isRegister: true,
+                    isJr: true,
+                    sendPayload: charge
+                })
+            }
+            
         }
     }, [gbProduct]);
 
@@ -497,6 +513,7 @@ const MainContent = ({ navigation, route }) => {
                 <MainFooter
                     navigation={navigation}
                     idSubscriber={userId}
+                    canChangeNumber={true}
                 />
 
             </View>

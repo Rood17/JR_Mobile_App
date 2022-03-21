@@ -33,3 +33,6 @@ export const IS_USER_LOGGED = 'isUserLogged'
 export const REGISTER_SUCCESS = 'registerSuccess'
 
 export const PREFERENCE_ID = 'preference_id'
+
+export const GET_IS_JR = 'get_is_jr'
+export const GET_USER_EMAIL = 'GET_USER_EMAIL'

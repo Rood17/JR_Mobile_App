@@ -2,9 +2,10 @@ import React, { useReducer } from 'react';
 
 import UserReducer from './UserReducer';
 import UserContext from './UserContext';
-import {getPerfilUf, getDataJson, getPaquetesApi} from '../../app/utils/services/get_services'
+import {getPerfilUf, get_api_isJr, get_user_email,
+    getDataJson, getPaquetesApi} from '../../app/utils/services/get_services'
 
-import { GET_USER_DATA, USER_INFO, SIM_DATA, SIM_SMS, SIM_MIN, SIM_DATA_EXTRA} from "../../types";
+import { GET_IS_JR,GET_USER_DATA, GET_USER_EMAIL,USER_INFO, SIM_DATA, SIM_SMS, SIM_MIN, SIM_DATA_EXTRA} from "../../types";
 
 
 
@@ -185,7 +186,6 @@ const UserState = (props) => {
                     console.log( ' 23A ******* : ' + response.userData.responseSubscriber)
                     filterArray(response.userData)
                     console.log('************************ 90  userArray ' + userArray)
-
                 }).catch((error) => {
                     console.log("UserState Error : " + error);
                     console.error("UserState Error : " + error.message);
@@ -195,7 +195,6 @@ const UserState = (props) => {
                     dispatch({
                         type: GET_USER_DATA,
                         payload: userArray
-
                     });
                 })
             );
@@ -207,6 +206,46 @@ const UserState = (props) => {
 
     }
 
+    const userIsJr = (number) => {
+        get_api_isJr(number).then( (response) => {
+            console.log('************************ 90  userIsJr ' + response)
+            dispatch({
+                type: GET_IS_JR,
+                payload: response
+            });
+        })
+    }
+
+
+    const getUserEmail = async (idSubscriber) => {
+        let resultFlag = false;
+        let final, result;
+     // Call Local Hc
+     console.log('************************ 90  getUserEmail ' )
+     let myPromise = new Promise(function (resolve) {
+        resolve(
+            get_user_email(idSubscriber).then( (response) => {
+            console.log('************************ 90  getUserEmail ' + response)
+            result = response
+        }).catch((error) => {
+                console.log("getUserEmail Error : " + error);
+                console.error("getUserEmail Error : " + error.message);
+            }).finally(() => {
+                console.log('************************ getUserEmail result  ' + result)
+
+                dispatch({
+                    type: GET_USER_DATA,
+                    payload: result
+                });
+            })
+        );
+      })
+     
+      final = await myPromise
+      return myPromise
+
+}
+
 
 
 return (
@@ -214,7 +253,9 @@ return (
         value={{
             userData: state.userData,
             getJson,
-            getAPIUserData
+            getAPIUserData,
+            userIsJr,
+            getUserEmail
         }}
     >
         {props.children}
