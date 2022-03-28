@@ -1,13 +1,13 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * -- JRmóvil App --
+ * Author: Rodrigo Mora
+ * rodmoraem@gmail.com
  *
- * @format
+ * @Lang  - JavaScript
  * @flow strict-local
  */
 
 import React, { useState, useEffect, useContext } from 'react';
-import type { Node } from 'react';
 import StatusBarHandler from './app/utils/StatusBarHandler';
 
 // Views
@@ -60,115 +60,107 @@ import {
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * App Mask
+ * Hook functions
+ * @returns App
+ */
 const App = () => {
   return (
     <>
-
-    <AuthState>
-    <UserState>
-      <AppWrapper />
-    </UserState>
-    </AuthState>
+      <AuthState>
+        <UserState>
+          <AppWrapper />
+        </UserState>
+      </AuthState>
     </>
   )
 }
 export default App;
 
 
-// Intro
+/**
+ * App Wrapper
+ * @returns App
+ */
 const AppWrapper = () => {
-  
+  //states
   const [isUserLogin, setIsUserLogin] = useState();
   const { authData, isUserLogged } = useContext(AuthContext);
   const [showIntro, setShowIntro] = useState(true);
-
-
-  // Intro Time/*
- 
 
   // Subscribe
   const unsubscribe = NetInfo.addEventListener(state => {
     console.log("Connection type", state.type);
     if (!state.isConnected)
       console.log("Favor de revisar su conexión a internet.")
-
   });
 
   // Check connection
   unsubscribe();
 
 
-const isLogged = false
+  const isLogged = false
 
-useEffect(() => {
-  isUserLogged().then((response) => {
-     console.log("0000000 : ", response)
-     if (response == false || response == true) {
-      setIsUserLogin(response)
-      setTimeout(() => {
-       setShowIntro(false) 
-      }, 3000);
-     }
-   });
-   console.log('************************ authData 222222222222  ****** : ',authData)
+  // Verificar si el usuario se encuentra autentificado.
+  useEffect(() => {
+    isUserLogged().then((response) => {
+      if (response == false || response == true) {
+        setIsUserLogin(response)
+        setTimeout(() => {
+          setShowIntro(false)
+        }, 3000);
+      }
+    });
+  }, [authData])
 
-}, [authData])
-
-  
-console.log('************************ authData 99  ****** : ',isUserLogin)
   return (
     <>
-        <PaquetesState>
-          <RecargasState>
-            <NavigationContainer>
-              <SafeAreaView style={MAIN_CONTAINER_STYLE}>
-                <StatusBarHandler hideBar={true} />
-                <Stack.Navigator initialRouteName={'Intro'} screenOptions={{ headerShown: false }}>
+      <PaquetesState>
+        <RecargasState>
+          <NavigationContainer>
+            <SafeAreaView style={MAIN_CONTAINER_STYLE}>
+              <StatusBarHandler hideBar={true} />
+              <Stack.Navigator initialRouteName={'Intro'} screenOptions={{ headerShown: false }}>
                 {showIntro ?
-                <Stack.Screen name="Intro" component={Intro} />
-                : null}
-                  {isUserLogin ?
-                    <>
-                      <Stack.Screen name="RegisterSuccess" component={RegisterSuccess} />
-                      <Stack.Screen name="Main" component={Main} />
-                      <Stack.Screen name="MiPerfil" component={MiPerfil} />
-                      <Stack.Screen name="MiPerfil_2" component={MiPerfil_2} />
-                      <Stack.Screen name="Details" component={Details} />
-                    </>
-                    :
-                    <>
-                      <Stack.Screen name='Login' component={Login} options={{
-                        // When logging out, a pop animation feels intuitive
-                        // You can remove this if you want the default 'push' animation
-                        animationTypeForReplace: 'pop',
-                      }} />
-                      <Stack.Screen name="Register" component={Register} />
-                      <Stack.Screen name="RegisterSms" component={RegisterSms} />
-
-                      <Stack.Screen name="Register_2" component={Register_2} />
-                      <Stack.Screen name="DetailLogOut" component={DetailLogOut} />
-                      <Stack.Screen name="RecoveryEmail" component={RecoveryEmail} />
-                    </>
-                  }
-
-                  <Stack.Screen name="MercadoP" component={MercadoP} />
-
-                  <Stack.Screen name="Asistance" component={Asistance} />
-
-                  <Stack.Screen name="Recharge" component={Recharge} />
-                  <Stack.Screen name="Recharge_2" component={Recharge_2} />
-                  <Stack.Screen name="Recharge_3" component={Recharge_3} />
-
-                  <Stack.Screen name="Privacidad" component={Privacidad} />
-                  <Stack.Screen name="Terminos" component={Terminos} />
-                  <Stack.Screen name="Contacto" component={Contacto} />
-                  <Stack.Screen name="Faqs" component={Faqs} />
-
-                </Stack.Navigator>
-              </SafeAreaView>
-            </NavigationContainer>
-          </RecargasState>
-        </PaquetesState>
+                  <Stack.Screen name="Intro" component={Intro} />
+                  : null}
+                {isUserLogin ?
+                  <>
+                    <Stack.Screen name="RegisterSuccess" component={RegisterSuccess} />
+                    <Stack.Screen name="Main" component={Main} />
+                    <Stack.Screen name="MiPerfil" component={MiPerfil} />
+                    <Stack.Screen name="MiPerfil_2" component={MiPerfil_2} />
+                    <Stack.Screen name="Details" component={Details} />
+                  </>
+                  :
+                  <>
+                    <Stack.Screen name='Login' component={Login} options={{
+                      // When logging out, a pop animation feels intuitive
+                      // You can remove this if you want the default 'push' animation
+                      animationTypeForReplace: 'pop',
+                    }} />
+                    <Stack.Screen name="Register" component={Register} />
+                    <Stack.Screen name="RegisterSms" component={RegisterSms} />
+                    <Stack.Screen name="Register_2" component={Register_2} />
+                    <Stack.Screen name="DetailLogOut" component={DetailLogOut} />
+                    <Stack.Screen name="RecoveryEmail" component={RecoveryEmail} />
+                  </>
+                }
+                <Stack.Screen name="MercadoP" component={MercadoP} />
+                <Stack.Screen name="Asistance" component={Asistance} />
+                <Stack.Screen name="Recharge" component={Recharge} />
+                <Stack.Screen name="Recharge_2" component={Recharge_2} />
+                <Stack.Screen name="Recharge_3" component={Recharge_3} />
+                <Stack.Screen name="Privacidad" component={Privacidad} />
+                <Stack.Screen name="Terminos" component={Terminos} />
+                <Stack.Screen name="Contacto" component={Contacto} />
+                <Stack.Screen name="Faqs" component={Faqs} />
+              </Stack.Navigator>
+            </SafeAreaView>
+          </NavigationContainer>
+        </RecargasState>
+      </PaquetesState>
     </>
   );
 };

@@ -16,7 +16,7 @@ const MercadoP = ({ navigation, route }) => {
     const [canGoBack, setCanGoBack] = useState()
     const [url, setUrl] = useState()
     const webViewRef = useRef(null)
-
+    console.log('pasando por back ************* ' + init_point)
     // Back handler
     useEffect(() => {
         const backAction = () => {

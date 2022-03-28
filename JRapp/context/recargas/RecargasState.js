@@ -19,6 +19,15 @@ const RecargasState = props => {
 
     const get_preference = async (dataProduct) => {
 
+        // Safe clear
+        if ( dataProduct == 'clear'){
+            dispatch({
+                type: PREFERENCE_ID,
+                payload: undefined
+            });
+            return
+        }
+
         console.log("**************** get_preference  ")
         console.log("****************  ")
         console.log("*** idSubscriber : " + dataProduct.idSubscriber)

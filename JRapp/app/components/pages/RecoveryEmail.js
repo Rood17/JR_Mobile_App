@@ -98,7 +98,7 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
     }, [])
 
     useEffect( () => {
-        if (userData) {
+        if (userData && userData != undefined) {
             let aIndex = userData.indexOf('@')
             let mainEmail = userData.slice(aIndex -3 ,aIndex.length);
             for (var i=0; i < aIndex; i++ ) {
@@ -147,7 +147,6 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
                     placeholder="Email"
                     textContentType='emailAddress'
                     keyboardType='email-address'
-                    autoComplete='email'
                     errorMessage={errorMsg}
                     secureTextEntry={false}
                     leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: 'grey' }}
@@ -228,7 +227,8 @@ const RecoveryEmail = ({navigation, route}) => {
                     idSubscriber={idSubscriber}
                     />
                     <View style={styles.registerContainer}>
-                        <Text>Espera un momento a que te llegue el mail,</Text>
+                        <Text>Espera un momento a que te llegue el mail.</Text>
+                        <Text>Si no ves el mail, revisa la bandeja de "Spam".</Text>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Text style={{color: styleConst.MAINCOLORS[0]}}>¿Ya recibiste el correo?... Regresa.</Text>
                         </TouchableOpacity>

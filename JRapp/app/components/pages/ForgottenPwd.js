@@ -1,12 +1,3 @@
-/**
- * -- Asistance JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState } from 'react';
 import type { Node } from 'react';
 import { Card, ReturnHeader } from "../elements/Elements";
@@ -62,12 +53,12 @@ export const PwdRecoveryCard = ({ navigation, title, subtitle, subtitleColor }) 
     return (
 
         <View style={stylesMainCard.boxShadow}>
-            <View style={{ paddingLeft: 15, paddingRight: 15, marginTop: 35 }}>
+            <View style={{ paddingLeft: 15, paddingRight: 15, marginTop: 35, color:styleConst.MAINCOLORS[3] }}>
                 <Text>Ingresa tu nùmero JRmóvil, para enviarte un còdigo de autentificaciòn.</Text>
             </View>
             <View style={stylesMainCard.inputContainer}>
                 <Input
-                    placeholder="Número JRmovil (10 dígitos)"
+                    placeholder="Número JRmóvil (10 dígitos)"
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}

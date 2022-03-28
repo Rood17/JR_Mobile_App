@@ -1,9 +1,9 @@
 /**
- * -- Main - JR App --
+ * -- JRmóvil App --
  * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
+ * rodmoraem@gmail.com
  *
- * @format
+ * @Lang  - JavaScript
  * @flow strict-local
  */
 
@@ -51,7 +51,12 @@ import {
 // Global Vars
 let userName, userId = null;
 
-// Drawer
+/**
+ * CustomDrawerContent
+ * Modificación contenido del SideNav
+ * @param {props} props
+ * @returns Component
+ */
 function CustomDrawerContent(props) {
 
     const { isUserLogged } = useContext(AuthContext);
@@ -82,8 +87,8 @@ function CustomDrawerContent(props) {
             <View >
                 <View style={{ height: '28%', margin: 20, alignItems: 'center', alignContent: 'center' }}>
                     <DisplayLogo stylesLogo={{ height: '55%', width: '55%', margin: 10 }} mini />
-                    <Text>{getUserName() + ' ' + getUserLastName()}</Text>
-                    <Text>{getUserId()}</Text>
+                    <Text style={styleConst.JRGREY}>{getUserName() + ' ' + getUserLastName()}</Text>
+                    <Text style={styleConst.JRGREY}>{getUserId()}</Text>
                 </View>
                 <View style={stylesNav.line}></View>
                 <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('MiPerfil')}>
@@ -163,9 +168,17 @@ const stylesNav = StyleSheet.create({
         color: styleConst.COLOR_LINK[0]
     },
     txtIcon: {
-        marginLeft: 15
+        marginLeft: 15,
+        color:styleConst.JRGREY,
     }
 })
+
+/**
+ * MyDrawer
+ * SideNav
+ * @param {Array} userData
+ * @returns Drawer Component
+ */
 function MyDrawer({ userData }) {
 
     return (
@@ -193,9 +206,14 @@ function MyDrawer({ userData }) {
     );
 }
 
-
-// Product card va a lements 999
-// Card
+/**
+ * ProductCard
+ * ** Es utilizada por vaios VIEWS -- pasar a elements --
+ * @param {navigation} navigation
+ * @param {String} idSubscriber, setGbProduct
+ * @param {Boolean} isRegister
+ * @returns Component
+ */
 export const ProductCard = ({ navigation, idSubscriber, isRegister, setGbProduct }) => {
 
     const productHandler = (charge) => {
@@ -291,7 +309,6 @@ export const ProductCard = ({ navigation, idSubscriber, isRegister, setGbProduct
         </ScrollView>
     );
 }
-
 const stylesProductCard = StyleSheet.create({
     container: {
         flex: 1,
@@ -322,21 +339,14 @@ const stylesProductCard = StyleSheet.create({
     }
 });
 
+/**
+ * MainContent
+ * Handler de todos los elementos en Main
+ * @param {navigation} navigation
+ * @param {route} params
+ * @returns Component
+ */
 const MainContent = ({ navigation, route }) => {
-
-    // 
-    // Set Constants
-    // Hacer pruebas on diferentes números
-    // la idea aquí es que siempre se tome de storage, porque en teoría venga de donde venga tendrá el storgae
-
-    // Si viene de Auth tomaá el id de rout
-    // Cuando inici debe pdirlo a la bd
-
-    // sino lo tomará de storga 
-
-    // Setting Global Vars
-    // Se debe quitar
-    // get userData Contextus
 
     const userData = route.params.userData
 
@@ -497,7 +507,7 @@ const MainContent = ({ navigation, route }) => {
                                 type='font-awesome'
                                 color={styleConst.MAINCOLORSLIGHT[1]}
                             />
-                            <Text style={{ marginLeft: 15 }}>Selecciona el plan que más te convenga</Text>
+                            <Text style={{ marginLeft: 15, color:styleConst.JRGREY }}>Selecciona el plan que más te convenga</Text>
                         </View>
                         <View>
                             <ProductCard
@@ -566,6 +576,13 @@ const styles = StyleSheet.create({
     },
 });
 
+/**
+ * MainContent
+ * Handler de todos los elementos en Main
+ * @param {navigation} navigation
+ * @param {route} params
+ * @returns Component
+ */
 const Main = ({ navigation, route }) => {
 
 
@@ -576,12 +593,10 @@ const Main = ({ navigation, route }) => {
     // Call UserState
     useEffect(() => {
         storeUserString('lastView', 'main')
-        getUserData().catch(() => console.log("Error in Main"))
+        getUserData().catch(() => console.log("[Error] - Main - Error en getUserData"))
         .finally(()=>{
-            console.log("** Main - Welcome ** " + getUserId())
-            console.log("** Main - Welcome getUserName  ** " + getUserName())
             getAPIUserData(getUserId()).then((response) => {
-                console.log("** Main - Welcome **")
+                console.log("[Info] - ** Bienvenido a Main **")
                 if ( response ){
                     setIsReady(true)
                 }
@@ -591,7 +606,7 @@ const Main = ({ navigation, route }) => {
         
     }, [userData])
 
-    console.log("** Main - Welcome ** " + getUserId())
+    console.log("[Info] - Main - userId : " + getUserId())
     userId = getUserId();
 
     return (

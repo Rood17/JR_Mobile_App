@@ -1,12 +1,3 @@
-/**
- * -- Main - JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect, useContext } from 'react';
 
 import DisplayLogo from '../elements/DisplayLogo';

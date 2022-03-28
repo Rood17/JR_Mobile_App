@@ -1,12 +1,3 @@
-/**
- * -- Register JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect } from 'react';
 import type { Node } from 'react';
 

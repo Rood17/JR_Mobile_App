@@ -371,7 +371,7 @@ export const get_api_preference = async (dataPorduct) => {
 
     
     let email;
-
+    console.log(' ***** dataPorduct email ' + dataPorduct.email)
     dataPorduct.email == undefined 
     ? email = 'undefined@gmail.com'
     : email = dataPorduct.email
@@ -418,10 +418,11 @@ export const get_api_isJr = async (idSubscriber) => {
   console.log(' ***** idSubscriber ' + idSubscriber)
   let result;
   const axios = require('axios');
+  const url = 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_isjr/' + idSubscriber
 
   let config = {
       method: 'get',
-      url: 'http://127.0.0.1:8000/jr_api/cm/1.0/get_isjr/'+idSubscriber.toString(),
+      url:  url,
       headers: { }
   };
   let myPromise = new Promise(function (resolve) {
@@ -429,8 +430,9 @@ export const get_api_isJr = async (idSubscriber) => {
     
     axios(config)
     .then((response) => {
-        console.log(JSON.stringify(response.data));
+        console.log('Services - get_api_isJr : '+JSON.stringify(response.data));
         result = response.data
+        resolve(result)
     })
     .catch((error) => {
         console.log(error);
@@ -439,7 +441,8 @@ export const get_api_isJr = async (idSubscriber) => {
   });
 
   const superResult = await myPromise
-  return result;
+  console.log('Services - get_api_isJr superResult : '+superResult);
+  return superResult;
 };
 
 export const get_user_email = async (idSubscriber) => {
