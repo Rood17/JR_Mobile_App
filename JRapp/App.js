@@ -91,9 +91,8 @@ const AppWrapper = () => {
 
   // Subscribe
   const unsubscribe = NetInfo.addEventListener(state => {
-    console.log("Connection type", state.type);
     if (!state.isConnected)
-      console.log("Favor de revisar su conexión a internet.")
+      console.error("[Error] - ¡Sin conexión a internet!")
   });
 
   // Check connection

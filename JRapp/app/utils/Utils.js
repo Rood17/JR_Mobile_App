@@ -17,7 +17,6 @@ export const CheckUppercase = (input) => {
         
         var letter = input.charAt(i);
         if (letter === letter.toUpperCase() && isNaN(parseInt(letter))) {
-            //console.log("La letra " + letter + " es mayúscula");
             return true;
         }
     }
@@ -31,7 +30,6 @@ export const checkIfHasNum = (input) => {
     for (var i = 0; i < input.length; i++) {
         var letter = input.charAt(i);
         if (!isNaN(parseInt(letter)) ) {
-            //console.log( letter + " es número");
             return true;
         }
     }
@@ -61,7 +59,6 @@ export const formatApiDate = (expireDate) => {
 // Compute recharge type
 export const setProductType = (payloadCode) => {
     const paquetes = getPaquetesApi();
-    console.log(' ****** payloadCode : 33333 : ' + payloadCode)
     let payloadDays, expireDate, payloadType, payloadPrice; 
     let result = {'title' : '', 'expireDate' : '', 'startDate':'', 'price' : ''}   
     let toMatch
@@ -84,8 +81,6 @@ export const setProductType = (payloadCode) => {
     result.expireDate = expireDate;
     result.startDate = DATE_NOW_CODE;
     result.price = payloadPrice;
-    console.log(' ****** searching title : ' + payloadType)
-    console.log(' ****** searching title : ' + result.title)
     return result;
 }
 
@@ -143,7 +138,6 @@ const expireDateHandler = (actualDate, offerDays) => {
     }
 
     // Setting date
-    console.log('** expireDate  : ' + expireDate)
     return expireDate;
 
 }

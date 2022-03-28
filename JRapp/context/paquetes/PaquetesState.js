@@ -19,9 +19,6 @@ const PaquetesState = props => {
 
     // useReducer con dispatch  para ejecutar las funciones
     const [state, dispatch] = useReducer(PaquetesReducer, initialState);
-    console.log("Paquetes State ")
-
-
 
     // Función que se ejecuta para traer los productos
     const getPaquetes = async () => {

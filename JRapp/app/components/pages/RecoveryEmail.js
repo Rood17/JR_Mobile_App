@@ -6,6 +6,7 @@ import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
 import UserContext from '../../../context/user/UserContext';
 import {send_recovery_email} from '../../utils/services/get_services'
+import { LOG_INFO } from '../../res/values/strings/Strings';
 
 import {
     Button,
@@ -61,13 +62,11 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
         const myPromise = new Promise(function (resolve) {
             resolve(send_recovery_email(idSubscriber, rcvryEmail)
             .then((response) => {
-                console.log('onChangeEmail  - send_recovery_email : '+ response)
+                console.log(LOG_INFO('RecoveryEmail', 'rcvry_btn_handler.send_recovery_email')+response)
                     if(response){
                         setDisabledBtn(true)
                         setRecvryResponse(<WarningAdvice type={3} warningText='El mail se envió con éxito.' />)
                         // Counting
-                        
-                        console.log(" countpass **** " + countPass)
                         if (countPass == 0){
                             setCountDown(55)
                             setCountPass(1)
@@ -94,7 +93,8 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
 
     useEffect( () => {
         const userEmailD = getUserEmail(idSubscriber)
-        console.log('Recovery PWD - get email: '+ userEmailD)
+        console.log(LOG_INFO('RecoveryEmail', 'PwdRecoveryCard.userEmailD')+userEmailD)
+
     }, [])
 
     useEffect( () => {

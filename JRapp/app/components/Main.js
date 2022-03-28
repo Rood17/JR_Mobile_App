@@ -351,7 +351,6 @@ const MainContent = ({ navigation, route }) => {
     const userData = route.params.userData
 
     let simData, simSMS, simMIN = [0,0,0,0,0]
-    console.log("** " + Object.values(userData.simData))
 
     // Open the package
     if (userData != null || userData.simData != undefined )
@@ -424,12 +423,9 @@ const MainContent = ({ navigation, route }) => {
 
     // Payload select
     useEffect(() => {
-        console.log('****** tracking gbProduct : ' + gbProduct)
         if (gbProduct) {
             // Set product
             let charge = setProductType(gbProduct)
-            console.log('****** searching payload : ' + charge.title)
-
             /**
              * Identificar si el usuario escoje MIfi
              */
@@ -593,7 +589,7 @@ const Main = ({ navigation, route }) => {
     // Call UserState
     useEffect(() => {
         storeUserString('lastView', 'main')
-        getUserData().catch(() => console.log("[Error] - Main - Error en getUserData"))
+        getUserData().catch(() => console.error("[Error] - Main - Error en getUserData"))
         .finally(()=>{
             getAPIUserData(getUserId()).then((response) => {
                 console.log("[Info] - ** Bienvenido a Main **")

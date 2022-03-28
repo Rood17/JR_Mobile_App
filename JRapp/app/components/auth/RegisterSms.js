@@ -100,7 +100,6 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
     const [countDown, setCountDown] = useState(15);
     const [value, setValue] = useState()
 
-    // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
     const { idSubscriber } = route.params;
     //setSafeName(name)
 
@@ -111,7 +110,7 @@ const RegisterSms: () => Node = ({ navigation, route }) => {
     }, 2000);
 
     const onChangeCode = (code) => {
-        console.log(code)
+        console.log('[Info] RegisterSMS - onChangeCode.code : ' + code)
         if (code == codeBase) {
             setPass1(true)
         } else {

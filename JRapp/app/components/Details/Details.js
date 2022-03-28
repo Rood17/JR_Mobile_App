@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, ReturnHeader, UserDataCard, DetailCard } from "../elements/Elements";
-import { getPerfilUf } from '../../utils/services/get_services'
 import * as data from '../../utils/services/perfil_uf.json';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';

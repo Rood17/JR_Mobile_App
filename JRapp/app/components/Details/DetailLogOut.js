@@ -56,7 +56,7 @@ const DetailLogOut = ({ navigation, route }) => {
     if (isReady) {
         // Open the package
         if (userData != null && userData.simData != undefined) {
-            console.log("** " + (userData.simData))
+            //console.log("[Info] DetailLogOut - userData.simData : " + (userData.simData))
             if (userData.simData != undefined)
                 simData = Object.values(userData.simData)
         }
@@ -66,11 +66,6 @@ const DetailLogOut = ({ navigation, route }) => {
         if (userData != null && userData.simSMS != undefined)
             simSMS = userData.simSMS
     }
-
-
-
-    //console.log("simData > Main : " + Object.values(userDataMain.simData))
-
 
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
@@ -87,8 +82,8 @@ const DetailLogOut = ({ navigation, route }) => {
     // Just accept this format '2022/02/18'
     const validityUser = formatApiDate(expireMBData)
     const validityUserCode = validityUser.replace(/\//g, '')
-    console.log("validityUser : " + validityUser)
-    console.log("validityUserCode : " + validityUserCode)
+    console.log("[Info] DetailLogOut - validityUser : " + validityUser)
+    console.log("[Info] DetailLogOut - validityUserCode : " + validityUserCode)
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
     let validityColor = styleConst.MAINCOLORSLIGHT[2]

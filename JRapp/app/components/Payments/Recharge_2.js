@@ -7,7 +7,7 @@ import IntentBtn from '../elements/IntentBtn';
 import RecargasContext from '../../../context/recargas/RecargasContext';
 import { getUserEmail } from '../../utils/Storage';
 import {get_api_preference} from '../../utils/services/get_services'
-
+import { LOG_INFO } from '../../res/values/strings/Strings';
 
 import {
     Button,
@@ -28,13 +28,12 @@ let monthFlag, yearFlag, secretFlag, postalFlag;
 const OverlayModal = ({ payloadArray, isRegister, payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
     const [visible, setVisible] = useState(false);
     const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
-    console.log('disabledbtn 1 : ' + disabledBtn)
+
     const toggleResume = () => {
         setVisible(!visible);
     };
 
     // All data ready for API
-    //console.log('payloadArray :  ' + payloadArray.startDate)
     // Set safe card
     safeCard = 'xxxx xxxx xxxx ' + safeCard.toString().slice(12);
 
@@ -184,7 +183,7 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
 
     // si el usuario ya esta loggeado se saca el email de storgae
     useEffect( () => {
-        console.log(" isRegister ********* " + isRegister)
+        console.log(LOG_INFO('Recharge_2', 'RechargeTwoCard.isRegister')+isRegister)
         if (isRegister){
             setMercadoEmail(getUserEmail())
             setDisabledEmail(true);
@@ -196,11 +195,11 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
     // preference debe ser llamada en el último state
     useEffect(() => {
         // si preference esta lista se avanza
-        console.log(" emailFlag ********* " + emailFlag)
+        console.log(LOG_INFO('Recharge_2', 'RechargeTwoCard.emailFlag')+emailFlag)
         if (emailFlag){
             const mercadoUrl = get_preference(productArray).then(
                 (response) => {
-                    console.log(" ******** response " + response)
+                    console.log(LOG_INFO('Recharge_2', 'RechargeTwoCard.get_preference')+response)
                     setisLoading(false);
                 }
             )
@@ -218,7 +217,7 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
     }
 
     const mercadoHandlerEmail = (email) => {
-        console.log('mercadoEmail 1111 ' + email)
+        console.log(LOG_INFO('Recharge_2', 'mercadoHandlerEmail.email')+email)
         if ( email != undefined && email.indexOf('@') != -1) {
             setMercadoEmail(email)
         } else {
@@ -321,17 +320,14 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
 
     function runVerification() {
         if (!showError && emailFlag) {
-            
             setDisabledBtn(false)
         }
         else {
-            console.log('disabledbtn true : ' + disabledBtn)
             setDisabledBtn(true)
         }
     }
     const isMasterCard = (card) => {
         if (card.toString().indexOf(materCard) != -1) {
-            console.log('pasando')
             setCardDisplay(0)
             return true;
         }

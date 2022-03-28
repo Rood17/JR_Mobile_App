@@ -5,6 +5,7 @@ import { SafeAreaView, View} from 'react-native';
 
 import { WebView } from 'react-native-webview';
 import { ReturnHeader, Loader } from '../elements/Elements';
+import { LOG_INFO } from '../../res/values/strings/Strings';
 import NetInfo from "@react-native-community/netinfo";
 
 const Contacto = ({ navigation }) => {
@@ -12,11 +13,11 @@ const Contacto = ({ navigation }) => {
     const [loading, setIsLoading] = useState(true);
     // Subscribe
     const unsubscribe = NetInfo.addEventListener(state => {
-        console.log("Connection type", state.type);
-        console.log("Is connected?", state.isConnected);
+        console.log(LOG_INFO('Contacto', 'state.type'), state.type);
+        console.log(LOG_INFO('Contacto', 'state.isConnected'), state.isConnected);
 
         if ( !state.isConnected )
-            console.info("Favor de revisar su conexión a internet.")
+            console.error("[Error] Favor de revisar su conexión a internet.")
     });
 
     // Unsubscribe

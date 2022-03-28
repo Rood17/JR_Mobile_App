@@ -118,8 +118,6 @@ const RegisterSuccess: () => Node = ({ navigation, route }) => {
   const routes = navigation.getState()?.routes;
   const prevRoute = routes[routes.length - 2];
 
-  console.log('prevRoute : ' + 34)
-
   // Entering From Auth
   getUserData().then(() => {
     // GOpen Modal countdown

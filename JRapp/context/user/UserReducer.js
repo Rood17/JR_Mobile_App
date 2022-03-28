@@ -10,7 +10,6 @@ export default (state, action) => {
                 userData: action.payload
             }
         case GET_IS_JR:
-            console.log('*** reducer   GET_IS_JR : ' + action.payload)
             return {
                 
                 ...state,

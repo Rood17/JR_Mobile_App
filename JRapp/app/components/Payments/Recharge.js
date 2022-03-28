@@ -8,7 +8,7 @@ import { setProductType } from '../../utils/Utils'
 import { Avatar } from 'react-native-elements';
 import PaquetesContext from '../../../context/paquetes/PaquetesContext';
 import UserContext from '../../../context/user/UserContext';
-
+import { LOG_INFO } from '../../res/values/strings/Strings';
 import {
     Button,
     ScrollView,
@@ -74,7 +74,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
     useEffect(() => {
         if (isJr) {
             // Set input value
-            console.log('******** isJr 1 ' + isJr)
+            console.log(LOG_INFO('Recharge', 'RechargeOneCard.isJr')+isJr)
             setPass1(true);
         }
     }, [])
@@ -92,15 +92,15 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
         const response = await get_api_isJr(number)
             .then(function (response) {
                 // Manejar errores
-                console.log(' Recharge - Is register : ' + response)
+                console.log(LOG_INFO('Recharge', 'RechargeOneCard.isNumberJr.get_api_isJr')+response)
                 result = response
                 numberIsJrHandler(number, result)
             })
             .catch(function (error) {
-                console.info("Recharge isRegister error : " + error);
+                console.error("[Error] Recharge - isRegister error : " + error);
                 //throw new Error ('Error - ' + error.message)
             }).finally(() => {
-                console.log("Recharge Isregister final")
+                console.log("[Info] Recharge - Isregister fin *")
             });
         return result
     };
@@ -110,7 +110,6 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
      * @param {resutado de la API isJr} result 
      */
     const numberIsJrHandler = (number, result) => {
-        console.log(' *********** result : ' + result)
         if (number.toString().indexOf(numberExist) != -1 || result) {
             setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
             setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
@@ -141,12 +140,8 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
 
     // Validate if Number account exist
     const onChangeNewNumber = (number) => {
-        console.log('******** nnn 1 ' + number)
-        console.log('******** pass1 1 ' + pass1)
         if (number.length === constants.MAX_NUMBER_LENGTH && pass1) {
-            console.log('******** nnn  2 ' + number)
             if (number === initNumber) {
-                console.log('******** nnn 23 ' + number)
                 setDisabledBtn(false)
                 setDisplayColor2(styleConst.MAINCOLORSLIGHT[1])
                 setErrorMsg2(<WarningAdvice type={3} warningText='El número coincide' />)
@@ -204,6 +199,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
                     intent={['Recharge_2', {
                         sendPayload: payloadArray,
                         idSubscriber: initNumber,
+                        isRegister:isRegister
                     }]}
                     navigation={navigation}
                     btnText='Continuar' />
@@ -356,7 +352,7 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
     // 999 seguro aquí se va a neceistar un ref
     const productHandler = (payload) => {
         // Set charge
-        console.log('[Info] - Recharge - ProductCard.productHandler : ' + payload)
+        console.log('[Info] Recharge - ProductCard.productHandler : ' + payload)
         setGbProduct(payload)
 
         // Close Modal
@@ -611,7 +607,7 @@ const Recharge = ({ navigation, chargeResume, route }) => {
     // Cargar payload dependiendo el view anterior
     useEffect(() => {
         if (sendPayload) {
-            console.log('[Info] - Recharge - sendPayload : ' + sendPayload)
+            console.log('[Info] Recharge - sendPayload : ' + sendPayload)
             setGbProduct(sendPayload)
         }
     }, [])

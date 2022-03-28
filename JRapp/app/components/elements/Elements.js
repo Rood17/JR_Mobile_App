@@ -140,13 +140,15 @@ const stylesCard = StyleSheet.create({
 // END Card
 
 // Detail Card
-export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
+/**
+ * DetailCard
+ * @param {String} header, icon
+ * @param {Arrray} data
+ * @returns DetailCard component
+ */
+export const DetailCard = ({ header, data, icon }) => {
 
     console.log('[Info] - Elements - DetailCard : ' + data)
-    if (data != undefined)
-        data.map((item) => {
-            console.log(item.campo)
-        })
     return (
 
         <View style={stylesCard.boxShadow}>

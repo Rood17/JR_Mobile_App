@@ -2,6 +2,7 @@ import React, { useReducer, useState } from 'react';
 
 import AuthContext from './AuthContext'
 import AuthReducer from './AuthReducer'
+import { LOG_INFO } from '../../app/res/values/strings/Strings';
 import {storeUserString, clearStorage, getUserData, getUserId, storeUserData, getSecret } from '../../app/utils/Storage'
 import {getUserAuth,registerAPIUser, getPaquetesApi} from '../../app/utils/services/get_services'
 
@@ -17,15 +18,13 @@ const AuthState = (props) => {
 
     // useReducer con dispatch  para ejecutar las funciones
     const [state, dispatch] = useReducer(AuthReducer, initialState);
-    console.log("Calling AUTH STATE ")
+    console.log("[Info] AuthState **")
     getUserData()
 
     const isUserLogged = async (authFlag) => {
         let resultFlag;
         let final;
-        console.log( ' 22A ******* : ')
-        console.log('************************ flujo 2 ****** : ')
-        console.log(" ** AUTH STATE: 1 authFlag :" + authFlag)
+        console.log(LOG_INFO('AuthState', 'authFlag')+authFlag)
 
         // Use fla
         if( authFlag == true || authFlag == false) {
@@ -33,21 +32,18 @@ const AuthState = (props) => {
                 type: IS_USER_LOGGED,
                 payload: authFlag
             });
-            console.log(" ** USER LOGED OUT **")
+            console.log("[Info] Auth State - isUserLogged - USER LOGED OUT **")
+
             return authFlag;
         }
      // Call Local Hc
         let myPromise = new Promise(function (resolve) {
         resolve(getUserData().then((response) => {
-                console.log( ' 23A ******* : ' + response)
-                console.log(" ** AUTH STATE 2 : " + getUserId())
                 resultFlag = response
 
             }).catch((error) => {
-                console.log("UserState Error : " + error);
-                console.error("UserState Error : " + error.message);
+                console.error('[Error] AuthState - isUserLogged'+error.message);
             }).finally(() => {
-                console.log( ' 23A ******* : ' + resultFlag)
                 dispatch({
                     type: GET_USER_DATA,
                     payload: resultFlag
@@ -66,20 +62,13 @@ const AuthState = (props) => {
     const login = async (navigation, idSubscriber, pwd, setError, setLoginSuccess) => {
         // Set an initializing state whilst Firebase connects
         let result = false;
-        
-    
-        console.log(" *** 1 getUserId : " + idSubscriber)
-        console.log(" *** 1 getSecret() : " + pwd)
-    
+            
         let myPromise = new Promise(function (resolve) {
             if ( idSubscriber != undefined && pwd != undefined ) {
-                console.log('************************ isUserLog : dentro del if ' )
     
                 resolve(getUserAuth(idSubscriber, pwd).then((response)=> {
-                    
-                    console.log("AUTH PROVIDER 222 ****   : ",response);
-                    console.log("AUTH PROVIDER 222 ****   : ",response.last_name);
-                    console.log("AUTH PROVIDER 222 ****   : ",response.email);
+                    console.log(LOG_INFO('AuthState', 'login.last_name')+response.last_name)
+
                     result = response;
     
                     // handle errors
@@ -100,27 +89,21 @@ const AuthState = (props) => {
                         // setLoginSuccess(true
                         // Clear Storage
                         // Store New Data
-                        console.log("calling user !!! 111 ")
                         storeUserData(dataArray);
                         storeUserString('login')
-                        console.log("calling user !!! 222  ")
                         // User Just Register
-                        setError()
-                        console.log("calling user !!! ")
-                        
+                        setError()                        
                         isUserLogged(true);
                     }
     
-                }).catch((error) => console.log("Error in isUserLogin : " + error))
+                }).catch((error) => console.error("[Error] Error in isUserLogin : " + error))
                 .finally(()=>{
-                    console.log("** isAuth final  ** ")
+                    console.log("[Info] Auth State - login - fin **")
                 }))
     
             
             }
         });
-    
-        console.log("*************************** AUTH PROVIDER 4444 ****   : ",result);
         result = await myPromise
         return  result;
     
@@ -128,15 +111,9 @@ const AuthState = (props) => {
 
     const registerUser = async (dataArray) => {
 
-        console.log("**************** Register  ")
-        console.log("****************  ")
-        console.log("*** pwd : " + dataArray[0].pwd)
-        console.log("*** email : " + dataArray[0].email)
-        console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-        console.log("*** name : " + dataArray[0].name)
-        console.log("*** lastName : " + dataArray[0].lastName)
-        console.log("****************  ")
-        console.log("****************  ")
+        console.log("[Info] Auth State - Register **")
+        console.log(LOG_INFO('AuthState', 'registerUser.idSubscriber')+dataArray[0].idSubscriber)
+
         let result;
     
         const email = dataArray[0].email.toLowerCase();
@@ -150,8 +127,7 @@ const AuthState = (props) => {
                     // Storage
                     result = response.id
             
-                    
-                    console.log('User account created & signed in! ' + response.id );
+                    console.log(LOG_INFO('AuthState', 'registerUser - User account created & signed in!')+ response.id)
                       
                     storeUserData(dataArray)
                     storeUserString('register')
@@ -159,7 +135,7 @@ const AuthState = (props) => {
                     
                 }).catch(error => {
                     result = error
-                    console.error("Register error - " + error);
+                    console.error('[Error] AuthState - registerUser'+error.message);
                 }).finally(() => {
                     dispatch({
                         type: REGISTER_SUCCESS,
@@ -198,13 +174,10 @@ export default AuthState;
 
 export const editUser = ( navigation, idSubscriber, editName, editLastName, editEmail, editPwd ) => {
 
-    console.log("*** idSubscriber : " + idSubscriber)
-    console.log("*** editName : " + editName)
-    console.log("*** editLastName : " + editLastName)
-    console.log("*** editEmail : " + editEmail)
-    console.log("*** editPwd : " + editPwd)
-    console.log("****************  ")
-    console.log("**************** editUser AUTH  ")
+    console.log("[Info] Auth State - editUser **")
+    console.log(LOG_INFO('AuthState', 'editUser -idSubscriber')+ idSubscriber)
+
+
     let dataArray = [{ 
         idSubscriber: idSubscriber, 
         name: editName, 
@@ -219,7 +192,9 @@ export const editUser = ( navigation, idSubscriber, editName, editLastName, edit
     try {
         editAPIUser(idSubscriber, editName, editLastName, editEmail, editPwd)
             .then((response) => {
-            console.log('User actualization!!');
+
+                console.log(LOG_INFO('AuthState', 'editUser.editAPIUser - ¡Usuario actualizado!')+true)
+
             storageUpdate(dataArray, 'main')
             navigation.reset({
                 index: 0,
@@ -234,7 +209,7 @@ export const editUser = ( navigation, idSubscriber, editName, editLastName, edit
 
         }).catch(error => {
             result = error
-            console.error("Register error - " + error);
+            console.error('[Error] AuthState - editUser'+error.message);
         });
     } catch {
         alert('Error al crear la cuenta - Compruebe el estado de su conexión.')

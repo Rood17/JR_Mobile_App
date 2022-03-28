@@ -35,7 +35,8 @@ const Intro: () => Node = () => {
             animacion, {
                 toValue: 0,  // al valor al que llega
                 duration: 700, // cantidad de tiempo en llegar
-                easing: Easing.ease
+                easing: Easing.ease,
+                useNativeDriver: false
             }
         ).start(); // iniciar la animación
     }, []);

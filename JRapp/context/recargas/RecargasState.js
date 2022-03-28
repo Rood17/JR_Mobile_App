@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 
 import RecargasReducer from './RecargasReducer';
 import RecargasContext from './RecargasContext';
+import { LOG_INFO } from '../../app/res/values/strings/Strings';
 import { PREFERENCE_ID } from "../../types";
 import {get_api_preference} from '../../app/utils/services/get_services'
 
@@ -27,16 +28,10 @@ const RecargasState = props => {
             });
             return
         }
+        console.log("[Info] Recargas State - get_preference **")
+        console.log(LOG_INFO('RecargasState', 'get_preference.title')+dataProduct.title)
 
-        console.log("**************** get_preference  ")
-        console.log("****************  ")
-        console.log("*** idSubscriber : " + dataProduct.idSubscriber)
-        console.log("*** email : " + dataProduct.email)
-        console.log('*** name ' + dataProduct.title)
-        console.log('*** price ' + dataProduct.price)
-        
-        console.log("****************  ")
-        console.log("****************   ")
+
         let result;
     
         let myPromise = new Promise( (resolve) => {
@@ -46,11 +41,11 @@ const RecargasState = props => {
                     // Response
                     // Storage
                     resolve(result = response)
-                    console.log('Obteniendo iframe mercado pago! ' + response );
+                    console.log(LOG_INFO('RecargasState', 'get_preference - Obteniendo iframe mercado pago')+response)
                     
                 }).catch(error => {
                     result = error
-                    console.error("Register error - " + error);
+                    console.error('[Error] RecargasState - RecargasState'+error.message);
                 }).finally(() => {
                     dispatch({
                         type: PREFERENCE_ID,

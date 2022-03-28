@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import type { Node } from 'react';
 import { UserImg, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import { Icon, Input } from 'react-native-elements'
 import * as styleConst from '../../res/values/styles/StylesConstants'
@@ -7,6 +6,7 @@ import IntentBtn from '../elements/IntentBtn'
 import { editUser } from '../../context/AuthProvider';
 import * as constants from '../../utils/constants/Constants'
 import { NewPwd } from '../auth/Register_2';
+import { LOG_INFO } from '../../res/values/strings/Strings';
 import {
     clearStorage, getUserName, storeUserData, storeUserString,
     getUserEmail, getUserId, getUserLastName, getSecret
@@ -73,9 +73,9 @@ export const CardPerfil = ({ navigation }) => {
         disabledBtn = true
     }
 
-    console.log("**************** editName | " + editName)
-    console.log("**************** editLastName  | " + editLastName)
-    console.log("**************** editEmail |  " + editEmail)
+    console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editName') + editName)
+    console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editLastName') + editLastName)
+    console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editEmail') + editEmail)
 
     const setAllData = () => {
 

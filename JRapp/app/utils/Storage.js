@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
+import { LOG_INFO } from '../res/values/strings/Strings';
 
 export const storeUserData = async (value) => {
 
-    
-    console.log(" In storage id Array : " + value[0].idSubscriber.toString())
+    console.log(LOG_INFO('Storage', 'storeUserData.idSubscriber')+value[0].idSubscriber.toString())
     try {
         await AsyncStorage.setItem('userData', JSON.stringify(value))
     } catch (e) {
@@ -13,13 +13,12 @@ export const storeUserData = async (value) => {
 }
 
 export const storeUserString = async (key, value) => {
-
-    console.log(" In storage id string : " + value)
+    console.log(LOG_INFO('Storage', 'storeUserString.value')+value)
     try {
         await AsyncStorage.setItem(key, value) ?? null
     } catch (e) {
         // saving error
-        console.log(" Error in storeUserString : " + key)
+        console.error("[Error] Error in storeUserString : " + key)
     }
 }
 
@@ -32,8 +31,7 @@ export const getUserData = async () => {
         if (jsonValue !== null && jsonValue != undefined) {
             // value previously stored
             jsonValue = JSON.parse(jsonValue)
-            console.log( "AsyncStorgae > getData : " + jsonValue[0].name)
-            console.log( "AsyncStorgae > getData : " + jsonValue[0].idSubscriber)
+            console.log(LOG_INFO('Storage', 'getUserData.idSubscriber')+jsonValue[0].idSubscriber.toString())
             setUserName(jsonValue[0].name)
             setUserLastName(jsonValue[0].lastName)
             setUserEmail(jsonValue[0].email)
@@ -42,13 +40,13 @@ export const getUserData = async () => {
             result = true;
 
         } else {
-            console.log( "AsyncStorgae > getData : NULL")
+            console.log( "[Info] Storage - AsyncStorgae.getData : NULL")
         }
         
         //return jsonValue[0].name != undefined ? data : null;
     } catch (e) {
         // error reading value
-        console.log("Error in getUserData" )
+        console.error("[Error] Error in getUserData" )
     }
     return result
 }
@@ -60,7 +58,7 @@ export const getUserString = async (key) => {
         let value = await AsyncStorage.getItem(key) ?? 'none'
         if (value !== null) {
             // value previously stored
-           console.log( "AsyncStorgae > getKey : " + value)
+            console.log(LOG_INFO('Storage', 'getUserString.getKey')+value)
            setStringValue(value)
         }
         return value;
@@ -73,11 +71,12 @@ export const getUserString = async (key) => {
 
 export const clearStorage = async () => {
     try {
-        console.log("STORAGE >>> Clearing")
+
+        console.log("[Info] STORAGE >>> Clearing")
         await AsyncStorage.clear()
     } catch (e) {
         // error reading value
-        console.log('Something is wrong with Clear Storage')
+        console.error('[Error] Something is wrong with Clear Storage')
     }
 }
 

@@ -226,8 +226,8 @@ const LoginBody = ({ nav }) => {
                 setLoading(true)
                 // API CALL
                 const response = await getPerfilUf(number)
-                    .then(function (response) {
-
+                    .then( (response) => {
+                        //console.log('[Info] Login - getPerfilUf : ' + JSON.stringify(response))
                         // Manejar errores
                         errorResponse = response.error;
                         if (response.indexOf('Error') != -1 ){
@@ -238,18 +238,19 @@ const LoginBody = ({ nav }) => {
                         responseUserData.array = response.userData
                         
                     })
-                    .catch(function (error) {
-                        responseUserData = error.message
-                        console.info("Login error");
-                        //throw new Error ('Error - ' + error.message)
+                    .catch( (error) => {
+                        if (error.message != undefined){
+                            responseUserData = error.message
+                            //console.error('[Error] Login - getPerfilUf.response : ' + error)
+                            //throw new Error ('Error - ' + error.message)
+                        }
+                            
                     }).finally(() => {
                         // Finalizando - está registrado??
-                        console.log('999 error ?? ' + errorResponse)
                         if (errorResponse != undefined && errorResponse.length > 2) {
                             validateIsJr(number, errorResponse, null)
                             setLoading(false)
                         } else {
-                            console.log('Llamando is register?? ')
                             isRegisterAPI(number, errorResponse)
                         }                                             
                 });                
@@ -286,7 +287,7 @@ const LoginBody = ({ nav }) => {
     const validateIsJr = async (number, error, result) => {
         if (error == null) {
             //Log
-            console.log("** User is JR **")
+            console.log("[Info] ** User is JR **")
 
             // Set data
             setUFUserData(responseUserData);
@@ -311,7 +312,7 @@ const LoginBody = ({ nav }) => {
             else
                 setErrorStr('Este no es un número JRmóvil.')
             setIconFlex(1.5)
-            console.log("** LOGIN - El usuario no es JR **")
+            console.log("[Info] Login - validateIsJr : El usuario no es JR.")
         }
     }
 
@@ -322,17 +323,17 @@ const LoginBody = ({ nav }) => {
         const response = await userIsRegisterAPI(number)
             .then(function (response) {
                 // Manejar errores
-                console.log(' LOGIN - estado de registro : ' + response)
+                console.log('[Info] Login - isRegisterAPI : ' + response)
                 result = response
                 setIsRegister(result)
                 validateIsJr(number, errorResponse, result)
             })
             .catch(function (error) {
-                console.info("Login isRegister error : " + error);
+                console.error("[Error] Login - isRegisterAPI : " + error);
                 //throw new Error ('Error - ' + error.message)
             }).finally(() => {
                 setLoading(false)  
-                console.log("Login Isregister final")
+                console.log('[Info] Login - isRegisterAPI FIN * ')
             });
 
             return result
@@ -354,9 +355,6 @@ const LoginBody = ({ nav }) => {
         } else if (intent === 'Recharge' && !jrAlert
                     && idSubscriber.length == constants.MAX_NUMBER_LENGTH
                     && !loading) {
-            console.log("Login > inside else if iconactionhandler idSubscriber : " + idSubscriber)
-            console.log(isPwdOk)
-
             nav.navigate(intent, {
                 idSubscriber: idSubscriber,
                 isRegister: isPwdOk,

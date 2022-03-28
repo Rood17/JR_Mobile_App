@@ -7,6 +7,7 @@ import { WebView } from 'react-native-webview';
 import { ReturnHeader, Loader } from '../elements/Elements';
 import NetInfo from "@react-native-community/netinfo";
 import UserState from '../../../context/user/UserState';
+import { LOG_INFO } from '../../res/values/strings/Strings'
 
 let varX;
 const MercadoP = ({ navigation, route }) => {
@@ -16,12 +17,13 @@ const MercadoP = ({ navigation, route }) => {
     const [canGoBack, setCanGoBack] = useState()
     const [url, setUrl] = useState()
     const webViewRef = useRef(null)
-    console.log('pasando por back ************* ' + init_point)
+    console.log(LOG_INFO('MercadoP', 'init_point')+init_point)
+
     // Back handler
     useEffect(() => {
         const backAction = () => {
             if (canGoBack) {
-                console.log('pasando por back ************* ' + webViewRef.current)
+                console.log(LOG_INFO('MercadoP', 'webViewRef.current')+webViewRef.current)
                 webViewRef.current.goBack();
                 return true; 
             }
@@ -38,7 +40,6 @@ const MercadoP = ({ navigation, route }) => {
 
     // Subscribe
     useEffect( () => {
-        //console.log(" ****** is finsih!!!!! url " + url)
         if (url == undefined || url.toString().indexOf('www.mercadopago.com') != -1
         ||  url.toString().indexOf('.paypal.com') != -1) {
             return
@@ -49,7 +50,7 @@ const MercadoP = ({ navigation, route }) => {
     
     const _onMessage = (message) => {
         // you can put processing code here.
-        console.log("SUPER msg -- " + JSON.stringify(message))
+        console.log(LOG_INFO('MercadoP', '_onMessage.message')+JSON.stringify(message))
       }
 
 
@@ -85,10 +86,8 @@ const MercadoP = ({ navigation, route }) => {
                     //console.info("e.canGoBack ", e);
                    // console.info("e.canGoBack ", e.canGoBack);
                     if (e.canGoBack){
-                        console.log("Puede ir hacía atras")
                         setCanGoBack(true)
                     } else {
-                        console.log("no puede ir hacía atras")
                         setCanGoBack(false)
                     }
                     /** put your comdition here based here and close webview.

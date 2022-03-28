@@ -3,6 +3,7 @@ import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Divider } from 'react-native-elements';
 import { Card, ReturnHeader } from "../elements/Elements";
 import {CALL_WHATSAPP} from '../../../types'
+import { LOG_INFO } from '../../res/values/strings';
 import {
     Linking,
     SafeAreaView,
