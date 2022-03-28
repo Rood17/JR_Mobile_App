@@ -1,21 +1,10 @@
-/**
- * -- Details JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, ReturnHeader, UserDataCard, DetailCard } from "../elements/Elements";
-import { getPerfilUf } from '../../utils/services/get_services'
 import * as data from '../../utils/services/perfil_uf.json';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
 import UserContext from '../../../context/user/UserContext'
 import { formatApiDate, setProductType } from '../../utils/Utils'
-
 
 import {
     Button,
@@ -29,18 +18,23 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+/**
+ * Details
+ * @param {navigation} navigation
+ * @param {params} route
+ * @returns component Details
+ */
 const Details = ({ navigation, route }) => {
+    // States
     const [userInfo, setUserInfo] = useState([]);
     const userIsActive = data.responseSubscriber.status.subStatus;
     const { idSubscriber } = route.params;
 
      // get userData Context
      const { userData, getAPIUserData } = useContext(UserContext);
-
      useEffect(() => {
         getAPIUserData(idSubscriber);
      }, [])
- 
  
      // Open the package
      if (userData.simData != undefined)

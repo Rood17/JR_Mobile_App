@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 
 import UserReducer from './UserReducer';
 import UserContext from './UserContext';
+import { LOG_INFO } from '../../app/res/values/strings/Strings';
 import {getPerfilUf, get_api_isJr, get_user_email,
     getDataJson, getPaquetesApi} from '../../app/utils/services/get_services'
 
@@ -20,8 +21,6 @@ const filterArray = (userData) => {
     let expireDateMIN,initialAmtMIN,unusedAmtMIN = 0;
     let dataFlag = false;
     let initialAmtExtra,unusedAmtExtra; 
-
-    console.log( ' 24A ******* : ' + userData.responseSubscriber.freeUnits)
     
     //offeringId
     Object.values(paquetes).map((paquete) => {
@@ -41,24 +40,17 @@ const filterArray = (userData) => {
 
                         // fechas
                         Object.values(item.detailOfferings).map((data) => {
-                            console.log('******* data **** ' + data)
-                            console.log('******* data.expireDate2 ****  '+ data.expireDate)
-                            console.log( 20220403000000 > 20220311000000)
                             if (parseInt(data.expireDate) > expireDateFinal )
                                 expireDateFinal = parseInt(data.expireDate)
-
-                            console.log('******* expireDateFinal4 2 ****  '+ expireDateFinal)
                         })
 
                         // set
                         expireDate = expireDateFinal.toString();
-                        console.log('******* expireDateFinal final finañl ****  '+ expireDateFinal)
                     } else {
                         dataFlag = true
                     }
     
                     if ( item.name == SIM_DATA_EXTRA){
-                        console.log('******* EXTRA **** ')
                         if (dataFlag) {
                             //console.log(' ======= 1 data extra ' + dataFlag)
                             
@@ -68,18 +60,13 @@ const filterArray = (userData) => {
 
                             // fechas
                             Object.values(item.detailOfferings).map((data) => {
-                                console.log('******* data **** ' + data)
-                                console.log('******* data.expireDate2 ****  '+ data.expireDate)
-                                console.log( 20220403000000 > 20220311000000)
                                 if (parseInt(data.expireDate) > expireDateFinal )
                                     expireDateFinal = parseInt(data.expireDate)
-
-                                console.log('******* expireDateFinal4 2 ****  '+ expireDateFinal)
                             })
 
                             // set
                             expireDate = expireDateFinal.toString();
-                            console.log('******* expireDateFinal final finañl ****  '+ expireDateFinal)
+                            console.log('[Info] UserState - expireDateFinal Final *')
                         }
                     }
     
@@ -108,25 +95,15 @@ const filterArray = (userData) => {
     })
 
     // SET DAT AMOUNT
-    console.log(' ======= 0 ' + initialAmt)
     if (initialAmt == undefined ) {
-        //console.log(' ======= 2 ' + initialAmtExtra)
-
         initialAmt = initialAmtExtra;
     }
     else {
-        console.log(' ======= ANTES initialAmt ' + initialAmt)
         initialAmt =  parseInt(initialAmt) + parseInt(initialAmtExtra);
-        
-        //console.log(' ======= DESPUÉS initialAmt ' + parseInt(initialAmt))
     }
-    console.log(' ======= 0B ' + unusedAmt)
     if (unusedAmt == undefined ) {
         unusedAmt = unusedAmtExtra;
-        //console.log(' ======= 0B ' + unusedAmt)
     } else {
-        console.log(' =======  unusedAmt ' + parseInt(unusedAmt))
-        console.log(' ======= unusedAmtExtra ' + parseInt(unusedAmtExtra))
         unusedAmt =  parseInt(unusedAmt) + parseInt(unusedAmtExtra);
     }
 
@@ -160,7 +137,7 @@ const UserState = (props) => {
 
     // useReducer con dispatch  para ejecutar las funciones
     const [state, dispatch] = useReducer(UserReducer, initialState);
-    console.log("Calling User State ")
+    console.log('[Info] UserState **')
 
     const getJson = () => {
         
@@ -168,8 +145,7 @@ const UserState = (props) => {
         
 
         filterArray(result)
-        console.log("User State > userArray **  : " + userArray)
-        console.log("User State > result **  : " + result)
+        console.log(LOG_INFO('UserState', 'getJson.result')+result)
         dispatch({
             type: GET_USER_DATA,
             payload: userArray
@@ -179,18 +155,13 @@ const UserState = (props) => {
     const getAPIUserData = async (number) => {
             let resultFlag = false;
             let final;
-            console.log( ' 22A ******* : ' + number)
          // Call Local Hc
          let myPromise = new Promise(function (resolve) {
             resolve(getPerfilUf(number).then((response) => {
-                    console.log( ' 23A ******* : ' + response.userData.responseSubscriber)
                     filterArray(response.userData)
-                    console.log('************************ 90  userArray ' + userArray)
                 }).catch((error) => {
-                    console.log("UserState Error : " + error);
-                    console.error("UserState Error : " + error.message);
+                    console.error('[Error] UserState - getAPIUserData'+error.message);
                 }).finally(() => {
-                    console.log('************************ 91 userArray  ' + userArray != undefined)
                     userArray != undefined ? resultFlag = true: null
                     dispatch({
                         type: GET_USER_DATA,
@@ -208,7 +179,6 @@ const UserState = (props) => {
 
     const userIsJr = (number) => {
         get_api_isJr(number).then( (response) => {
-            console.log('************************ 90  userIsJr ' + response)
             dispatch({
                 type: GET_IS_JR,
                 payload: response
@@ -221,18 +191,14 @@ const UserState = (props) => {
         let resultFlag = false;
         let final, result;
      // Call Local Hc
-     console.log('************************ 90  getUserEmail ' )
      let myPromise = new Promise(function (resolve) {
         resolve(
             get_user_email(idSubscriber).then( (response) => {
-            console.log('************************ 90  getUserEmail ' + response)
             result = response
         }).catch((error) => {
-                console.log("getUserEmail Error : " + error);
-                console.error("getUserEmail Error : " + error.message);
+                console.error('[Error] UserState - getUserEmail'+error.message);
             }).finally(() => {
-                console.log('************************ getUserEmail result  ' + result)
-
+                console.log(LOG_INFO('UserState', 'getUserEmail.result')+result)
                 dispatch({
                     type: GET_USER_DATA,
                     payload: result

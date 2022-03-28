@@ -16,7 +16,6 @@ export default (state, action) => {
                 userData: action.payload
             }
         case GET_USER_EMAIL:
-            console.log('***    reducer : ' + action.payload)
             return {
 
                 ...state,

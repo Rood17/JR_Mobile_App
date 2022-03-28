@@ -1,15 +1,4 @@
-/**
- * -- Register JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect } from 'react';
-import type { Node } from 'react';
-
 import DisplayLogo from '../elements/DisplayLogo';
 import IntentBtn from '../elements/IntentBtn';
 import Help from '../elements/Help';
@@ -19,7 +8,6 @@ import * as strings from '../../res/values/strings/Strings'
 import * as utils from '../../utils/Utils'
 import { Icon, Input } from 'react-native-elements'
 import { WarningAdvice } from '../elements/Elements';
-
 
 import {
     Button,
@@ -45,17 +33,21 @@ import {
 
 // Btn Disabled Flaf Team
 let name, lastName
-const Register: () => Node = ({ navigation, route }) => {
+/**
+ * Register
+ * @param {navigation} navigation 
+ * @param {params} route 
+ * @returns Register Component
+ */
+const Register = ({ navigation, route }) => {
 
     const { idSubscriber } = route.params
 
-   // const [name, setName] = useState('');
+    //const [name, setName] = useState('');
     //const [lastName, setLastName] = useState('');
     const [btnDisabledFlag, setBtnDisabledFlag] = useState(true)
     const [keyBoardIsOpen, setKeyBoardIsOpen] = useState(false);
-    const [error, setError] = useState(false);
-    // console.log("Intro Log : " + MAIN_CONTAINER_STYLE)
-    
+    const [error, setError] = useState(false);    
     
     const onChangeName = (inputName, inputLastName) => {
         setError('')
@@ -97,8 +89,8 @@ const Register: () => Node = ({ navigation, route }) => {
 
     const registerHandler = () => {
 
-        console.log('name : '+name)
-        console.log('lastName : '+lastName)
+        console.log('[Info] Regsiter - registerHandler.name : '+ name)
+        console.log('[Info] Regsiter - registerHandler.lastName : '+lastName)
 
         if (name != undefined && lastName != undefined && 
             name.length >= 3 && lastName.length >= 3)
@@ -165,7 +157,6 @@ const Register: () => Node = ({ navigation, route }) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

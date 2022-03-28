@@ -57,12 +57,12 @@ export const UserDataCard = ({ header, text, icon, actionBtnTxt }) => {
 export const Card = ({ header, text, icon, actionBtnTxt, social }) => {
     let backgroundColor;
     let textColor;
-    let secColorText;
 
     if (social) {
         backgroundColor = styleConst.MAINCOLORS[0]
         textColor = 'white'
-        secColorText = 'grey'
+    } else {
+        textColor = styleConst.JRGREY
     }
 
     return (
@@ -100,7 +100,6 @@ export const Card = ({ header, text, icon, actionBtnTxt, social }) => {
 const stylesCard = StyleSheet.create({
     container: {
         flex: 1,
-
     },
     iconContainer: {
         padding: 15
@@ -141,13 +140,15 @@ const stylesCard = StyleSheet.create({
 // END Card
 
 // Detail Card
-export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
+/**
+ * DetailCard
+ * @param {String} header, icon
+ * @param {Arrray} data
+ * @returns DetailCard component
+ */
+export const DetailCard = ({ header, data, icon }) => {
 
-    console.log(data)
-    if (data != undefined)
-        data.map((item) => {
-            console.log(item.campo)
-        })
+    console.log('[Info] - Elements - DetailCard : ' + data)
     return (
 
         <View style={stylesCard.boxShadow}>
@@ -165,11 +166,9 @@ export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
                         {data.map((item) => (
                             <>
                                 <Text style={stylesdeatilCard.campo}>{item.campo}: </Text>
-                                <Text style={stylesdeatilCard.txtDin}>{item.campoD}</Text>
+                                <Text style={stylesdeatilCard.txtDin}>{item.campoD ? item.campoD : ' - ' }</Text>
                             </>
                         ))}
-
-
 
                     </View>
                 </View>
@@ -181,7 +180,7 @@ export const DetailCard = ({ header, data, icon, actionBtnTxt }) => {
 }
 const stylesdeatilCard = StyleSheet.create({
     campo: {
-
+        color:styleConst.JRGREY
     },
     txtDin: {
         color: 'black',
@@ -208,7 +207,7 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
     // Default
     requireWifi = require0;
     // Porcent
-    if (porcent < 10 || porcent == undefined || isNaN(porcent)) {
+    if (porcent < 10 || porcent == undefined || isNaN(porcent) || !porcent) {
         requireWifi = require0;
         mbAlert = true
     }
@@ -262,7 +261,7 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
 
                 <View style={stylesMainCard.datosContainer}>
                     <Text style={stylesMainCard.cardHeadTxt}>{bodyHeadOne}</Text>
-                    <Text >{dataOne}</Text>
+                    <Text style={styleConst.JRGREY}>{dataOne}</Text>
                 </View>
                 <View style={stylesMainCard.verticalLine}></View>
                 <View style={stylesMainCard.datosContainer}>
@@ -736,7 +735,7 @@ export const LetterCircle = ({ insightData, color }) => {
                 underlayColor='#ccc'
                 onPress={() => alert('Yaay!')}
             >
-                <Text style={stylesCircle.textAvatar, { color: letterColor }}> {insightData} </Text>
+                <Text style={{ color: letterColor }}> {insightData} </Text>
 
             </TouchableHighlight>
         </>
@@ -745,9 +744,6 @@ export const LetterCircle = ({ insightData, color }) => {
 
 const stylesCircle = StyleSheet.create({
     circle: { height: 30, width: 30, borderRadius: 30, },
-    textAvatar: {
-        fontSize: 20
-    }
 });
 
 
@@ -904,5 +900,123 @@ const pressableJrStyles = StyleSheet.create({
         zIndex: 5, // works on ios
         alignItems: 'center',
         justifyContent: 'center',
+    }
+});
+
+/**
+ * Componente teclado $$
+ * ** COMPONENTE NO UTILIZADO EN LAS NUEVAS VERSIONES > 1.03 **
+ * Componente simulando un teclado para efectuar las cargas por $$
+ * @param {setIsPwdOk, navigation, idSubscriber}
+ * @returns MifiMoneyCard
+ */
+ export const MifiMoneyCard = ({ setGbProduct, togglePrices }) => {
+
+    // handle money bby
+    const moneyHandler = (payloadCode) => {
+        // set pay charge
+        setGbProduct(payloadCode)
+        // Close modal
+        togglePrices()
+    }
+
+    return (
+        <View style={stylesMifiMoneyCard.boxShadow} >
+            <View style={stylesMifiMoneyCard.horizontalCard}>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(20)}
+                >
+                    <Text>8GB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(30)}
+                >
+                    <Text>10GB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(50)}
+                >
+                    <Text>13GB</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={stylesMifiMoneyCard.horizontalCard}>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(100)}
+                >
+                    <Text>20GB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(150)}
+                >
+                    <Text>23GB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(200)}
+                >
+                    <Text>33GB</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={stylesMifiMoneyCard.horizontalCard}>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(300)}
+                >
+                    <Text style={{ alignItems: 'center' }}>50GB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(400)}
+                >
+                    <Text>53GB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylesMifiMoneyCard.box}
+                    onPress={() => moneyHandler(500)}
+                >
+                    <Text>100GB</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
+const stylesMifiMoneyCard = StyleSheet.create({
+    container: {
+
+    },
+    horizontalCard: {
+        flexDirection: 'row',
+
+    },
+    box: {
+        borderColor: styleConst.MAINCOLORSLIGHT[3],
+        padding: 5,
+        borderWidth: .8,
+        width: 70,
+        height: 70,
+        alignItems: 'center',
+        backgroundColor: styleConst.MAINCOLORSLIGHT[0],
+        justifyContent: 'center',
+
+    },
+    boxShadow: {
+        marginTop: 10,
+        margin: 20,
+        backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+
+        elevation: 6,
+        alignItems: 'center'
     }
 });

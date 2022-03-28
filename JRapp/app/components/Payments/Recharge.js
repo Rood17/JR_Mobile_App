@@ -1,14 +1,5 @@
-/**
- * -- Asistance JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useContext, useState, useEffect } from 'react';
-import { JrBtnCircle,DisplayLogo, LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
+import { JrBtnCircle, DisplayLogo, LetterCircle, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input, Overlay } from 'react-native-elements'
 import * as constants from '../../utils/constants/Constants'
@@ -17,7 +8,7 @@ import { setProductType } from '../../utils/Utils'
 import { Avatar } from 'react-native-elements';
 import PaquetesContext from '../../../context/paquetes/PaquetesContext';
 import UserContext from '../../../context/user/UserContext';
-
+import { LOG_INFO } from '../../res/values/strings/Strings';
 import {
     Button,
     ScrollView,
@@ -31,10 +22,17 @@ import {
 } from 'react-native';
 import { get_api_isJr } from '../../utils/services/get_services';
 
-let payload;
+// Globals
 let payloadArray;
-// MainCard
+/**
+ * RechargeOneCard
+ * @param {Boolean} canChangeNumber, isMifi, isJr,isRegister
+ * @param {String} title,subtitle,subtitleColor
+ * @param {userInfo} idSubscriber, setGbProduct
+ * @returns Component Card
+ */
 export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
+    // Sates
     const [disabledBtn, setDisabledBtn] = useState(true);
     const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
     const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
@@ -42,6 +40,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
     const [errorMsg2, setErrorMsg2] = useState('');
     const [initNumber, setInitNumber] = useState(idSubscriber);
     const [pass1, setPass1] = useState(false);
+    const { userData, userIsJr } = useContext(UserContext);
 
     /**
      * Si se bloquea el idSubscriber
@@ -49,58 +48,86 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
      */
     const [autoFlag, setAutoFlag] = useState(true);
 
-    // UserState
-    const { userData, userIsJr } = useContext(UserContext);
-
-    // El número es Jr y la carga es móvil 
- 
 
     // MIFI
-    useEffect( () => {
-        if( isMifi ){
+    useEffect(() => {
+        if (isMifi) {
             setAutoFlag(false)
             onChangeNumber(initNumber)
         }
     }, [isMifi])
 
     // CAN CHANGE NUMBER
-    useEffect( () => {
-        if( canChangeNumber ){
+    useEffect(() => {
+        if (canChangeNumber) {
             setAutoFlag(false)
             onChangeNumber(initNumber)
         }
     }, [])
 
-    // IsRegister
     if (isJr) {
         // Set input value
         phoneValue = initNumber
     }
 
+    // IsRegister
+    useEffect(() => {
+        if (isJr) {
+            // Set input value
+            console.log(LOG_INFO('Recharge', 'RechargeOneCard.isJr')+isJr)
+            setPass1(true);
+        }
+    }, [])
+
     const numberExist = 888
     let phoneValue;
+    /**
+     * Verificar si el número es JR Async
+     * @param {idSubscriber} number 
+     * @returns Boolean
+     */
+    const isNumberJr = async (number) => {
 
+        let result = false;
+        const response = await get_api_isJr(number)
+            .then(function (response) {
+                // Manejar errores
+                console.log(LOG_INFO('Recharge', 'RechargeOneCard.isNumberJr.get_api_isJr')+response)
+                result = response
+                numberIsJrHandler(number, result)
+            })
+            .catch(function (error) {
+                console.error("[Error] Recharge - isRegister error : " + error);
+                //throw new Error ('Error - ' + error.message)
+            }).finally(() => {
+                console.log("[Info] Recharge - Isregister fin *")
+            });
+        return result
+    };
+    /**
+     * numberIsJrHandler
+     * @param {idSubscriber} number 
+     * @param {resutado de la API isJr} result 
+     */
+    const numberIsJrHandler = (number, result) => {
+        if (number.toString().indexOf(numberExist) != -1 || result) {
+            setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
+            setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
+            setPass1(true);
+        } else {
+            setDisplayColor1('red')
+            setDisabledBtn(true)
+            setErrorMsg(<WarningAdvice type={2} warningText='El número no es Jr' />)
+            setPass1(false);
+        }
+    }
     // Validate if Number account exist
     const onChangeNumber = (number) => {
         // Set number
         setInitNumber(number);
-
         if (number.length === constants.MAX_NUMBER_LENGTH) {
-            console.log(' * ************************************')
-            console.log(' * *******userIsJr(number) ****    : ' + number )
-            console.log(' * *******userIsJr(number) ****    : ' + userIsJr(number) )
-            console.log(' * ************************************')
-            if (number.toString().indexOf(numberExist) != -1 || userIsJr(number) ) {
-                setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
-                setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
-                setPass1(true);
-            } else {
-                setDisplayColor1('red')
-                setDisabledBtn(true)
-                setErrorMsg(<WarningAdvice type={2} warningText='El número no es Jr' />)
-                setPass1(false);
-            }
-
+            // Verificar si es JR
+            isNumberJr(number)
         }
         else {
             setDisabledBtn(true)
@@ -140,12 +167,12 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
         <View style={stylesMainCard.boxShadow}>
 
             <View style={stylesMainCard.inputContainer}>
-                {isMifi 
-                ? <Text>Introduce el número MIFI a recargar</Text>
-                : <Text>Introduce el número móvil a recargar</Text>
+                {isMifi
+                    ? <Text style={styleConst.JRGREY}>Introduce el número MIFI a recargar</Text>
+                    : <Text>Introduce el número móvil a recargar</Text>
                 }
                 <Input
-                    placeholder="Número JRmovil (10 dígitos)"
+                    placeholder="Número JRmóvil (10 dígitos)"
                     keyboardType='number-pad'
                     textContentType='telephoneNumber'
                     errorMessage={errorMsg}
@@ -172,6 +199,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
                     intent={['Recharge_2', {
                         sendPayload: payloadArray,
                         idSubscriber: initNumber,
+                        isRegister:isRegister
                     }]}
                     navigation={navigation}
                     btnText='Continuar' />
@@ -223,129 +251,15 @@ const stylesMainCard = StyleSheet.create({
         alignItems: 'center',
     },
 });
-// END MainCard
 
-// Money List
-export const MifiMoneyCard = ({ setGbProduct, togglePrices }) => {
-
-    // handle money bby
-    const moneyHandler = (payloadCode) => {
-        // set pay charge
-        setGbProduct(payloadCode)
-        // Close modal
-        togglePrices()
-    }
-
-    return (
-        <View style={stylesMifiMoneyCard.boxShadow} >
-            <View style={stylesMifiMoneyCard.horizontalCard}>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(20)}
-                >
-                    <Text>8GB</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(30)}
-                >
-                    <Text>10GB</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(50)}
-                >
-                    <Text>13GB</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={stylesMifiMoneyCard.horizontalCard}>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(100)}
-                >
-                    <Text>20GB</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(150)}
-                >
-                    <Text>23GB</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(200)}
-                >
-                    <Text>33GB</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={stylesMifiMoneyCard.horizontalCard}>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(300)}
-                >
-                    <Text style={{ alignItems: 'center' }}>50GB</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(400)}
-                >
-                    <Text>53GB</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={stylesMifiMoneyCard.box}
-                    onPress={() => moneyHandler(500)}
-                >
-                    <Text>100GB</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
-}
-
-const stylesMifiMoneyCard = StyleSheet.create({
-    container: {
-
-    },
-    horizontalCard: {
-        flexDirection: 'row',
-
-    },
-    box: {
-        borderColor: styleConst.MAINCOLORSLIGHT[3],
-        padding: 5,
-        borderWidth: .8,
-        width: 70,
-        height: 70,
-        alignItems: 'center',
-        backgroundColor: styleConst.MAINCOLORSLIGHT[0],
-        justifyContent: 'center',
-
-    },
-    boxShadow: {
-        marginTop: 10,
-        margin: 20,
-        backgroundColor: 'white',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
-
-        elevation: 6,
-        alignItems: 'center'
-    }
-});
-
-// Products List
+/**
+ * MifiCard list
+ * @param {String} setGbProduct
+ * @param {Boolean} togglePlans
+ * @returns Mifi list COMPONENT
+ */
 export const MifiCard = ({ setGbProduct, togglePlans }) => {
 
-    // get Paquetes Contex
-
-    //console.log("paquetes : " + paquetes)
-
-    // 999 seguro aquí se va a neceistar un ref
     const productHandler = (payload) => {
         // Set charge
         setGbProduct(payload)
@@ -399,7 +313,6 @@ export const MifiCard = ({ setGbProduct, togglePlans }) => {
         </ScrollView>
     );
 }
-
 const stylesMifiCard = StyleSheet.create({
     container: {
 
@@ -428,19 +341,20 @@ const stylesMifiCard = StyleSheet.create({
     }
 });
 
-// Products List
+/**
+ * Products List
+ * @param {String} setGbProduct
+ * @param {Boolean} togglePlans
+ * @returns ProductCard COMPONENT
+ */
 export const ProductCard = ({ setGbProduct, togglePlans }) => {
-
-    // get Paquetes Contex
-
-    //console.log("paquetes : " + paquetes)
 
     // 999 seguro aquí se va a neceistar un ref
     const productHandler = (payload) => {
         // Set charge
-        console.log('*** tracking - productHandler : ' + payload)
+        console.log('[Info] Recharge - ProductCard.productHandler : ' + payload)
         setGbProduct(payload)
-        
+
         // Close Modal
         togglePlans()
     }
@@ -516,7 +430,6 @@ export const ProductCard = ({ setGbProduct, togglePlans }) => {
         </ScrollView>
     );
 }
-
 const stylesProductCard = StyleSheet.create({
     container: {
 
@@ -545,9 +458,14 @@ const stylesProductCard = StyleSheet.create({
     }
 });
 
-
-// Modal
+/**
+ * MODAL
+ * @param {String} setGbProduct
+ * @param {Boolean} main (if view)
+ * @returns modal COMPONENT
+ */
 export const OverlayModal = ({ setGbProduct, main }) => {
+    // STATES
     const [visible1, setVisible1] = useState(false);
     const [visible2, setVisible2] = useState(false);
     let [backgroundIconColor, iconColor] = ['white', styleConst.MAINCOLORSLIGHT[1]]
@@ -560,7 +478,7 @@ export const OverlayModal = ({ setGbProduct, main }) => {
         setVisible2(!visible2);
     };
 
-    // If we are in main
+    // Si es que se proviene de MAIN
     if (main) {
         backgroundIconColor = styleConst.MAINCOLORS[0];
         iconColor = styleConst.MAINCOLORS[0];
@@ -573,17 +491,17 @@ export const OverlayModal = ({ setGbProduct, main }) => {
 
 
                     <View style={modalStyle.icon}>
-                        <JrBtnCircle 
-                            onPress={togglePlans} 
+                        <JrBtnCircle
+                            onPress={togglePlans}
                         />
-                        <Text style={{ marginTop: 10 }}>Planes de Recarga</Text>
+                        <Text style={{ marginTop: 10, color: styleConst.JRGREY, textAlign: 'center', }}>Planes de Recarga</Text>
                     </View>
                     <View style={modalStyle.icon}>
-                    <JrBtnCircle 
-                        icon='signal' 
-                        onPress={togglePrices} 
-                    />
-                        <Text style={{ marginTop: 10 }}>¡Recarga tu MiFi!</Text>
+                        <JrBtnCircle
+                            icon='signal'
+                            onPress={togglePrices}
+                        />
+                        <Text style={{ marginTop: 10, color: styleConst.JRGREY, textAlign: 'center', }}>¡Recarga tu MiFi!</Text>
                     </View>
                 </View>
             </View>
@@ -612,7 +530,7 @@ export const OverlayModal = ({ setGbProduct, main }) => {
                 <View style={modalStyle.headContainer}>
                     <View style={[{ flex: 1, }, modalStyle.headTextContainer]}>
                         <Text style={modalStyle.headTxt}>Recargar Saldo</Text>
-                        <Text style={{ margin: 0 }}>Selecciona una compra</Text>
+                        <Text style={{ margin: 0, color: styleConst.MAINCOLORS[3] }}>Selecciona una compra</Text>
                     </View>
                     <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
                         <MifiCard setGbProduct={setGbProduct} togglePlans={togglePrices} />
@@ -673,41 +591,38 @@ const modalStyle = StyleSheet.create({
     },
 });
 
+/**
+ * Componente RECAHRGE
+ * @param {chargeResume, navigation, route (Params)}
+ * @returns RECHARGE
+ */
 const Recharge = ({ navigation, chargeResume, route }) => {
 
-    
+    // STATES
     const { idSubscriber, isRegister, isJr, sendPayload, canChangeNumber } = route.params;
-    
     const [isMifi, setIsMifi] = useState()
     const [gbProduct, setGbProduct] = useState()
     let payload;
-    // Set the prodcut type
-    /**
-     * Aquí debe llamarse a paquetes state para
-     * alimentar los paquetes
-     */
-    // console.log("Recharge - sendPayload : " + sendPayload)
-    // console.log("Recharge - gbProduct : " + gbProduct)
 
+    // Cargar payload dependiendo el view anterior
     useEffect(() => {
-        console.log(' Recharge > sendPayload !! ' + typeof sendPayload)
-        if (sendPayload){
-            console.log(' Recharge > sendPayload dentroo  !! ' + sendPayload)
+        if (sendPayload) {
+            console.log('[Info] Recharge - sendPayload : ' + sendPayload)
             setGbProduct(sendPayload)
         }
     }, [])
-    
+
     /**
      *  Se pone fuera del useEffect y en esta posición 
-     *  para que se pueda actualizar.
+     *  para que se pueda actualizar forzosamente.
      */
     payloadArray = setProductType(gbProduct)
     payload = payloadArray.title
 
 
-    // Verify if it´s MIFI
-    useEffect( () => {
-        if (payload.indexOf('MiFi') != -1){
+    // Verificar si es MIFI
+    useEffect(() => {
+        if (payload.indexOf('MiFi') != -1) {
             setIsMifi(true)
         } else {
             setIsMifi(false)
@@ -726,7 +641,7 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                     <View style={styles.headContainer}>
                         <LetterCircle insightData={1} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Ingresa tu número JRmóvil y el tipo de compra.</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[3] }}>Ingresa tu número JRmóvil y el tipo de compra.</Text>
                         </View>
                     </View>
                     <RechargeOneCard
@@ -734,24 +649,22 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                         isRegister={isRegister}
                         isMifi={isMifi}
                         isJr={isJr}
-                        navigation={navigation} 
+                        navigation={navigation}
                         setGbProduct={setGbProduct}
-                        canChangeNumber={canChangeNumber} 
+                        canChangeNumber={canChangeNumber}
                     />
                     <View style={styles.registerContainer}>
                         <Text>Carga seleccionada:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>
-
-
                     </View>
                     <View style={styles.headContainer}>
-                        <View style={styles.inline}>
+                        <View style={{ marginLeft: 5 }}>
                             <LetterCircle insightData={2} color={1} />
                         </View>
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Realiza tu pago.</Text>
+                            <Text style={{ color: styleConst.MAINCOLORS[3] }}>Realiza tu pago.</Text>
                         </View>
                     </View>
                     <View style={styles.cardsContainer}>
@@ -773,9 +686,6 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                                 source={require('../../res/drawable/logo/cards/ae.jpg')}
                             />
                         </View>
-
-
-
                         <Text></Text>
                     </View>
                 </View>
@@ -783,7 +693,6 @@ const Recharge = ({ navigation, chargeResume, route }) => {
         </>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

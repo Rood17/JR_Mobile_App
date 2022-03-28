@@ -6,6 +6,7 @@ import * as constants from '../../utils/constants/Constants'
 import IntentBtn from '../elements/IntentBtn';
 import UserContext from '../../../context/user/UserContext';
 import {send_recovery_email} from '../../utils/services/get_services'
+import { LOG_INFO } from '../../res/values/strings/Strings';
 
 import {
     Button,
@@ -61,13 +62,11 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
         const myPromise = new Promise(function (resolve) {
             resolve(send_recovery_email(idSubscriber, rcvryEmail)
             .then((response) => {
-                console.log('onChangeEmail  - send_recovery_email : '+ response)
+                console.log(LOG_INFO('RecoveryEmail', 'rcvry_btn_handler.send_recovery_email')+response)
                     if(response){
                         setDisabledBtn(true)
                         setRecvryResponse(<WarningAdvice type={3} warningText='El mail se envió con éxito.' />)
                         // Counting
-                        
-                        console.log(" countpass **** " + countPass)
                         if (countPass == 0){
                             setCountDown(55)
                             setCountPass(1)
@@ -94,11 +93,12 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
 
     useEffect( () => {
         const userEmailD = getUserEmail(idSubscriber)
-        console.log('Recovery PWD - get email: '+ userEmailD)
+        console.log(LOG_INFO('RecoveryEmail', 'PwdRecoveryCard.userEmailD')+userEmailD)
+
     }, [])
 
     useEffect( () => {
-        if (userData) {
+        if (userData && userData != undefined) {
             let aIndex = userData.indexOf('@')
             let mainEmail = userData.slice(aIndex -3 ,aIndex.length);
             for (var i=0; i < aIndex; i++ ) {
@@ -147,7 +147,6 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
                     placeholder="Email"
                     textContentType='emailAddress'
                     keyboardType='email-address'
-                    autoComplete='email'
                     errorMessage={errorMsg}
                     secureTextEntry={false}
                     leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: 'grey' }}
@@ -228,7 +227,8 @@ const RecoveryEmail = ({navigation, route}) => {
                     idSubscriber={idSubscriber}
                     />
                     <View style={styles.registerContainer}>
-                        <Text>Espera un momento a que te llegue el mail,</Text>
+                        <Text>Espera un momento a que te llegue el mail.</Text>
+                        <Text>Si no ves el mail, revisa la bandeja de "Spam".</Text>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Text style={{color: styleConst.MAINCOLORS[0]}}>¿Ya recibiste el correo?... Regresa.</Text>
                         </TouchableOpacity>

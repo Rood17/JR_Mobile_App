@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 
 import RecargasReducer from './RecargasReducer';
 import RecargasContext from './RecargasContext';
+import { LOG_INFO } from '../../app/res/values/strings/Strings';
 import { PREFERENCE_ID } from "../../types";
 import {get_api_preference} from '../../app/utils/services/get_services'
 
@@ -19,15 +20,18 @@ const RecargasState = props => {
 
     const get_preference = async (dataProduct) => {
 
-        console.log("**************** get_preference  ")
-        console.log("****************  ")
-        console.log("*** idSubscriber : " + dataProduct.idSubscriber)
-        console.log("*** email : " + dataProduct.email)
-        console.log('*** name ' + dataProduct.title)
-        console.log('*** price ' + dataProduct.price)
-        
-        console.log("****************  ")
-        console.log("****************   ")
+        // Safe clear
+        if ( dataProduct == 'clear'){
+            dispatch({
+                type: PREFERENCE_ID,
+                payload: undefined
+            });
+            return
+        }
+        console.log("[Info] Recargas State - get_preference **")
+        console.log(LOG_INFO('RecargasState', 'get_preference.title')+dataProduct.title)
+
+
         let result;
     
         let myPromise = new Promise( (resolve) => {
@@ -37,11 +41,11 @@ const RecargasState = props => {
                     // Response
                     // Storage
                     resolve(result = response)
-                    console.log('Obteniendo iframe mercado pago! ' + response );
+                    console.log(LOG_INFO('RecargasState', 'get_preference - Obteniendo iframe mercado pago')+response)
                     
                 }).catch(error => {
                     result = error
-                    console.error("Register error - " + error);
+                    console.error('[Error] RecargasState - RecargasState'+error.message);
                 }).finally(() => {
                     dispatch({
                         type: PREFERENCE_ID,

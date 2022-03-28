@@ -10,30 +10,24 @@ import Auth, {
 import {storeUserString, clearStorage, getUserData,getUserEmail, getUserId, storeUserData, getSecret } from '../utils/Storage'
 import {getUserAuth, registerAPIUser, editAPIUser} from '../utils/services/get_services'
 import RNRestart from 'react-native-restart';
+import { LOG_INFO } from "../res/values/strings/Strings";
 import AuthContext from "../../context/auth/AuthContext"; 
 import { AppState } from "react-native";
 import App from "../../App";
 
 export const isUserLogged = (authFlag) => {
-    console.log(" ** isUserLogged: 1 authFlag :" + authFlag)
+    console.log(LOG_INFO('AuthProvider', 'isUserLogged.authFlag')+authFlag)
     // Use flag
     if( authFlag != undefined ) return authFlag;
-    console.log(" ** isUserLogged: 2 ")
     const [isUserLogin, setIsUserLogin] = useState();
     
 
-    console.log(" ** buenos días precioso : 1 " + getUserId())
     getUserData().then( () => {
-        console.log(" ** buenos días precioso 2 : " + getUserId())
         if (getUserId() != undefined && getUserId().length == 10){
-            console.log(' estamos pasando no se hagan --- true')
             setIsUserLogin(true)
- 
         }
-    })
-        
+    }) 
 
-    console.log(" ** buenos días precioso :3A  " + isUserLogin)
     return isUserLogin;
 }
 
@@ -49,18 +43,14 @@ export const login = async (navigation, idSubscriber, pwd, setError, setLoginSuc
         pwd = getSecret()
     } 
 
-    console.log(" *** 1 getUserId : " + idSubscriber)
-    console.log(" *** 1 getSecret() : " + pwd)
+    console.log(LOG_INFO('AuthProvider', 'login.idSubscriber')+idSubscriber)
 
     let myPromise = new Promise(function (resolve) {
         if ( idSubscriber != undefined && pwd != undefined ) {
-            console.log('************************ isUserLog : dentro del if ' )
 
             getUserAuth(idSubscriber, pwd).then((response)=> {
-                
-                console.log("AUTH PROVIDER 222 ****   : ",response);
-                console.log("AUTH PROVIDER 222 ****   : ",response.last_name);
-                console.log("AUTH PROVIDER 222 ****   : ",response.email);
+                console.log(LOG_INFO('AuthProvider', 'login.getUserAuth.last_name')+response.last_name)
+
                 result = response;
 
                 // handle errors
@@ -83,32 +73,26 @@ export const login = async (navigation, idSubscriber, pwd, setError, setLoginSuc
                     // Store New Data
                     storageUpdate(dataArray, 'login');
                     // User Just Register
-                    setError()
-                    console.log("calling user !!! ")
-                    
+                    setError()                    
                     RNRestart.Restart();
                 }
 
-            }).catch((error) => console.log("Error in isUserLogin : " + error))
+            }).catch((error) => console.error("[Error] AuthProvider - isUserLogin : " + error))
             .finally(()=>{
-                console.log("** isAuth final  ** ")
+                console.log("[Info] AuthProvider - isUserLogin final *")
             })
 
         
         }
     });
 
-    console.log("*************************** AUTH PROVIDER 4444 ****   : ",result);
     result = await myPromise
     return  result;
 
 }
 export const logout = (navigation) => {
-
-    console.log("*************************** Login out ****    ");
+    console.log("[Info] AuthProvider - Login out **")
     const user = false;
-
-
     //const auth = auth();
     //const userc = auth.currentUser;
 
@@ -122,16 +106,10 @@ export const logout = (navigation) => {
 
 }
 export const registerUser = async (dataArray) => {
+    console.log("[Info] AuthProvider - registerUser **")
+    console.log(LOG_INFO('AuthProvider', 'registerUser.pwd')+dataArray[0].pwd)
+    console.log(LOG_INFO('AuthProvider', 'registerUser.idSubscriber')+dataArray[0].idSubscriber)
 
-    console.log("**************** Register  ")
-    console.log("****************  ")
-    console.log("*** pwd : " + dataArray[0].pwd)
-    console.log("*** email : " + dataArray[0].email)
-    console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-    console.log("*** name : " + dataArray[0].name)
-    console.log("*** lastName : " + dataArray[0].lastName)
-    console.log("****************  ")
-    console.log("****************  ")
     let result;
 
     const email = dataArray[0].email.toLowerCase();
@@ -145,16 +123,15 @@ export const registerUser = async (dataArray) => {
                 // Storage
                 result = response.data
         
-                
-                console.log('User account created & signed in! ' + response );
-                console.log('User account created & signed in! ' + response.data );
+                console.log(LOG_INFO('AuthProvider', 'registerAPIUser - ser account created & signed in! - ')+dataArray[0].idSubscriber)
+                //console.log('User account created & signed in! ' + response.data );
                   
                 resolve(storageUpdate(dataArray, 'register'))
                 RNRestart.Restart();
                 
             }).catch(error => {
                 result = error
-                console.error("Register error - " + error);
+                console.error("[Error] registerAPIUser error - " + error);
             });
         } catch {
             alert('El Mail ya existe.')
@@ -170,13 +147,9 @@ export const registerUser = async (dataArray) => {
 }
 export const editUser = ( navigation, idSubscriber, editName, editLastName, editEmail, editPwd ) => {
 
-    console.log("*** idSubscriber : " + idSubscriber)
-    console.log("*** editName : " + editName)
-    console.log("*** editLastName : " + editLastName)
-    console.log("*** editEmail : " + editEmail)
-    console.log("*** editPwd : " + editPwd)
-    console.log("****************  ")
-    console.log("**************** editUser AUTH  ")
+    console.log(LOG_INFO('AuthProvider', 'editUser.idSubscriber')+idSubscriber)
+    console.log(LOG_INFO('AuthProvider', 'editUser.editEmail')+editEmail)
+
     let dataArray = [{ 
         idSubscriber: idSubscriber, 
         name: editName, 
@@ -191,7 +164,6 @@ export const editUser = ( navigation, idSubscriber, editName, editLastName, edit
     try {
         editAPIUser(idSubscriber, editName, editLastName, editEmail, editPwd)
             .then((response) => {
-            console.log('User actualization!! + ');
             storageUpdate(dataArray, 'main')
             navigation.reset({
                 index: 0,
@@ -246,7 +218,6 @@ export const isFireUserLog = () => {
 
 }
 export function updateUserEmail(navigation, newEmail, currentPassword, newSecret, oldEmail, setRegisterResponse ) {
-    console.log("Updating User")
 
     let result = '';
     newEmail = newEmail.toLowerCase();
@@ -257,7 +228,7 @@ export function updateUserEmail(navigation, newEmail, currentPassword, newSecret
                 const user = userCredential.user;
                 // ...
                 updateEmail(user, newEmail).then(() => {
-                    console.log("Email updated!");
+                    console.log("[Info] AuthProvider signInWithEmailAndPassword - email updated!");
                     result = 'Success'
                     //navigation.popToTop()
                     navigation.reset({
@@ -281,9 +252,8 @@ export function updateUserEmail(navigation, newEmail, currentPassword, newSecret
     return result; 
 }
 export const updateUserPwd = (newSecret) => {
-        console.log("Auth - UpdateingSecret")
-        console.log("Auth - getUserEmail : " + getUserEmail())
-        console.log("Auth - getSecret : " + getSecret())
+    console.log("[Info] AuthProvider updateUserPwd");
+
         try {
             signInWithEmailAndPassword(auth, getUserEmail(), getSecret())
                 .then((userCredential) => {
@@ -291,10 +261,10 @@ export const updateUserPwd = (newSecret) => {
                     const user = userCredential.user;
                     // ...
                     updatePassword(user, newSecret).then(() => {
-                        console.log("Pwd updated!");
+                        console.log("[Info] AuthProvider Pwd updated!");
                         //navigation.popToTop()
                     }).catch(error => {
-                        console.error("AuthProvider - UpdatePwd: " + error);
+                        console.error("[Error] AuthProvider - UpdatePwd: " + error);
                         //setRegisterResponse(error.code)
                     });
                 })
@@ -308,23 +278,24 @@ export const reauthenticate = (currentPassword, oldEmail) => {
     var user = getAuth();
     var cred = EmailAuthProvider.credential(
         'carlos@zz.ss', 'Prueba123').catch(error => {
-            console.log("Error reauthenticate : " + error)
+            console.error("[Error] AuthProvider - reauthenticate: " + error);
         });
     return reauthenticateWithCredential(user, cred);
 }
 export const registerFireUser = (email, pwd, setRegisterResponse) => {
 
     email = email.toLowerCase();
-    console.log('setRegisterResponse : ' +setRegisterResponse)
+    console.log(LOG_INFO('AuthProvider', 'registerFireUser.setRegisterResponse')+setRegisterResponse)
     try {
         createUserWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
-            console.log('User account created & signed in!');
+            console.log("[Info] AuthProvider - createUserWithEmailAndPassword - User account created & signed in!");
+
             // Response
             setRegisterResponse('success')
 
         }).catch(error => {
             setRegisterResponse(error)
-            console.error("Register error - " + error);
+            console.error('[Error] AuthProvider - registerFireUser'+error);
         });
     } catch {
         alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
@@ -335,7 +306,7 @@ export const Firelogin = (email, pwd, setError, setLoginSuccess) => {
 
 
     signInWithEmailAndPassword(auth, email, 'Prueba123').then(() => {
-        console.log('User is log in!');
+
         // This one yes
         setLoginSuccess(true)
         //setSuccess(true)
@@ -349,11 +320,11 @@ export const Firelogin = (email, pwd, setError, setLoginSuccess) => {
         }
 
         if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
             setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
         }
 
-        console.error(error);
+        console.error('[Error] AuthProvider - Firelogin'+error);
+
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;

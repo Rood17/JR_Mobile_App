@@ -1,15 +1,4 @@
-/**
- * -- Register JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect, useContext } from 'react';
-import type { Node } from 'react';
-
 import DisplayLogo from '../elements/DisplayLogo';
 import { WarningAdvice } from '../elements/Elements'
 import Help from '../elements/Help';
@@ -49,14 +38,24 @@ import {
 let pass1, pass2, pass3, i;
 let { isBold1, isBold2, isBold3 } = '500'
 
+/**
+ * NewPwd
+ * @param {state} setOnPwdChange, setNewPwd, setError
+ * @param {Boolean} emailPass 
+ * @param {String} goToIntent, btnTxt, label, editName, editLastName, editEmail
+ * @param {navigation} navigation 
+ * @param {Array} dataArray 
+ * @returns Component NewPwd
+ */
 export const NewPwd = ({ setOnPwdChange,setNewPwd, 
     update, setError, emailPass, goToIntent, btnTxt, 
     label, navigation, dataArray,
     editName, editLastName, editEmail }) => {
 
+    // Context
     const { registerResponse, registerUser } = useContext(AuthContext);
 
-
+    // States
     const [chackColor, setChackColor] = useState('grey');
     const [chackColor2, setChackColor2] = useState('grey');
     const [chackColor3, setChackColor3] = useState('grey');
@@ -64,17 +63,17 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
     const [leftIcon, setLeftIcon] = useState('eye')
     const [secureText, setSecureText] = useState(false)
     const [pwd, setPwd] = useState()
-    console.log("****************  ")
-    console.log("**************** setNewPwd  " + setNewPwd)
-    console.log("**************** editName  " + editName)
-    console.log("**************** editLastName   " + editLastName)
-    console.log("**************** editEmail   " + editEmail)
+
+    console.log("[Info] Register_2 - NewPwd **")
+    console.log("[Info] Register_2 - NewPwd setNewPwd  " + setNewPwd)
+    console.log("[Info] Register_2 - NewPwd editName  " + editName)
+    console.log("[Info] Register_2 - NewPwd editLastName   " + editLastName)
+    console.log("[Info] Register_2 - NewPwd editEmail   " + editEmail)
 
     
     const onChangeText = (text) => {
         setOnPwdChange(true)
         i = text.length;
-        console.log(text.length)
         if (utils.CheckUppercase(text)) {
             setChackColor(styleConst.MAINCOLORS[0]);
             isBold1 = 'bold'
@@ -120,10 +119,9 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
             setbtnDisabled(false)
             setLeftIcon('eye-slash')
             // set pwd
-            console.log("text - " + text)
             dataArray[0].pwd = text;
             setPwd(dataArray[0].pwd)
-            console.log("dataArray[0].pwd - " + pwd)
+            //console.log("[Info] Register_2 - onChangeText.secret : " + pwd)
         }
         else { setbtnDisabled(true) }
     }
@@ -132,18 +130,18 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
         register()
     }
 
-    // Register
     // User Register??
     async function register () {
         let email = dataArray[0].email
-
-        console.log("****************  ")
-        console.log("*** pwd : " + pwd)
         dataArray[0].pwd = pwd
-        console.log("*** email : " + email)
-        console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-        console.log("*** name : " + dataArray[0].name)
-        console.log("*** lastName : " + dataArray[0].lastName)
+
+        console.log("[Info] Register_2 - register ** ")
+        console.log("[Info] Register_2 - register.pwd : " + pwd)
+        console.log("[Info] Register_2 - register.email : " + email)
+        console.log("[Info] Register_2 - register.idSubscriber : " + dataArray[0].idSubscriber)
+        console.log("[Info] Register_2 - register.name : " + dataArray[0].name)
+        console.log("[Info] Register_2 - register.pwd : " + dataArray[0].lastName)
+
 
         email = email.toLowerCase();
         let newSecret = pwd
@@ -158,15 +156,10 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
             })
             const create = await myPromiseCreate.finally(
                 () => {
-                    console.log("Finally myPromiseCreate")
+                    console.log("[Info] Register_2 - register.registerUser Fin *")
                 }
             )
-            registerResponse2 = create
-            console.log('****************************************************')
-            console.log("create 22 - " + create)
-            console.log("registerResponse - " + registerResponse)
-
-            
+            registerResponse2 = create           
             
         } else {
             const edit = editUser(navigation, dataArray[0].idSubscriber, editName, editLastName, editEmail, newSecret)
@@ -234,8 +227,6 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
     )
 
 }
-
-
 const modalStyle = StyleSheet.create({
     containerModal: {
         margin: 20
@@ -259,7 +250,14 @@ const modalStyle = StyleSheet.create({
     },
 });
 
-const Register_2: () => Node = ({ recovery, navigation, route }) => {
+/**
+ * Register_2
+ * @param {Boolean} recovery 
+ * @param {navigation} navigation 
+ * @param {Params} route 
+ * @returns Register_2 Component
+ */
+const Register_2 = ({ recovery, navigation, route }) => {
 
     // Params
     const { idSubscriber, name, lastName } = route.params;
@@ -373,7 +371,6 @@ const Register_2: () => Node = ({ recovery, navigation, route }) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

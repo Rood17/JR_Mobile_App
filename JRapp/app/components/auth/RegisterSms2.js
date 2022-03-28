@@ -19,7 +19,6 @@ function RegisterSms2() {
   // Handle the button press
   async function signInWithPhoneNumber(auth, phoneNumber, appVerifier ) {
     const confirmation = await auth().signInWithPhoneNumber(phoneNumber).then(() => {
-        console.log('User is log in!');
         // This one yes
         //setSuccess(true)
         // Finalizar
@@ -32,11 +31,10 @@ function RegisterSms2() {
         }
 
         if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
             setError(<WarningAdvice type={2} warningText='El mail no es válido.' />)
         }
 
-        console.error(error);
+        console.error('[Error] RegisterSMS2 : '+error);
     });;
     setConfirm(confirmation);
   }
@@ -46,7 +44,6 @@ function RegisterSms2() {
       await confirm.confirm(code);
     } catch (error) {
     alert('Error al crear la cuenta - Compruebe el estado de su conexión.')
-      console.log('Invalid code.');
     }
   }
 

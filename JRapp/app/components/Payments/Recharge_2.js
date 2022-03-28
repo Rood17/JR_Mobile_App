@@ -1,12 +1,3 @@
-/**
- * -- Asistance JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect, useContext } from 'react';
 import { LetterCircle, Loader, ReturnHeader, WarningAdvice } from "../elements/Elements";
 import * as styleConst from '../../res/values/styles/StylesConstants'
@@ -16,7 +7,7 @@ import IntentBtn from '../elements/IntentBtn';
 import RecargasContext from '../../../context/recargas/RecargasContext';
 import { getUserEmail } from '../../utils/Storage';
 import {get_api_preference} from '../../utils/services/get_services'
-
+import { LOG_INFO } from '../../res/values/strings/Strings';
 
 import {
     Button,
@@ -37,13 +28,12 @@ let monthFlag, yearFlag, secretFlag, postalFlag;
 const OverlayModal = ({ payloadArray, isRegister, payload, idSubscriber, navigation, safeCard, disabledBtn, fail }) => {
     const [visible, setVisible] = useState(false);
     const [safePaymentSuccess, setSafePaymentSuccess] = useState(true);
-    console.log('disabledbtn 1 : ' + disabledBtn)
+
     const toggleResume = () => {
         setVisible(!visible);
     };
 
     // All data ready for API
-    //console.log('payloadArray :  ' + payloadArray.startDate)
     // Set safe card
     safeCard = 'xxxx xxxx xxxx ' + safeCard.toString().slice(12);
 
@@ -161,57 +151,94 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
     const [cardYear, setCardYear] = useState(false)
     const [cardSeret, setCardSecret] = useState(false)
     const [disabledEmail, setDisabledEmail] = useState(false)
-    const [realeseLoader, setRealeseLoader] = useState(false);
+    const [isLoading, setisLoading] = useState(false);
+    const [mercadoEmail, setMercadoEmail] = useState();
 
+    // Constantes de prueba
     const materCard = 888
     const visa = 777
     const american = 666
-    let detailPass;
-
-    // If MERCADO PAGO
-    const [mercadoEmail, setMercadoEmail] = useState();
-
+    
+    // Context
     const { recargas, get_preference } = useContext(RecargasContext);
     const price = clearPrice(payloadArray.price)
+
+    /**
+     * Array que se enviará a la API de MP    * 
+     */
     const productArray = {
         'idSubscriber': idSubscriber,
         'title': payloadArray.title,
         'price': price,
         'email': mercadoEmail == undefined ? getUserEmail() : mercadoEmail,
     }
+
+    /**
+     * Capturar el mail del usuario no registrado    * 
+     */
+    useEffect( () => {
+        if (mercadoEmail)
+            productArray.email = mercadoEmail
+    }, [mercadoEmail])
+
     // si el usuario ya esta loggeado se saca el email de storgae
     useEffect( () => {
+        console.log(LOG_INFO('Recharge_2', 'RechargeTwoCard.isRegister')+isRegister)
         if (isRegister){
             setMercadoEmail(getUserEmail())
             setDisabledEmail(true);
             setEmailFlag(true); 
         }
-
-    })
+    },[])
     
-    // si no se le pide antes de pasar a esta pantalla
-
     // si el mail está listo se llama a get preference
-    // preference deve ser llamada en el último state
-
+    // preference debe ser llamada en el último state
     useEffect(() => {
-        // so preference esta lista se avanza
-        setRealeseLoader(true)
-        console.log(" ***** 01s ")
-        const mercadoUrl = get_preference(productArray)
-        
-
-    }, [])
-
-    useEffect( () => {
-        console.log(" ***** result final 000 recargas " + recargas.init_point)
-        if ( recargas != undefined && recargas.init_point ){
-            setRealeseLoader(false);
-            setEmailFlag(true);
+        // si preference esta lista se avanza
+        console.log(LOG_INFO('Recharge_2', 'RechargeTwoCard.emailFlag')+emailFlag)
+        if (emailFlag){
+            const mercadoUrl = get_preference(productArray).then(
+                (response) => {
+                    console.log(LOG_INFO('Recharge_2', 'RechargeTwoCard.get_preference')+response)
+                    setisLoading(false);
+                }
+            )
         }
-    }, [recargas])
+    }, [emailFlag])
 
-    // New mercado pago validations 
+    // Mercado Handler Email
+    const mercadoEndHandler = () => {
+        if ( mercadoEmail != undefined && mercadoEmail.indexOf('@') != -1) {
+            setisLoading(true)
+            setEmailFlag(true)
+        } else {
+            setEmailFlag(false)
+        }
+    }
+
+    const mercadoHandlerEmail = (email) => {
+        console.log(LOG_INFO('Recharge_2', 'mercadoHandlerEmail.email')+email)
+        if ( email != undefined && email.indexOf('@') != -1) {
+            setMercadoEmail(email)
+        } else {
+            setMercadoEmail(undefined)
+        }
+    }
+
+    // Ir a mercado pago
+    const mercadoHandler = () => {
+        if ( recargas != undefined && recargas.init_point && !isLoading && emailFlag ){
+            navigation.navigate('MercadoP', {'init_point' : recargas.init_point})
+            get_preference('clear')
+        }
+    }
+
+    /**
+     * Funciones de la interface para cobro.
+     * Por el momento no se utilizan 24/03/22
+     * En su lugar se utiliza la interface de MP
+     */
+    // Email validations 
     const mercadoEmailValidation = (email) => {
         if (email.length > 2 && email.indexOf('@') != -1 ) {
             // Validations 
@@ -230,15 +257,6 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
             SetErrorTxt('El mail no es correcto.') 
         }
     }
-
-    // Mercado Handler
-    const mercadoHandler = () => {
-        console.log(' what in the hell of god is happening?? ')
-        if ( recargas != undefined && recargas.init_point && !realeseLoader )
-            navigation.navigate('MercadoP', {'init_point' : recargas.init_point})
-    }
-
-    // Validate if Number account exist
     const onChangeCard = (card) => {
         if (card.length === 16) {
             if (isMasterCard(card) || isVisa(card) || isAmerican(card)) {
@@ -302,17 +320,14 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
 
     function runVerification() {
         if (!showError && emailFlag) {
-            
             setDisabledBtn(false)
         }
         else {
-            console.log('disabledbtn true : ' + disabledBtn)
             setDisabledBtn(true)
         }
     }
     const isMasterCard = (card) => {
         if (card.toString().indexOf(materCard) != -1) {
-            console.log('pasando')
             setCardDisplay(0)
             return true;
         }
@@ -335,35 +350,36 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
 
         return false
     }
-
-    // Detect wich card will pay
-    switch (cardDisplay) {
-        case 0:
-            displayMaster = 'flex';
-            displayVisa = 'none';
-            displayAmerican = 'none'
-            break;
-        case 1:
-            displayMaster = 'none';
-            displayVisa = 'flex';
-            displayAmerican = 'none'
-            break;
-        case 2:
-            displayMaster = 'none';
-            displayVisa = 'none';
-            displayAmerican = 'flex'
-            break;
-        case 9:
-            displayMaster = 'flex';
-            displayVisa = 'flex';
-            displayAmerican = 'flex'
-            break;
-        default:
-            displayMaster = 'flex';
-            displayVisa = 'flex';
-            displayAmerican = 'flex'
-
-    }
+    // Seleccionar tarjeta
+    useEffect( () => {
+        switch (cardDisplay) {
+            case 0:
+                displayMaster = 'flex';
+                displayVisa = 'none';
+                displayAmerican = 'none'
+                break;
+            case 1:
+                displayMaster = 'none';
+                displayVisa = 'flex';
+                displayAmerican = 'none'
+                break;
+            case 2:
+                displayMaster = 'none';
+                displayVisa = 'none';
+                displayAmerican = 'flex'
+                break;
+            case 9:
+                displayMaster = 'flex';
+                displayVisa = 'flex';
+                displayAmerican = 'flex'
+                break;
+            default:
+                displayMaster = 'flex';
+                displayVisa = 'flex';
+                displayAmerican = 'flex'
+        }
+    }, [cardDisplay])
+    /*** */
 
     return (
         <>
@@ -401,16 +417,26 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
                 <>
                 <View style={[stylesMainCard.boxShadow, {padding:30}]}>
                         <Text>Email de Verificación</Text>
+                        {isRegister
+                        ? 
+                        <Input
+                            placeholder="Email de verificación"
+                            textContentType='emailAddress'
+                            keyboardType='email-address'
+                            value={mercadoEmail}
+                            disabled={disabledEmail}
+                        />
+                        :
                         <Input
                             placeholder="Email de verificación"
                             textContentType='emailAddress'
                             keyboardType='email-address'
                             secureTextEntry={false}
-                            value={mercadoEmail}
                             disabled={disabledEmail}
-                            onChangeText={email => mercadoHandler(email)}
-                        />
-                        {realeseLoader
+                            onChangeText={email => mercadoHandlerEmail(email)}
+                            onEndEditing={() => mercadoEndHandler()}
+                        />}
+                        {isLoading
                     ? <Loader isText={false} marginTop='0%' marginBottom={20} />
                     : <Button disabled={!emailFlag} title="Realizar Pago" onPress={() => mercadoHandler()}/>         
                     }
@@ -587,7 +613,7 @@ const Recharge_2 = ({ navigation, route }) => {
                     <View style={styles.headContainer}>
                         <LetterCircle insightData={1} color={1} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Ingresa tu número JRmóvil y el tipo de compra.</Text>
+                            <Text style={{color:styleConst.MAINCOLORS[3]}}>Ingresa tu número JRmóvil y el tipo de compra.</Text>
                         </View>
                     </View>
                     <View style={styles.registerContainer}>
@@ -607,7 +633,7 @@ const Recharge_2 = ({ navigation, route }) => {
                             <LetterCircle insightData={2} />
                         </View>
                         <View style={{ marginLeft: 15 }}>
-                            <Text>Realiza tu pago.</Text>
+                            <Text style={{color:styleConst.MAINCOLORS[3]}}>Realiza tu pago.</Text>
                         </View>
                     </View>
                     <RechargeTwoCard

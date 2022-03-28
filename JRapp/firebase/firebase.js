@@ -13,10 +13,6 @@ class Firebase {
         const app = initializeApp(firebaseConfig);
 
         this.db = getFirestore(app);
-        console.log("db length!!! : " + this.db.length)
-
-        console.log("Firebase Init")
-
 
 
     }

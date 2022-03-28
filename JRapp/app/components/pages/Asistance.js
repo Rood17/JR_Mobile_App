@@ -1,17 +1,9 @@
-/**
- * -- Asistance JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type { Node } from 'react';
+import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Divider } from 'react-native-elements';
 import { Card, ReturnHeader } from "../elements/Elements";
 import {CALL_WHATSAPP} from '../../../types'
+import { LOG_INFO } from '../../res/values/strings';
 import {
     Linking,
     SafeAreaView,
@@ -24,10 +16,16 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+/**
+ * Componente ASISTANCE - HELP
+ * @param {navigation}
+ * @returns Asistance
+ */
 const Asistance = ({ navigation }) => {
     // header, text, icon
     let whatsAppMsg = 'Hola, podría ayudarme :)';
     let mobileNumber = CALL_WHATSAPP;
+
     const initiateWhatsApp = () => {
         let url =
           'whatsapp://send?text=' + 
@@ -35,17 +33,17 @@ const Asistance = ({ navigation }) => {
           '&phone=52' + mobileNumber;
         Linking.openURL(url)
           .then((data) => {
-            console.log('WhatsApp Opened');
+            console.log('[Info] - Asistance - WhatsApp Opened');
           })
           .catch(() => {
-            alert('Make sure Whatsapp installed on your device');
+            alert('Asegurate de tener instalado Whatsapp.');
           });
       };
     return (
         <View style={styles.container} >
             <ReturnHeader title='¿Te Podemos Ayudar?' navigation={navigation} />
             <View style={{ paddingLeft: 15, marginTop: 35 }}>
-                <Text>Estamos para atender cualquiera de tus dudas,
+                <Text style={styles.text}>Estamos para atender cualquiera de tus dudas,
                     aclaraciones o comentarios.</Text>
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
@@ -85,7 +83,6 @@ const Asistance = ({ navigation }) => {
 
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -107,6 +104,9 @@ const styles = StyleSheet.create({
         flex: 2,
         alignItems: 'center'
     },
+    text:{
+        color:styleConst.JRGREY,
+    }
 });
 
 export default Asistance;

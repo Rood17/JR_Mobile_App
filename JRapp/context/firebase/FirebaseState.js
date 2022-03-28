@@ -19,7 +19,6 @@ const FirebaseState = props => {
 
         // Traer la info del usuario
         const setUserData = () => {
-            console.log("desde firebase state")
             dispatch({
                 type:SET_USER_INFO
             })

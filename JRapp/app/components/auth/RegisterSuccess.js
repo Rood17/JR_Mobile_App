@@ -1,12 +1,3 @@
-/**
- * -- Intro JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState } from 'react';
 import type { Node } from 'react';
 import { Overlay } from 'react-native-elements'
@@ -95,7 +86,7 @@ const modalStyle = StyleSheet.create({
   },
   headContainer: {
     margin: 0,
-    marginTop:160,
+    marginTop:190,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -126,8 +117,6 @@ const RegisterSuccess: () => Node = ({ navigation, route }) => {
 
   const routes = navigation.getState()?.routes;
   const prevRoute = routes[routes.length - 2];
-
-  console.log('prevRoute : ' + 34)
 
   // Entering From Auth
   getUserData().then(() => {

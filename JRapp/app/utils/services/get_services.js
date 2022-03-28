@@ -7,7 +7,7 @@ import {
 import * as data from '../../utils/services/perfil_uf.json'
 import * as paquetes from '../../utils/services/paquetes.json'
 import { clearStorage, storeUserData, storeUserString } from '../../utils/Storage';
-
+import { LOG_INFO } from "../../res/values/strings/Strings";
 import * as qs from 'qs'
 import {
   API_LOCAL_ENPOINT_BASE,
@@ -21,63 +21,10 @@ export const getDataJson = () => {
 }
 
 export const getPerfilUf = (idSubscriber) => {
-  console.log(' ** Calling UF ** : ' + idSubscriber)
   return getAPI(idSubscriber, GET_UF)
 }
 
-export const activateOffering = (idSubscriber, offeringId) => {
-  console.log(' ** Activate!! ** : ' + idSubscriber)
-  return getAPI(idSubscriber, ACTIVATE, offeringId)
-}
-
-export const activate = async (idSubscriber, offeringId, secret) => {
-
-  const result = { statusResponse: true, error: null, userData: [] };
-  let axios = require('axios');
-
-
-  if (idSubscriber == 5688888888 || idSubscriber == 8888888888)
-    idSubscriber = 5624898598;
-
-  let data = JSON.stringify({
-    "offeringId": offeringId
-  });
-
-  let config = {
-    method: POST,
-    url: `https://altanredes-prod.apigee.net/cm/v1/subscribers/${idSubscriber}/activate`,
-    headers: {
-      CONTENT_TYPE: APLICATION_JSON,
-      AUTHORIZATION: secret
-    },
-    data: data
-  };
-
-  try {
-    await axios(config)
-      .then(function (response) {
-        //console.log(JSON.stringify(response.data));
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.error(error.message);
-        result.error = error.message;
-      }).finally(function () {
-        // always executed
-        console.info('Activate Finally called')
-        result.statusResponse = true;
-      });
-  } catch (error) {
-    //console.error("getListHcLocal > error >> "+error)
-    result.statusResponse = false;
-    result.error = error;
-  }
-  return result;
-};
-
 export const getPerfilUfAPI = async (idSubscriber, secret) => {
-
 
   const result = { statusResponse: true, error: null, userData: [] };
   let axios = require('axios');
@@ -97,18 +44,16 @@ export const getPerfilUfAPI = async (idSubscriber, secret) => {
   try {
     await axios(config)
       .then(function (response) {
-        //console.log(JSON.stringify(response.data));
         result.userData = response.data;
-        console.log("Services response.data : " + result.userData.responseSubscriber.freeUnits)
-        console.log("Services response.data : " + JSON.stringify(result.userData))
+        //console.log("Services response.data : " + result.userData.responseSubscriber.freeUnits)
+        //console.log("Services response.data : " + JSON.stringify(result.userData))
       })
       .catch(function (error) {
-        console.log(error);
-        console.error(error.message);
+        console.error('[Error] getServices - getPerfileUFApi : '+error.message);
         result.error = error.message;
       }).finally(function () {
         // always executed
-        console.info('getPerfilUf Finally called')
+        console.info('[Info]  getServices - getPerfilUf Fin*')
         result.statusResponse = true;
       });
   } catch (error) {
@@ -145,25 +90,22 @@ export const getAPI = async (idSubscriber, action, offeringId) => {
           if (action == GET_UF) {
             resolve(getPerfilUfAPI(idSubscriber, secret))
           }
-          if (action == ACTIVATE) {
-            // Aqui api para activate
-            resolve(activate(idSubscriber, offeringId, secret))
-          }
 
         })
         .catch((error) => {
-          console.error("GetApi : ", error.message);
+          console.error('[Error] get_services - GetApi'+error.message);
+
           //throw new Error ('Error - ' + error.message)
           resolve(error.message)
 
         }).finally(() => {
 
-          console.log("Perfil UF Listo")
+          console.info('[Info]  getServices - getAPI Fin*')
+
 
         });
 
     });
-  console.log("Flujo getAPI final 1 ")
   result = await myPromise
   return result;
 };
@@ -172,12 +114,8 @@ export const getAPI = async (idSubscriber, action, offeringId) => {
 export const getUserAuth = async (idSubscriber, pwd) => {
 
 
-  console.log("**************** getUserAuth !!!   ")
-  console.log("****************  ")
-  console.log("*** idSubscriber : " + idSubscriber)
-  console.log("*** pwd : " + pwd)
-  console.log("****************  ")
-  console.log("****************  ")
+  console.log("[Info] get_services - getUserAuth **")
+  console.log(LOG_INFO('get_services', 'getUserAuth.idSubscriber')+idSubscriber)
 
   let result;
 
@@ -214,7 +152,7 @@ export const getUserAuth = async (idSubscriber, pwd) => {
 
         resolve(result)
       })
-      .catch(error => console.log('error', error))
+      .catch(error => console.error('[Error] get_services - getUserAuth : '+error.message))
     
 
 
@@ -226,16 +164,8 @@ export const getUserAuth = async (idSubscriber, pwd) => {
 
 export const registerAPIUser = async (dataArray, email) => {
 
-  console.log("**************** SERVICES !!!   ")
-  console.log("****************  ")
-  console.log("*** pwd : " + dataArray[0].pwd)
-  console.log("*** email : " + dataArray[0].email)
-  console.log("*** idSubscriber : " + dataArray[0].idSubscriber)
-  console.log("*** name : " + dataArray[0].name)
-  console.log("*** lastName : " + dataArray[0].lastName)
-  console.log("****************  ")
-  console.log("****************  ")
-
+  console.log("[Info] get_services - registerAPIUser **")
+  console.log(LOG_INFO('get_services', 'registerAPIUser.idSubscriber')+dataArray[0].idSubscriber)
 
 
   let myPromise = new Promise(function (resolve, reject) {
@@ -258,11 +188,11 @@ export const registerAPIUser = async (dataArray, email) => {
     };
       axios(config)
       .then((response) => {
-        console.log("Services - registration : ", JSON.stringify(response.data));
+        //console.log(LOG_INFO('get_services', 'registerAPIUser.response')+JSON.stringify(response.data))
         resolve(response.data)
       })
       .catch((error) => {
-        console.log("Services - Error : ", error.message);
+        console.error("[Error] get_services - registerAPIUser : ", error.message);
         reject(error)
       })
 
@@ -273,19 +203,8 @@ export const registerAPIUser = async (dataArray, email) => {
 }
 
 export const editAPIUser = async (idSubscriber, editName, editLastName, editEmail, editPwd) => {
-
-  console.log("**************** SERVICES !!!   ")
-  console.log("****************  ")
-  
-  
-  console.log("*** idSubscriber : " + idSubscriber)
-  console.log("*** editName : " + editName)
-  console.log("*** editLastName : " + editLastName)
-  console.log("*** editEmail : " + editEmail)
-  console.log("*** editPwd : " + editPwd)
-  console.log("****************  ")
-  console.log("****************  ")
-
+  console.log("[Info] get_services - editAPIUser **")
+  console.log(LOG_INFO('get_services', 'editAPIUser.idSubscriber')+idSubscriber)
 
   const axios = require('axios');
   let result;
@@ -306,14 +225,13 @@ export const editAPIUser = async (idSubscriber, editName, editLastName, editEmai
 		data : data
   };
   let myPromise = new Promise(function (resolve) {
-    console.log("**************** SERVICES !!!   22 ")
     axios(config)
       .then((response) => {
-        console.log("Services - registration : ", JSON.stringify(response.data));
+        console.log(LOG_INFO('get_services', 'editAPIUser.response')+JSON.stringify(response.data))
         resolve(response.data)
       })
       .catch((error) => {
-        console.log("Services - registration : ", error);
+        console.error("[Error] get_services - editAPIUser : ", error);
       });
   });
 
@@ -323,12 +241,7 @@ export const editAPIUser = async (idSubscriber, editName, editLastName, editEmai
 
 export const userIsRegisterAPI = async (idSubscriber) => {
 
-
-    console.log("**************** userIsRegisterAPI !!!   ")
-    console.log("****************  ")
-    console.log("*** idSubscriber : " + idSubscriber)
-    console.log("****************  ")
-    console.log("****************  ")
+  console.log("[Info] get_services - userIsRegisterAPI **")
   
     let result;
   
@@ -351,18 +264,17 @@ export const userIsRegisterAPI = async (idSubscriber) => {
       fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/is_register/", requestOptions)
         .then(response => response.text())
         .then(result => {
-          console.log('userIsRegisterAPI : ' +  result)
+          console.log(LOG_INFO('get_services', 'userIsRegisterAPI.result')+JSON.stringify(result))
           resolve(result)
         })
         .catch(error => {
-          console.log('userIsRegisterAPI error', error)
+          console.error("[Error] get_services - userIsRegisterAPI : ", error);
         })
-        .finally(() => console.log('userIsRegisterAPI Final'))
+        .finally(() => console.log('[Info] getServices - userIsRegisterAPI Final'))
       
   
   
     });
-    console.log('userIsRegisterAPI FLUJO 2')
     result = await myPromise
     return result;
   }
@@ -371,15 +283,13 @@ export const get_api_preference = async (dataPorduct) => {
 
     
     let email;
+    console.log("[Info] get_services - get_api_preference **")
 
     dataPorduct.email == undefined 
     ? email = 'undefined@gmail.com'
     : email = dataPorduct.email
 
-    console.log(' ***** idSubscriber ' + dataPorduct.idSubscriber)
-    console.log(' ***** name ' + dataPorduct.title)
-    console.log(' ***** price ' + dataPorduct.price)
-    console.log(' ***** email ' + email)
+    console.log(LOG_INFO('get_services', 'get_api_preference.idSubscriber')+dataPorduct.idSubscriber)
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -401,10 +311,10 @@ export const get_api_preference = async (dataPorduct) => {
     fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_api_preference/", requestOptions)
       .then(response => response.text())
       .then(result => {
-        console.log("[Result] get_api_preference : " + result)
+        console.log(LOG_INFO('get_services', 'get_api_preference.result')+result)
         resolve(JSON.parse(result))
       })
-      .catch(error => console.log('error', error));
+      .catch(error => console.error('[Error] get_services - get_api_preference : '+error.message));
     });
 
     const superResult = await myPromise
@@ -414,14 +324,17 @@ export const get_api_preference = async (dataPorduct) => {
 export const get_api_isJr = async (idSubscriber) => {
 
 
-  console.log(' *****  get_api_isJr' )
-  console.log(' ***** idSubscriber ' + idSubscriber)
+  console.log("[Info] get_services - get_api_isJr **")
+
+  console.log(LOG_INFO('get_services', 'get_api_isJr.idSubscriber')+idSubscriber)
+
   let result;
   const axios = require('axios');
+  const url = 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_isjr/' + idSubscriber
 
   let config = {
       method: 'get',
-      url: 'http://127.0.0.1:8000/jr_api/cm/1.0/get_isjr/'+idSubscriber.toString(),
+      url:  url,
       headers: { }
   };
   let myPromise = new Promise(function (resolve) {
@@ -429,24 +342,27 @@ export const get_api_isJr = async (idSubscriber) => {
     
     axios(config)
     .then((response) => {
-        console.log(JSON.stringify(response.data));
+        console.log(LOG_INFO('get_services', 'get_api_isJr.response')+JSON.stringify(response.data))
+
         result = response.data
+        resolve(result)
     })
     .catch((error) => {
-        console.log(error);
+      console.error('[Error] get_services - get_api_isJr : '+error.message)
         result = error
     });
   });
 
   const superResult = await myPromise
-  return result;
+  return superResult;
 };
 
 export const get_user_email = async (idSubscriber) => {
 
 
-  console.log(' *****  get_user_email' )
-  console.log(' ***** idSubscriber ' + idSubscriber)
+  console.log("[Info] get_services - get_user_email **")
+  console.log(LOG_INFO('get_services', 'get_user_email.idSubscriber')+idSubscriber)
+
   let result;
   const axios = require('axios');
 
@@ -463,14 +379,14 @@ let config = {
     
     resolve(axios(config)
     .then((response) => {
-        console.log("Get services - get_user_email : " + JSON.stringify(response.data));
+      console.log(LOG_INFO('get_services', 'get_user_email.response')+JSON.stringify(response.data))
         result = response.data
     })
     .catch((error) => {
-        console.log("get_user_email error : " + error);
+      console.error('[Error] get_services - error : '+error.message)
         result = error
     }).finally(() => {
-      console.log('************************ getUserEmail final result  ' + result)
+      console.log(LOG_INFO('get_services', 'get_user_email.FINAL')+result)
   }))
   });
 
@@ -480,9 +396,8 @@ let config = {
 
 export const send_recovery_email = async (idSubscriber, rcvry_email) => {
 
-
-  console.log(' *****  get_user_email' )
-  console.log(' ***** idSubscriber ' + idSubscriber)
+  console.log("[Info] get_services - send_recovery_email **")
+  console.log(LOG_INFO('get_services', 'get_user_email.idSubscriber')+idSubscriber)
   let resultApi;
  
   
@@ -503,12 +418,12 @@ export const send_recovery_email = async (idSubscriber, rcvry_email) => {
       .then(
         (result) =>
         {
-          console.log("Services - send_recovery_email - "+ result)
+          console.log(LOG_INFO('get_services', 'get_user_email.result')+result)
           resultApi = result
         }
         )
-      .catch(error => console.log('error', error)).
-        finally(() => console.log("Services - send_recovery_email final "))
+      .catch(error => console.error('[Error] get_services - get_api_preference : '+error.message)).
+        finally(() => console.log('[Info] getServices - send_recovery_email Final'))
 
         )
       });

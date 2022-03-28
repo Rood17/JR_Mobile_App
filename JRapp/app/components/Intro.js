@@ -1,12 +1,3 @@
-/**
- * -- Intro JR App --
- * Author: Rodrigo Mora
- * rodmorar@yahoo.com.mx
- *
- * @format
- * @flow strict-local
- */
-
 import React, {useState, useEffect} from 'react';
 import type { Node } from 'react';
 
@@ -44,7 +35,8 @@ const Intro: () => Node = () => {
             animacion, {
                 toValue: 0,  // al valor al que llega
                 duration: 700, // cantidad de tiempo en llegar
-                easing: Easing.ease
+                easing: Easing.ease,
+                useNativeDriver: false
             }
         ).start(); // iniciar la animación
     }, []);
