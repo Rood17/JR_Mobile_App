@@ -17,7 +17,7 @@ import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
 import { storeUserString } from '../../utils/Storage'
-import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
+import { get_api_isJr, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
 import AuthContext from '../../../context/auth/AuthContext';
 import { WarningAdvice } from '../elements/Elements';
 
@@ -206,52 +206,45 @@ const LoginBody = ({ nav }) => {
     const [isPwdOk, setIsPwdOk] = useState(false)
     const [dinamicColor, setDinamicColor] = useState(styleConst.MAINCOLORSLIGHT[1])
     const [clear, setClear] = useState(null);
-    const [UFuserData, setUFUserData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isRegister, setIsRegister] = useState(false)
 
     // Constante que se utiliza para verificar si el usuario ya existe.
-    let responseUserData = [];
     // Auth handler
     const onChangeNumber = (number) => {
         setIdSubscriber(number)
-        setUFUserData('');
 
         // Validar si el número ingrsado es JR.
         if (number.length == constants.MAX_NUMBER_LENGTH) {
             // Se llama a la API
             const fetchData = async () => {
-                let errorResponse;
+                let errorResponse, login_api_response;
                 // Loading
                 setLoading(true)
                 // API CALL
-                const response = await getPerfilUf(number)
+                const response = await get_api_isJr(number)
                     .then( (response) => {
-                        //console.log('[Info] Login - getPerfilUf : ' + JSON.stringify(response))
+                        //console.log('[Info] Login - get_api_isJr : ' + JSON.stringify(response))
                         // Manejar errores
-                        errorResponse = response.error;
-                        if (response.indexOf('Error') != -1 ){
-                            errorResponse = response;
+                        if ( response){
+                            login_api_response = response;
+                        } else {
+                            errorResponse = 'error - no es Jr';
                         }
-                        
-                        // Data user
-                        responseUserData.array = response.userData
-                        
                     })
                     .catch( (error) => {
                         if (error.message != undefined){
-                            responseUserData = error.message
-                            //console.error('[Error] Login - getPerfilUf.response : ' + error)
+                            console.error('[Error] Login - get_api_isJr.response : ' + error)
                             //throw new Error ('Error - ' + error.message)
                         }
-                            
                     }).finally(() => {
-                        // Finalizando - está registrado??
+                        // Se asume que hay un error o que no es JR
                         if (errorResponse != undefined && errorResponse.length > 2) {
                             validateIsJr(number, errorResponse, null)
                             setLoading(false)
                         } else {
-                            isRegisterAPI(number, errorResponse)
+                            // Se asume que es número JR
+                            isRegisterAPI(number, login_api_response)
                         }                                             
                 });                
             };
@@ -284,13 +277,20 @@ const LoginBody = ({ nav }) => {
     );
 
     // Función de validación
+    /**
+     * validateIsJr
+     * En esta función se manejan los resultados de la api
+     * tanto errir como resultado de si está registrado.
+     * @param {ApiResult} error 
+     * @param {Boolean} result 
+     * @param {String} number 
+     */
     const validateIsJr = async (number, error, result) => {
         if (error == null) {
             //Log
             console.log("[Info] ** User is JR **")
 
             // Set data
-            setUFUserData(responseUserData);
             //console.log("userData >>>> ", responseUserData)
 
             // Setters
@@ -326,7 +326,7 @@ const LoginBody = ({ nav }) => {
                 console.log('[Info] Login - isRegisterAPI : ' + response)
                 result = response
                 setIsRegister(result)
-                validateIsJr(number, errorResponse, result)
+                validateIsJr(number, null, result)
             })
             .catch(function (error) {
                 console.error("[Error] Login - isRegisterAPI : " + error);
@@ -472,7 +472,6 @@ const styles = StyleSheet.create({
         margin: 30,
         marginTop:80,
         marginBottom:80
-
     },
     btnActionContainer: {
         paddingLeft: 20,

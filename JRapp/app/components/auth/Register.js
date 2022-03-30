@@ -177,9 +177,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         flex: 1,
-        height: 65,
-        margin: 105
-
+        height: 90,
+        margin: 50,
+        marginTop:100,
+        marginBottom:80
     },
     phoneTxt: {
         color: styleConst.MAINCOLORS[1],

@@ -385,10 +385,11 @@ const styles = StyleSheet.create({
         marginTop: '20%'
     },
     logo: {
-        flex: 2,
-        height: 65,
-        margin: 105
-
+        flex: 1,
+        height: 90,
+        margin: 50,
+        marginTop:100,
+        marginBottom:80
     },
     btnActionContainer: {
         padding: 20,
