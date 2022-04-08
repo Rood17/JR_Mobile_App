@@ -111,7 +111,7 @@ const Register = ({ navigation, route }) => {
                         <DisplayLogo stylesLogo={styles.logo} />
                     </View>
                     <View style={styles.btnActionContainer}>
-                        <Text>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
                         <>
                             {error 
                                 ? <WarningAdvice type={2} warningText='Favor de llenar los campos correctamente.' />

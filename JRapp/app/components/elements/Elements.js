@@ -330,7 +330,7 @@ const stylesMainCard = StyleSheet.create({
     verticalLine: {
         marginTop: 20,
         borderLeftWidth: 1,
-        borderLeftColor: styleConst.MAINCOLORSLIGHT[2],
+        borderLeftColor: styleConst.SECONDARY_TXT_COLOR,
         height: 50
     },
     cardTitleTxt: {
@@ -638,10 +638,9 @@ export const MainFooter = ({ name, navigation, idSubscriber, canChangeNumber }) 
         <>
             <View style={styleFooterMain.container} onPress={onPress}>
                 <TouchableOpacity style={styleFooterMain.iconContainer}>
-                    <Icon
-                        name='home'
-                        type='font-awesome'
-                        color={styleConst.MAINCOLORSLIGHT[1]}
+                    <Image
+                        source={require('../../res/drawable/icons/home.png')}
+                        style={styleFooterMain.icons}
                     />
                     <Text style={{ color: styleConst.MAINCOLORSLIGHT[1] }}>Home</Text>
                 </TouchableOpacity>
@@ -652,13 +651,11 @@ export const MainFooter = ({ name, navigation, idSubscriber, canChangeNumber }) 
                         isJr: true,
                         canChangeNumber : canChangeNumber
                     })}>
-                    <Icon
-                        name='mobile'
-                        type='font-awesome'
-                        color={styleConst.MAINCOLORSLIGHT[2]}
-
+                    <Image
+                        source={require('../../res/drawable/icons/phone.png')}
+                        style={styleFooterMain.icons}
                     />
-                    <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Recarga</Text>
+                    <Text style={{ color: styleConst.SECONDARY_TXT_COLOR}}>Recarga</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
                     onPress={() => navigation.navigate('Details', {
@@ -666,23 +663,19 @@ export const MainFooter = ({ name, navigation, idSubscriber, canChangeNumber }) 
                         isRegister: true,
                         isJr: true
                     })}>
-                    <Icon
-                        name='file'
-                        type='font-awesome'
-                        color={styleConst.MAINCOLORSLIGHT[2]}
-
+                    <Image
+                        source={require('../../res/drawable/icons/file.png')}
+                        style={styleFooterMain.icons}
                     />
-                    <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Saldo</Text>
+                    <Text style={{ color: styleConst.SECONDARY_TXT_COLOR}}>Saldo</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styleFooterMain.iconContainer}
                     onPress={() => navigation.navigate('Asistance')}>
-                    <Icon
-                        name='question'
-                        type='font-awesome'
-                        color={styleConst.MAINCOLORSLIGHT[2]}
-
+                    <Image
+                        source={require('../../res/drawable/icons/ask.png')}
+                        style={styleFooterMain.icons}
                     />
-                    <Text style={{ color: styleConst.MAINCOLORSLIGHT[2] }}>Ayuda</Text>
+                    <Text style={{ color: styleConst.SECONDARY_TXT_COLOR }}>Ayuda</Text>
                 </TouchableOpacity>
 
             </View>
@@ -705,8 +698,15 @@ const styleFooterMain = StyleSheet.create({
     },
     iconContainer: {
         flex: 0,
+        alignContent: 'center',
+        alignItems:'center'
 
     },
+    icons : {
+        width:25,
+        height:25,
+        
+    }
 });
 // END MainFooter
 
@@ -870,6 +870,7 @@ export const JrBtnCircle = ({onPress, icon}) => {
                 :
                 <TouchableHighlight
                     onPress={onPress}
+                    underlayColor={styleConst.MAINCOLORS[0]}
                     style={pressableJrStyles.shadowPressable}
                     >
                     <Image
@@ -900,6 +901,68 @@ const pressableJrStyles = StyleSheet.create({
         zIndex: 5, // works on ios
         alignItems: 'center',
         justifyContent: 'center',
+    }
+});
+
+export const IconBtnCircle = ({onPress, phone, file}) => {
+    return (
+        <>
+            { phone ?
+                <TouchableHighlight
+                    onPress={onPress}
+                    underlayColor={styleConst.MAINCOLORSLIGHT[4]}
+                    style={pressableIconStyles.shadowPressable}
+                >
+                    <Image
+                        source={require('../../res/drawable/icons/phone_blue.png')}
+                        style={pressableIconStyles.iconsPhone}
+                    />
+                </TouchableHighlight>
+            : null}
+            { file ?
+                <TouchableHighlight
+                    underlayColor={styleConst.MAINCOLORSLIGHT[4]}
+                    onPress={onPress}
+                    style={pressableIconStyles.shadowPressable}
+                    >
+                    <Image
+                        source={require('../../res/drawable/icons/file_blue.png')}
+                        style={pressableIconStyles.icons}
+                    />
+                </TouchableHighlight>
+            : null}
+
+        </>
+    )
+}
+const pressableIconStyles = StyleSheet.create({
+    shadowPressable: {
+        height: 50,
+        width: 50,
+        padding: 0,
+        marginRight: 0,
+        marginBottom:10,
+        backgroundColor: 'white',
+        shadowColor: 'black',
+        shadowOpacity: 0.2,
+        shadowRadius: 30,
+        shadowOffset: {
+            height: 0,
+            width: 0,
+        },
+        borderRadius: 30,
+        elevation: 5,
+        zIndex: 5, // works on ios
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    icons : {
+        width:28,
+        height:28,
+    },
+    iconsPhone : {
+        width:26.5,
+        height:26.5,
     }
 });
 

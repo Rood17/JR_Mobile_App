@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Node } from 'react';
 import { UserImg, ReturnHeader } from "../elements/Elements";
 import { Icon, Input } from 'react-native-elements'
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import IntentBtn from '../elements/IntentBtn'
-import { getUserName,  getUserEmail, getUserId } from '../../utils/Storage'
+import { getUserName,  getUserEmail, getUserId, } from '../../utils/Storage'
+import {get_notification_status, set_notification_status} from '../../utils/services/get_services'
 
 import {
     Button,
@@ -43,7 +44,7 @@ export const CardPerfil = ({ navigation }) => {
                     <Text style={stylesCardPerfil.cardHeadTxt}>Email</Text>
                     <Text>{getUserEmail()}</Text>
                     <Text style={stylesCardPerfil.cardHeadTxt}>Contraseña</Text>
-                    <Text>********</Text>
+                    <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>********</Text>
                 </View>
             </View>
             <View style={stylesCardPerfil.btnContainer}>
@@ -61,11 +62,29 @@ export const CardPerfil = ({ navigation }) => {
 export const CardPerfilInfo = ({navigation }) => {
     const [isEnabled, setIsEnabled] = useState(true);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-    let agree = 'Sí'
+    const idSubscriber = getUserId()
+    let agree;
+
+    // Init
+    useEffect(() => {
+        let myPromise = new Promise(function (resolve) {
+            resolve(get_notification_status())
+        })
+        const notificationStatusStart = myPromise.then(
+            (result) => setIsEnabled(result)
+        )
+    }, [])
 
     // Agree Validation
-    if (!isEnabled)
-        agree = 'No'
+    isEnabled ?  agree = 'Sí' : agree = 'No'
+
+
+    
+    const notificationHandler = () => {
+        set_notification_status(idSubscriber, isEnabled)
+        navigation.navigate('Main')
+    }
+    
     return (
 
         <View style={stylesCardPerfil.boxShadow}>
@@ -95,15 +114,15 @@ export const CardPerfilInfo = ({navigation }) => {
                     onValueChange={toggleSwitch}
                     value={isEnabled}
                 />
-                <Text>{agree}</Text>
+                <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>{agree}</Text>
             </View>
             <View style={stylesCardPerfil.btnContainer}>
-                <IntentBtn
-                    navigation={navigation}
-                    color={1}
-                    intent='Main'
-                    btnText='Guardar configuración'
-                />
+                <Button
+                //style={stylesBtn == null ? btnNormal() : stylesBtn}
+                onPress={() => notificationHandler()}
+                title='Guardar Configuración'
+                color={styleConst.MAINCOLORSLIGHT[1]}
+            />
             </View>
         </View>
 
@@ -144,7 +163,7 @@ const stylesCardPerfil = StyleSheet.create({
         fontWeight:'bold'
     },
     cardHeadTxt: {
-        color: styleConst.MAINCOLORSLIGHT[2],
+        color: styleConst.SECONDARY_TXT_COLOR,
         fontWeight: 'bold'
     },
     boxShadow: {

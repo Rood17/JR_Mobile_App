@@ -19,7 +19,7 @@ import { Icon, Input } from 'react-native-elements'
 import { storeUserString } from '../../utils/Storage'
 import { get_api_isJr, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
 import AuthContext from '../../../context/auth/AuthContext';
-import { WarningAdvice } from '../elements/Elements';
+import { WarningAdvice, IconBtnCircle } from '../elements/Elements';
 
 import {
     Button,
@@ -55,6 +55,11 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [error, setError] = useState()
     const [loginSuccess, setLoginSuccess] = useState(false)
     const [secret, setSecret] = useState()
+
+    const [secureText, setSecureText] = useState(false)
+    const [leftIcon, setLeftIcon] = useState('eye')
+
+
     const { login } = useContext(AuthContext);
     //Vars
     let pwdInput = React.createRef();
@@ -66,10 +71,12 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
             setDisabledBtn(false);
             setIsPwdOk(true)
             setSecret(pwd)
+            
         }
         else {
             setDisabledBtn(true)
             setIsPwdOk(false)
+            setLeftIcon('eye-slash')
         }
     }
 
@@ -100,6 +107,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
 
     return (
         <>
+        {/** 
             <Input
                 ref={input => { pwdInput = input }}
                 placeholder="Contraseña"
@@ -110,7 +118,20 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
                 secureTextEntry={true}
                 leftIcon={{ type: 'font-awesome', name: 'lock', size: 18 }}
                 onChangeText={pwd => onChangeText(pwd)}
-            />
+            />*/}
+            <Input
+                    onEndEditing={() => {setSecureText(true); setLeftIcon('eye-slash')}}
+                    onTextInput={() => {setSecureText(false); setLeftIcon('eye')}}
+                    placeholder="Contraseña"
+                    textContentType='password'
+                    maxLength={12}
+                    errorMessage={error}
+                    secureTextEntry={secureText}
+                    leftIcon={{ type: 'font-awesome', name: 'lock', size: 18, color: styleConst.MAINCOLORSLIGHT[1] }}
+                    rightIcon={{ type: 'font-awesome', name: leftIcon, size: 18, color: styleConst.MAINCOLORSLIGHT[1] }}
+                    color={styleConst.MAINCOLORS[1]}
+                    onChangeText={pwd => onChangeText(pwd)}
+                />
             {pwdFail ?
                 <Text style={styles.txtError}>*La contraseña o el número es incorrecto.</Text>
                 :
@@ -152,12 +173,12 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                 />
                 :
                 <View style={{ marginBottom: 0, }}>
-                    <Text style={{ textAlign: 'center', color:styleConst.JRGREY }}>
+                    <Text style={{ textAlign: 'center', color:styleConst.SECONDARY_TXT_COLOR }}>
                         Hemos detectado que aún no tienes una cuenta,
                         si gustas puedes registrarte para aglizar tus consultas
                         y recargas.
                     </Text>
-                    <Text style={{ textAlign: 'center', marginBottom:20, color:styleConst.JRGREY  }}>¡Es totalmente gratuito!</Text>
+                    <Text style={{ textAlign: 'center', marginBottom:20, color:styleConst.SECONDARY_TXT_COLOR  }}>¡Es totalmente gratuito!</Text>
                     <Button
                         //style={stylesBtn == null ? btnNormal() : stylesBtn}
                         onPress={() => navigation.navigate('Register', { idSubscriber: idSubscriber })}
@@ -414,21 +435,17 @@ const LoginBody = ({ nav }) => {
                         <Line color='grey' />
                         <View style={styles.iconContainer}>
                             <View style={styles.icon}>
-                                <Icon
-                                    raised
-                                    name='mobile'
-                                    type='font-awesome'
-                                    color={dinamicColor}
-                                    onPress={() => iconActionHandler('Recharge')} />
+                                    <IconBtnCircle 
+                                    phone
+                                    onPress={() => iconActionHandler('Recharge')}
+                                />
                                 <Text style={styles.icon_text}>Recarga</Text>
                             </View>
                             <View style={styles.icon}>
-                                <Icon
-                                    raised
-                                    name='file'
-                                    type='font-awesome'
-                                    color={dinamicColor}
-                                    onPress={() => iconActionHandler('DetailLogOut')} />
+                                <IconBtnCircle 
+                                    file
+                                    onPress={() => iconActionHandler('DetailLogOut')}
+                                />
                                 <Text style={styles.icon_text}>Consulta</Text>
                             </View>
                         </View>
@@ -501,7 +518,7 @@ const styles = StyleSheet.create({
         flexBasis: '35%',
     },
     icon_text: {
-        color: styleConst.JRGREY
+        color: styleConst.SECONDARY_TXT_COLOR
     },
     txtError: {
         margin: 10,

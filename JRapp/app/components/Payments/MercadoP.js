@@ -8,24 +8,29 @@ import { ReturnHeader, Loader } from '../elements/Elements';
 import NetInfo from "@react-native-community/netinfo";
 import UserState from '../../../context/user/UserState';
 import { LOG_INFO } from '../../res/values/strings/Strings'
+import {cancel_payment} from '../../utils/services/get_services'
 
-let varX;
 const MercadoP = ({ navigation, route }) => {
 
-    const { init_point } = route.params;
+    const { init_point, pago_id } = route.params;
     const [isFinish, setIsFinish] = useState(false)
     const [canGoBack, setCanGoBack] = useState()
     const [url, setUrl] = useState()
     const webViewRef = useRef(null)
     console.log(LOG_INFO('MercadoP', 'init_point')+init_point)
+    console.log(LOG_INFO('MercadoP', 'pago_id')+pago_id)
 
     // Back handler
     useEffect(() => {
         const backAction = () => {
             if (canGoBack) {
-                console.log(LOG_INFO('MercadoP', 'webViewRef.current')+webViewRef.current)
+                console.log(LOG_INFO('MercadoP', 'webViewRef.current : ')+webViewRef.current)
                 webViewRef.current.goBack();
                 return true; 
+            } else {
+                // Cancelar pago (API)
+                cancel_payment(pago_id)
+                console.log(LOG_INFO('MercadoP', 'Intentional user getting out of MP App.'))
             }
             return false;
         };

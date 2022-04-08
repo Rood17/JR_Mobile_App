@@ -56,13 +56,14 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
     const { registerResponse, registerUser } = useContext(AuthContext);
 
     // States
-    const [chackColor, setChackColor] = useState('grey');
-    const [chackColor2, setChackColor2] = useState('grey');
-    const [chackColor3, setChackColor3] = useState('grey');
+    const [chackColor, setChackColor] = useState(styleConst.SECONDARY_TXT_COLOR);
+    const [chackColor2, setChackColor2] = useState(styleConst.SECONDARY_TXT_COLOR);
+    const [chackColor3, setChackColor3] = useState(styleConst.SECONDARY_TXT_COLOR);
     const [btnDisabled, setbtnDisabled] = useState(true);
     const [leftIcon, setLeftIcon] = useState('eye')
     const [secureText, setSecureText] = useState(false)
     const [pwd, setPwd] = useState()
+    const [btnText, setBtnText] = useState(!update ? 'Registrarse' : 'Guardar')
 
     console.log("[Info] Register_2 - NewPwd **")
     console.log("[Info] Register_2 - NewPwd setNewPwd  " + setNewPwd)
@@ -189,7 +190,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
                     color={styleConst.MAINCOLORS[1]}
                     onChangeText={text => onChangeText(text)}
                 />
-                <Text>Favor de Introducir como mínimo los siguientes criterios:</Text>
+                <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Favor de Introducir como mínimo los siguientes criterios:</Text>
                 <View style={{ margin: 20 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text>{'\u2022'}</Text>
@@ -218,7 +219,7 @@ export const NewPwd = ({ setOnPwdChange,setNewPwd,
                     //style={stylesBtn == null ? btnNormal() : stylesBtn}
                     onPress={registerHandler}
                     color={styleConst.MAINCOLORS[0]}
-                    title='Registrarse'
+                    title={btnText}
                     disabled={btnDisabled}
                 />
             </View>
@@ -325,7 +326,7 @@ const Register_2 = ({ recovery, navigation, route }) => {
                     <View style={styles.btnActionContainer}>
                         {!recovery ?
                             <>
-                                <Text>
+                                <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>
                                     Para entrar a tu portal "JRmóvil" es necesario que
                                     introduzcas tus datos.
                                 </Text>
@@ -344,8 +345,8 @@ const Register_2 = ({ recovery, navigation, route }) => {
                                 </View>
                             </>
                             :
-                            <Text style={{ marginBottom: 20 }}>
-                                Ingresa una nueva contraseña segura, para poder ingresar a tu portal JRmóvil.
+                            <Text style={{ marginBottom: 20, color:styleConst.SECONDARY_TXT_COLOR }}>
+                                Introduzca una nueva contraseña segura, para poder ingresar a tu portal JRmóvil.
                             </Text>
                         }
 
