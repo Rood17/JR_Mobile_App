@@ -3,6 +3,7 @@ import type { Node } from 'react';
 
 import DisplayLogo from './elements/DisplayLogo';
 import IntentBtn from './elements/IntentBtn';
+import * as styleConst from '../res/values/styles/StylesConstants'
 
 import {
   Animated,
@@ -58,7 +59,7 @@ const Intro: () => Node = () => {
 
       </View>
       <View style={styles.btnActionContainer}>
-        <Text style={{fontWeight:'600', fontSize:30, color:'black'}}></Text>
+        <Text style={{fontWeight:'600', fontSize:30, color: styleConst.PRIMARY_TXT_COLOR}}></Text>
       </View>
     </ImageBackground>
     </> 

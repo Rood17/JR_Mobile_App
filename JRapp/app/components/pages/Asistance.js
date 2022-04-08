@@ -52,7 +52,7 @@ const Asistance = ({ navigation }) => {
                     icon='life-ring' />
             </TouchableOpacity>
             
-            <TouchableOpacity onPress={() => navigation.navigate('Faqs')}>
+            <TouchableOpacity style={{marginLeft:5}} onPress={() => navigation.navigate('Faqs')}>
                 <Card header='Faqs'
                     text='Preguntas frecuentes.'
                     icon='question' />
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     text:{
-        color:styleConst.JRGREY,
+        color:styleConst.SECONDARY_TXT_COLOR,
     }
 });
 

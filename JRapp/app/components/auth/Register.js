@@ -111,7 +111,7 @@ const Register = ({ navigation, route }) => {
                         <DisplayLogo stylesLogo={styles.logo} />
                     </View>
                     <View style={styles.btnActionContainer}>
-                        <Text>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Para entrar a tu portal "JRmóvil" es necesario que introduzcas tus datos.</Text>
                         <>
                             {error 
                                 ? <WarningAdvice type={2} warningText='Favor de llenar los campos correctamente.' />
@@ -177,9 +177,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         flex: 1,
-        height: 65,
-        margin: 105
-
+        height: 90,
+        margin: 50,
+        marginTop:100,
+        marginBottom:80
     },
     phoneTxt: {
         color: styleConst.MAINCOLORS[1],

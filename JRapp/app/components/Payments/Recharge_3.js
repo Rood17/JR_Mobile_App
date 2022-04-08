@@ -145,7 +145,7 @@ const Recharge_3 = ({ navigation, route }) => {
                     </View>
                     <RechargeFinalCard />
                     <View style={styles.registerContainer}>
-                        <Text>Carga seleccionada:</Text>
+                        <Text style={{color : styleConst.SECONDARY_TXT_COLOR}}>Carga seleccionada:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>

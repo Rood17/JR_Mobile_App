@@ -87,8 +87,8 @@ function CustomDrawerContent(props) {
             <View >
                 <View style={{ height: '28%', margin: 20, alignItems: 'center', alignContent: 'center' }}>
                     <DisplayLogo stylesLogo={{ height: '55%', width: '55%', margin: 10 }} mini />
-                    <Text style={styleConst.JRGREY}>{getUserName() + ' ' + getUserLastName()}</Text>
-                    <Text style={styleConst.JRGREY}>{getUserId()}</Text>
+                    <Text style={{color : styleConst.SECONDARY_TXT_COLOR}}>{getUserName() + ' ' + getUserLastName()}</Text>
+                    <Text style={{color : styleConst.SECONDARY_TXT_COLOR}}>{getUserId()}</Text>
                 </View>
                 <View style={stylesNav.line}></View>
                 <TouchableOpacity style={stylesNav.navBtn} onPress={() => goToIntent('MiPerfil')}>
@@ -98,7 +98,7 @@ function CustomDrawerContent(props) {
                         size={20}
                         color={styleConst.MAINCOLORSLIGHT[1]}
                     />
-                    <Text style={stylesNav.txtIcon}>Mi Perfil</Text>
+                    <Text style={[stylesNav.txtIcon]}>Mi Perfil</Text>
                 </TouchableOpacity>
 
 
@@ -139,7 +139,7 @@ function CustomDrawerContent(props) {
                         <Text style={stylesNav.txtA}>Contacto</Text>
                     </TouchableOpacity>
 
-                    <Text style={{ margin: 10, marginTop: 20, color: 'black', fontSize: 12 }}>@2022 JR móvil S.A. de C.V.</Text>
+                    <Text style={{ margin: 10, marginTop: 20, color: styleConst.PRIMARY_TXT_COLOR, fontSize: 12 }}>@2022 JR móvil S.A. de C.V.</Text>
                 </View>
 
 
@@ -169,7 +169,7 @@ const stylesNav = StyleSheet.create({
     },
     txtIcon: {
         marginLeft: 15,
-        color:styleConst.JRGREY,
+        color:styleConst.SECONDARY_TXT_COLOR,
     }
 })
 
@@ -396,7 +396,7 @@ const MainContent = ({ navigation, route }) => {
     const validityUserCode = validityUser.replace(/\//g, '')
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
-    let validityColor = styleConst.MAINCOLORSLIGHT[2]
+    let validityColor = styleConst.SECONDARY_TXT_COLOR
 
     // Validity neast conditionals
     // If validity is end
@@ -503,7 +503,7 @@ const MainContent = ({ navigation, route }) => {
                                 type='font-awesome'
                                 color={styleConst.MAINCOLORSLIGHT[1]}
                             />
-                            <Text style={{ marginLeft: 15, color:styleConst.JRGREY }}>Selecciona el plan que más te convenga</Text>
+                            <Text style={{ marginLeft: 15, color:styleConst.SECONDARY_TXT_COLOR }}>Selecciona el plan que más te convenga</Text>
                         </View>
                         <View>
                             <ProductCard
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
     number: {
         marginLeft: 15,
         fontWeight: 'bold',
-        color: 'grey',
+        color: styleConst.SECONDARY_TXT_COLOR,
         fontSize: 18
     },
     infoNoRegisterTxt: {

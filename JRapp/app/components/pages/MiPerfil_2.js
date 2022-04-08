@@ -30,7 +30,7 @@ export const CardPerfil = ({ navigation }) => {
     const [newName, setNewName] = useState(getUserName());
     const [newLastName, setNewLastName] = useState(getUserLastName());
     const [newEmail, setNewEmail] = useState(getUserEmail());
-    const [newPwd, setNewPwd] = useState(false);
+    const [newPwd, setNewPwd] = useState(getSecret());
     const [onPwdChange, setOnPwdChange] = useState(false);
     const [editNameToSend, setEditNameToSend] = useState(false);
     const [editLastNameToSend, setEditLastNameToSend] = useState(false);
@@ -51,11 +51,10 @@ export const CardPerfil = ({ navigation }) => {
     const oldName = getUserName();
     const oldLastName = getUserLastName();
     const oldEmail = getUserEmail().toString();
-    const oldPwd = 'Prueba123';
+    const oldPwd = getSecret();
     const idSubscriber = getUserId();
 
     let dataArray = [{ idSubscriber: idSubscriber, name: newName, email: newEmail, lastName: newLastName, pwd: newPwd }]
-    let currentPassword;
     let disabledBtn = true;
     let editName = oldName;
     let editLastName = oldLastName;
@@ -76,10 +75,9 @@ export const CardPerfil = ({ navigation }) => {
     console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editName') + editName)
     console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editLastName') + editLastName)
     console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editEmail') + editEmail)
+    console.log(LOG_INFO('MiPerfil_2', 'CardPerfil.editPwd') + editPwd)
 
     const setAllData = () => {
-
-        currentPassword = oldPwd
 
         setNewEmail(newEmail.toLowerCase());
 
@@ -90,8 +88,8 @@ export const CardPerfil = ({ navigation }) => {
 
         if ( oldEmail != newEmail)
             editEmail = newEmail
-        if ( currentPassword != newPwd)
-            editPwd = newName;
+        if ( oldPwd != newPwd)
+            editPwd = newPwd;
 
 
         setEditNameToSend(editName)
@@ -106,7 +104,7 @@ export const CardPerfil = ({ navigation }) => {
     
     if (!newPwdOn && !disabledBtn) {
         if (oldName != newName || oldLastName != newLastName || 
-            oldEmail != newEmail || currentPassword !=  newPwd || onPwdChange) {
+            oldEmail != newEmail || oldPwd !=  newPwd || onPwdChange) {
                 editUser(navigation, idSubscriber, 
                     editName, editLastName, editEmail, editPwd)
         }
@@ -158,7 +156,7 @@ export const CardPerfil = ({ navigation }) => {
                         onChangeText={email => setNewEmail(email)}
                     />
                     <View style={stylesCardPerfil.pwdContainer}>
-                        <Text>Cambio de Contraseña</Text>
+                        <Text style={{color : styleConst.SECONDARY_TXT_COLOR}}>Cambio de Contraseña</Text>
                         <Switch
                             trackColor={{ false: "#767577", true: "#81b0ff" }}
                             thumbColor={newPwdOn ? "#f5dd4b" : "#f4f3f4"}
@@ -187,7 +185,7 @@ export const CardPerfil = ({ navigation }) => {
                         <Button
                             //style={stylesBtn == null ? btnNormal() : stylesBtn}
                             onPress={() => updateHandler()}
-                            title='Continuar'
+                            title='Guardar'
                             disabled={disabledBtn}
                             color={styleConst.MAINCOLORS[0]}
                         />
@@ -249,7 +247,7 @@ const stylesCardPerfil = StyleSheet.create({
         fontWeight: 'bold'
     },
     cardHeadTxt: {
-        color: styleConst.MAINCOLORSLIGHT[2],
+        color: styleConst.SECONDARY_TXT_COLOR,
         fontWeight: 'bold'
     },
     boxShadow: {

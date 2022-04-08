@@ -145,6 +145,8 @@ export const registerUser = async (dataArray) => {
     return result
     
 }
+
+// Active call for edit user
 export const editUser = ( navigation, idSubscriber, editName, editLastName, editEmail, editPwd ) => {
 
     console.log(LOG_INFO('AuthProvider', 'editUser.idSubscriber')+idSubscriber)

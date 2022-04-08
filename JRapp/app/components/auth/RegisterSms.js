@@ -63,7 +63,7 @@ const TouchableBtn = ({ text, finish, countDown, action, disabledSms }) => {
 
     // Set Colors
     if (disabled)
-        sendAgainColor = styleConst.MAINCOLORSLIGHT[2]
+        sendAgainColor = styleConst.SECONDARY_TXT_COLOR
     else
         sendAgainColor = styleConst.MAINCOLORSLIGHT[1]
 

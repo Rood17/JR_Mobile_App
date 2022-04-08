@@ -17,9 +17,9 @@ import * as utils from '../../utils/Utils'
 import Line from '../elements/Elements/'
 import { Icon, Input } from 'react-native-elements'
 import { storeUserString } from '../../utils/Storage'
-import { getPerfilUf, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
+import { get_api_isJr, userIsRegisterAPI, getUserAuth} from '../../utils/services/get_services'
 import AuthContext from '../../../context/auth/AuthContext';
-import { WarningAdvice } from '../elements/Elements';
+import { WarningAdvice, IconBtnCircle } from '../elements/Elements';
 
 import {
     Button,
@@ -55,6 +55,11 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
     const [error, setError] = useState()
     const [loginSuccess, setLoginSuccess] = useState(false)
     const [secret, setSecret] = useState()
+
+    const [secureText, setSecureText] = useState(false)
+    const [leftIcon, setLeftIcon] = useState('eye')
+
+
     const { login } = useContext(AuthContext);
     //Vars
     let pwdInput = React.createRef();
@@ -66,10 +71,12 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
             setDisabledBtn(false);
             setIsPwdOk(true)
             setSecret(pwd)
+            
         }
         else {
             setDisabledBtn(true)
             setIsPwdOk(false)
+            setLeftIcon('eye-slash')
         }
     }
 
@@ -100,6 +107,7 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
 
     return (
         <>
+        {/** 
             <Input
                 ref={input => { pwdInput = input }}
                 placeholder="Contraseña"
@@ -110,7 +118,20 @@ const PwdInput = ({ setIsPwdOk, nav, idSubscriber }) => {
                 secureTextEntry={true}
                 leftIcon={{ type: 'font-awesome', name: 'lock', size: 18 }}
                 onChangeText={pwd => onChangeText(pwd)}
-            />
+            />*/}
+            <Input
+                    onEndEditing={() => {setSecureText(true); setLeftIcon('eye-slash')}}
+                    onTextInput={() => {setSecureText(false); setLeftIcon('eye')}}
+                    placeholder="Contraseña"
+                    textContentType='password'
+                    maxLength={12}
+                    errorMessage={error}
+                    secureTextEntry={secureText}
+                    leftIcon={{ type: 'font-awesome', name: 'lock', size: 18, color: styleConst.MAINCOLORSLIGHT[1] }}
+                    rightIcon={{ type: 'font-awesome', name: leftIcon, size: 18, color: styleConst.MAINCOLORSLIGHT[1] }}
+                    color={styleConst.MAINCOLORS[1]}
+                    onChangeText={pwd => onChangeText(pwd)}
+                />
             {pwdFail ?
                 <Text style={styles.txtError}>*La contraseña o el número es incorrecto.</Text>
                 :
@@ -152,12 +173,12 @@ const PassOrRegister = ({ setIsPwdOk, numberFlag, navigation, idSubscriber }) =>
                 />
                 :
                 <View style={{ marginBottom: 0, }}>
-                    <Text style={{ textAlign: 'center', color:styleConst.JRGREY }}>
+                    <Text style={{ textAlign: 'center', color:styleConst.SECONDARY_TXT_COLOR }}>
                         Hemos detectado que aún no tienes una cuenta,
                         si gustas puedes registrarte para aglizar tus consultas
                         y recargas.
                     </Text>
-                    <Text style={{ textAlign: 'center', marginBottom:20, color:styleConst.JRGREY  }}>¡Es totalmente gratuito!</Text>
+                    <Text style={{ textAlign: 'center', marginBottom:20, color:styleConst.SECONDARY_TXT_COLOR  }}>¡Es totalmente gratuito!</Text>
                     <Button
                         //style={stylesBtn == null ? btnNormal() : stylesBtn}
                         onPress={() => navigation.navigate('Register', { idSubscriber: idSubscriber })}
@@ -206,52 +227,45 @@ const LoginBody = ({ nav }) => {
     const [isPwdOk, setIsPwdOk] = useState(false)
     const [dinamicColor, setDinamicColor] = useState(styleConst.MAINCOLORSLIGHT[1])
     const [clear, setClear] = useState(null);
-    const [UFuserData, setUFUserData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isRegister, setIsRegister] = useState(false)
 
     // Constante que se utiliza para verificar si el usuario ya existe.
-    let responseUserData = [];
     // Auth handler
     const onChangeNumber = (number) => {
         setIdSubscriber(number)
-        setUFUserData('');
 
         // Validar si el número ingrsado es JR.
         if (number.length == constants.MAX_NUMBER_LENGTH) {
             // Se llama a la API
             const fetchData = async () => {
-                let errorResponse;
+                let errorResponse, login_api_response;
                 // Loading
                 setLoading(true)
                 // API CALL
-                const response = await getPerfilUf(number)
+                const response = await get_api_isJr(number)
                     .then( (response) => {
-                        //console.log('[Info] Login - getPerfilUf : ' + JSON.stringify(response))
+                        //console.log('[Info] Login - get_api_isJr : ' + JSON.stringify(response))
                         // Manejar errores
-                        errorResponse = response.error;
-                        if (response.indexOf('Error') != -1 ){
-                            errorResponse = response;
+                        if ( response){
+                            login_api_response = response;
+                        } else {
+                            errorResponse = 'error - no es Jr';
                         }
-                        
-                        // Data user
-                        responseUserData.array = response.userData
-                        
                     })
                     .catch( (error) => {
                         if (error.message != undefined){
-                            responseUserData = error.message
-                            //console.error('[Error] Login - getPerfilUf.response : ' + error)
+                            console.error('[Error] Login - get_api_isJr.response : ' + error)
                             //throw new Error ('Error - ' + error.message)
                         }
-                            
                     }).finally(() => {
-                        // Finalizando - está registrado??
+                        // Se asume que hay un error o que no es JR
                         if (errorResponse != undefined && errorResponse.length > 2) {
                             validateIsJr(number, errorResponse, null)
                             setLoading(false)
                         } else {
-                            isRegisterAPI(number, errorResponse)
+                            // Se asume que es número JR
+                            isRegisterAPI(number, login_api_response)
                         }                                             
                 });                
             };
@@ -284,13 +298,20 @@ const LoginBody = ({ nav }) => {
     );
 
     // Función de validación
+    /**
+     * validateIsJr
+     * En esta función se manejan los resultados de la api
+     * tanto errir como resultado de si está registrado.
+     * @param {ApiResult} error 
+     * @param {Boolean} result 
+     * @param {String} number 
+     */
     const validateIsJr = async (number, error, result) => {
         if (error == null) {
             //Log
             console.log("[Info] ** User is JR **")
 
             // Set data
-            setUFUserData(responseUserData);
             //console.log("userData >>>> ", responseUserData)
 
             // Setters
@@ -326,7 +347,7 @@ const LoginBody = ({ nav }) => {
                 console.log('[Info] Login - isRegisterAPI : ' + response)
                 result = response
                 setIsRegister(result)
-                validateIsJr(number, errorResponse, result)
+                validateIsJr(number, null, result)
             })
             .catch(function (error) {
                 console.error("[Error] Login - isRegisterAPI : " + error);
@@ -414,21 +435,17 @@ const LoginBody = ({ nav }) => {
                         <Line color='grey' />
                         <View style={styles.iconContainer}>
                             <View style={styles.icon}>
-                                <Icon
-                                    raised
-                                    name='mobile'
-                                    type='font-awesome'
-                                    color={dinamicColor}
-                                    onPress={() => iconActionHandler('Recharge')} />
+                                    <IconBtnCircle 
+                                    phone
+                                    onPress={() => iconActionHandler('Recharge')}
+                                />
                                 <Text style={styles.icon_text}>Recarga</Text>
                             </View>
                             <View style={styles.icon}>
-                                <Icon
-                                    raised
-                                    name='file'
-                                    type='font-awesome'
-                                    color={dinamicColor}
-                                    onPress={() => iconActionHandler('DetailLogOut')} />
+                                <IconBtnCircle 
+                                    file
+                                    onPress={() => iconActionHandler('DetailLogOut')}
+                                />
                                 <Text style={styles.icon_text}>Consulta</Text>
                             </View>
                         </View>
@@ -472,7 +489,6 @@ const styles = StyleSheet.create({
         margin: 30,
         marginTop:80,
         marginBottom:80
-
     },
     btnActionContainer: {
         paddingLeft: 20,
@@ -502,7 +518,7 @@ const styles = StyleSheet.create({
         flexBasis: '35%',
     },
     icon_text: {
-        color: styleConst.JRGREY
+        color: styleConst.SECONDARY_TXT_COLOR
     },
     txtError: {
         margin: 10,

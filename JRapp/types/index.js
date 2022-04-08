@@ -20,8 +20,6 @@ export const SIM_MIN = "FU_Min_Altan-NR-IR-LDI_NA"
 export const CALL_WHATSAPP = '5530687563'
 
 export const BEARER = 'Bearer ';
-export const URL_OUTH = 'https://altanredes-prod.apigee.net/v1/oauth/accesstoken?grant-type=client_credentials';
-export const BASIC = 'Basic MVVlYWRvVmFMWm9Fb2dORzZBMHVmN1lkeXpwemM2R0g6Nm9GMUMxd0sxMEdXS3dJUw=='
 export const CONTENT_TYPE = 'Content-Type';
 export const APLICATION_JSON = 'application/json';
 export const TYPE_URLENCODED = 'application/x-www-form-urlencoded';

@@ -228,7 +228,11 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
     // Ir a mercado pago
     const mercadoHandler = () => {
         if ( recargas != undefined && recargas.init_point && !isLoading && emailFlag ){
-            navigation.navigate('MercadoP', {'init_point' : recargas.init_point})
+            navigation.navigate('MercadoP', 
+                {
+                    'init_point' : recargas.init_point,
+                    'pago_id' : recargas.pago_id
+                })
             get_preference('clear')
         }
     }
@@ -416,7 +420,7 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
                 ?
                 <>
                 <View style={[stylesMainCard.boxShadow, {padding:30}]}>
-                        <Text>Email de Verificación</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Email de Verificación</Text>
                         {isRegister
                         ? 
                         <Input
@@ -449,7 +453,7 @@ export const RechargeTwoCard = ({ mercadoPago, payloadArray, isRegister, payload
                         {/** Aquí un spinner en lo que esta listo el iframe */}
                         <>
                             <View style={stylesMainCard.inputContainer}>
-                                <Text>Introduce el número a recargar</Text>
+                                <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Introduce el número a recargar</Text>
                                 <Input
                                     placeholder="Tarjeta (16 dígitos)"
                                     keyboardType='number-pad'
@@ -617,11 +621,11 @@ const Recharge_2 = ({ navigation, route }) => {
                         </View>
                     </View>
                     <View style={styles.registerContainer}>
-                        <Text>Carga seleccionada:</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Carga seleccionada:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{JSON.stringify(payload)}</Text>
                         </TouchableOpacity>
-                        <Text>Número JRmóvil:</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Número JRmóvil:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0] }}>{JSON.stringify(idSubscriber)}</Text>
                         </TouchableOpacity>

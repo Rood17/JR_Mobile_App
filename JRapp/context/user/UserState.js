@@ -3,7 +3,7 @@ import React, { useReducer } from 'react';
 import UserReducer from './UserReducer';
 import UserContext from './UserContext';
 import { LOG_INFO } from '../../app/res/values/strings/Strings';
-import {getPerfilUf, get_api_isJr, get_user_email,
+import {getPerfilUf, get_api_isJr, get_user_email, getPerfilUfAPI,
     getDataJson, getPaquetesApi} from '../../app/utils/services/get_services'
 
 import { GET_IS_JR,GET_USER_DATA, GET_USER_EMAIL,USER_INFO, SIM_DATA, SIM_SMS, SIM_MIN, SIM_DATA_EXTRA} from "../../types";
@@ -157,7 +157,7 @@ const UserState = (props) => {
             let final;
          // Call Local Hc
          let myPromise = new Promise(function (resolve) {
-            resolve(getPerfilUf(number).then((response) => {
+            resolve(getPerfilUfAPI(number).then((response) => {
                     filterArray(response.userData)
                 }).catch((error) => {
                     console.error('[Error] UserState - getAPIUserData'+error.message);

@@ -86,7 +86,7 @@ const DetailLogOut = ({ navigation, route }) => {
     console.log("[Info] DetailLogOut - validityUserCode : " + validityUserCode)
     // si no tiene próxima recarga - vigencia
     let validityResponse = 'Vigencia: ' + validityUser
-    let validityColor = styleConst.MAINCOLORSLIGHT[2]
+    let validityColor = styleConst.SECONDARY_TXT_COLOR
 
     // Validity neast conditionals
     // If validity is end
@@ -146,7 +146,7 @@ const DetailLogOut = ({ navigation, route }) => {
 
                         <View style={styles.infoNoRegisterTxt}>
                             <TouchableOpacity onPress={() => navigation.goBack()}>
-                                <Text style={{ textAlign: 'center' }}>
+                                <Text style={{ textAlign: 'center', color:styleConst.SECONDARY_TXT_COLOR }}>
                                     Para más información
                                     <Text style={{ color: styleConst.MAINCOLORS[0] }}> Ingresa </Text>
                                     a tu "Cuenta".
@@ -155,7 +155,7 @@ const DetailLogOut = ({ navigation, route }) => {
                             <TouchableOpacity onPress={() => navigation.navigate('Register', {
                                                 idSubscriber: idSubscriber,
                                                 })}>
-                                <Text style={{ textAlign: 'center' }}>
+                                <Text style={{ textAlign: 'center', color:styleConst.SECONDARY_TXT_COLOR }}>
                                     O<Text style={{ color: styleConst.MAINCOLORS[0] }}> Regístrate Aquí. </Text>
                                     ¡Es gratuito!
                                 </Text>
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     number: {
         marginLeft: 15,
         fontWeight: 'bold',
-        color: 'grey',
+        color: styleConst.SECONDARY_TXT_COLOR,
         fontSize: 18
     },
     infoNoRegisterTxt: {

@@ -34,8 +34,8 @@ let payloadArray;
 export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, isRegister, title, subtitle, subtitleColor, navigation, setGbProduct }) => {
     // Sates
     const [disabledBtn, setDisabledBtn] = useState(true);
-    const [displayColor1, setDisplayColor1] = useState(styleConst.MAINCOLORSLIGHT[2]);
-    const [displayColor2, setDisplayColor2] = useState(styleConst.MAINCOLORSLIGHT[2]);
+    const [displayColor1, setDisplayColor1] = useState(styleConst.SECONDARY_TXT_COLOR);
+    const [displayColor2, setDisplayColor2] = useState(styleConst.SECONDARY_TXT_COLOR);
     const [errorMsg, setErrorMsg] = useState('');
     const [errorMsg2, setErrorMsg2] = useState('');
     const [initNumber, setInitNumber] = useState(idSubscriber);
@@ -79,7 +79,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
         }
     }, [])
 
-    const numberExist = 888
+    const numberExist = 8888888888
     let phoneValue;
     /**
      * Verificar si el número es JR Async
@@ -110,6 +110,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
      * @param {resutado de la API isJr} result 
      */
     const numberIsJrHandler = (number, result) => {
+        console.log(' ********** result : ' + result)
         if (number.toString().indexOf(numberExist) != -1 || result) {
             setDisplayColor1(styleConst.MAINCOLORSLIGHT[1])
             setErrorMsg(<WarningAdvice type={3} warningText='Número correcto' />)
@@ -131,7 +132,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
         }
         else {
             setDisabledBtn(true)
-            setDisplayColor1(styleConst.MAINCOLORSLIGHT[2])
+            setDisplayColor1(styleConst.SECONDARY_TXT_COLOR)
             setErrorMsg('')
             setPass1(false);
         }
@@ -154,7 +155,7 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
         }
         else {
             setDisabledBtn(true)
-            setDisplayColor2(styleConst.MAINCOLORSLIGHT[2])
+            setDisplayColor2(styleConst.SECONDARY_TXT_COLOR)
             setErrorMsg2('')
         }
 
@@ -168,8 +169,8 @@ export const RechargeOneCard = ({ canChangeNumber, isMifi, isJr, idSubscriber, i
 
             <View style={stylesMainCard.inputContainer}>
                 {isMifi
-                    ? <Text style={styleConst.JRGREY}>Introduce el número MIFI a recargar</Text>
-                    : <Text>Introduce el número móvil a recargar</Text>
+                    ? <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Introduce el número MIFI a recargar</Text>
+                    : <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Introduce el número móvil a recargar</Text>
                 }
                 <Input
                     placeholder="Número JRmóvil (10 dígitos)"
@@ -494,14 +495,14 @@ export const OverlayModal = ({ setGbProduct, main }) => {
                         <JrBtnCircle
                             onPress={togglePlans}
                         />
-                        <Text style={{ marginTop: 10, color: styleConst.JRGREY, textAlign: 'center', }}>Planes de Recarga</Text>
+                        <Text style={{ marginTop: 10, color: styleConst.SECONDARY_TXT_COLOR, textAlign: 'center', }}>Planes de Recarga</Text>
                     </View>
                     <View style={modalStyle.icon}>
                         <JrBtnCircle
                             icon='signal'
                             onPress={togglePrices}
                         />
-                        <Text style={{ marginTop: 10, color: styleConst.JRGREY, textAlign: 'center', }}>¡Recarga tu MiFi!</Text>
+                        <Text style={{ marginTop: 10, color: styleConst.SECONDARY_TXT_COLOR, textAlign: 'center', }}>¡Recarga tu MiFi!</Text>
                     </View>
                 </View>
             </View>
@@ -510,7 +511,7 @@ export const OverlayModal = ({ setGbProduct, main }) => {
                 <View style={modalStyle.headContainer}>
                     <View style={[{ flex: 1, }, modalStyle.headTextContainer]}>
                         <Text style={modalStyle.headTxt}>Recargar Saldo</Text>
-                        <Text style={{ margin: 0 }}>Selecciona una compra</Text>
+                        <Text style={{ margin: 0, color:styleConst.SECONDARY_TXT_COLOR }}>Selecciona una compra</Text>
                     </View>
                     <View style={[modalStyle.bodyContainer, { flex: 6 }]}>
                         <ProductCard setGbProduct={setGbProduct} togglePlans={togglePlans} />
@@ -654,7 +655,7 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                         canChangeNumber={canChangeNumber}
                     />
                     <View style={styles.registerContainer}>
-                        <Text>Carga seleccionada:</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Carga seleccionada:</Text>
                         <TouchableOpacity>
                             <Text style={{ color: styleConst.MAINCOLORS[0], fontWeight: 'bold' }}>{payload}</Text>
                         </TouchableOpacity>
@@ -686,7 +687,6 @@ const Recharge = ({ navigation, chargeResume, route }) => {
                                 source={require('../../res/drawable/logo/cards/ae.jpg')}
                             />
                         </View>
-                        <Text></Text>
                     </View>
                 </View>
             </ScrollView>

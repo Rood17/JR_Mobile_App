@@ -31,10 +31,10 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
     const [countPass, setCountPass] = useState(0)
     const [countDown, setCountDown] = useState();
     
-
+    console.log(' *********** 1 ')
     // Validate if Number account exist
     const onChangeEmail = (email) => {
-
+        console.log(' *********** 1 b ')
         if (email == userData) {
             
             if (email == userData) {
@@ -56,9 +56,9 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
         }
 
     }
-
+    console.log(' *********** 2 ')
     const rcvry_btn_handler = () => {
-
+        console.log(' *********** 2 b')
         const myPromise = new Promise(function (resolve) {
             resolve(send_recovery_email(idSubscriber, rcvryEmail)
             .then((response) => {
@@ -86,17 +86,18 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
             ))
         })
     }
-
+    console.log(' *********** 3 ')
     const { userData, getUserEmail } = useContext(UserContext);
     const [secretEmail, setSecretEmail] = useState()
     let secretString = '*';
-
+    console.log(' *********** 4 ')
     useEffect( () => {
         const userEmailD = getUserEmail(idSubscriber)
-        console.log(LOG_INFO('RecoveryEmail', 'PwdRecoveryCard.userEmailD')+userEmailD)
+        if (userEmailD!= undefined)
+            console.log(LOG_INFO('RecoveryEmail', 'PwdRecoveryCard.userEmailD')+userEmailD)
 
     }, [])
-
+    console.log(' *********** 5 ')
     useEffect( () => {
         if (userData && userData != undefined) {
             let aIndex = userData.indexOf('@')
@@ -111,7 +112,7 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
 
     // CountDown
     // Count Down
-    
+    console.log(' *********** 6 ')
     useEffect( () => {
         // Count Down
         setTimeout(() => {
@@ -135,12 +136,12 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
     }, [countDown])
 
 
-
+    console.log(' *********** 7 ')
     return (
 
         <View style={stylesMainCard.boxShadow}>
             <View style={{ paddingLeft: 15, paddingRight: 15, marginTop: 35 }}>
-                <Text>Ingresa el mail con el que te registraste, con terminación "{secretEmail}".</Text>
+                <Text style={{color : styleConst.SECONDARY_TXT_COLOR}}>Ingresa el mail con el que te registraste, con terminación "{secretEmail}".</Text>
             </View>
             <View style={stylesMainCard.inputContainer}>
                 <Input
@@ -149,7 +150,7 @@ export const PwdRecoveryCard = ({ navigation, idSubscriber }) => {
                     keyboardType='email-address'
                     errorMessage={errorMsg}
                     secureTextEntry={false}
-                    leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: 'grey' }}
+                    leftIcon={{ type: 'font-awesome', name: 'envelope', size: 18, color: styleConst.SECONDARY_TXT_COLOR }}
                     onChangeText={email => onChangeEmail(email)}
                 />
                 {rcvryResponse 
@@ -227,8 +228,8 @@ const RecoveryEmail = ({navigation, route}) => {
                     idSubscriber={idSubscriber}
                     />
                     <View style={styles.registerContainer}>
-                        <Text>Espera un momento a que te llegue el mail.</Text>
-                        <Text>Si no ves el mail, revisa la bandeja de "Spam".</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Espera un momento a que te llegue el mail.</Text>
+                        <Text style={{color:styleConst.SECONDARY_TXT_COLOR}}>Si no ves el mail, revisa la bandeja de "Spam".</Text>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Text style={{color: styleConst.MAINCOLORS[0]}}>¿Ya recibiste el correo?... Regresa.</Text>
                         </TouchableOpacity>

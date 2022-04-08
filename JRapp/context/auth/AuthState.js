@@ -90,7 +90,7 @@ const AuthState = (props) => {
                         // Clear Storage
                         // Store New Data
                         storeUserData(dataArray);
-                        storeUserString('login')
+                        //storeUserString('login')
                         // User Just Register
                         setError()                        
                         isUserLogged(true);
@@ -175,7 +175,7 @@ export default AuthState;
 export const editUser = ( navigation, idSubscriber, editName, editLastName, editEmail, editPwd ) => {
 
     console.log("[Info] Auth State - editUser **")
-    console.log(LOG_INFO('AuthState', 'editUser -idSubscriber')+ idSubscriber)
+    console.log(LOG_INFO('AuthState', 'editUser -idSubscriber')+ editPwd)
 
 
     let dataArray = [{ 
