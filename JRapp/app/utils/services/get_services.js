@@ -27,7 +27,7 @@ export const getPerfilUfAPI2 = async (idSubscriber, secret) => {
 
 
   if (idSubscriber == 5688888888 || idSubscriber == 8888888888)
-    idSubscriber = 5624898598;
+    idSubscriber = 5535131305;
 
   let config = {
     method: GET,
@@ -67,7 +67,7 @@ export const getPerfilUfAPI = async (idSubscriber) => {
 
   var formdata = new FormData();
   if (idSubscriber == 8888888888)
-    idSubscriber= 5624898598
+    idSubscriber= 5535131305
 
   formdata.append("user_number", idSubscriber);
 
@@ -364,7 +364,7 @@ export const get_api_isJr = async (idSubscriber) => {
 
   console.log(LOG_INFO('get_services', 'get_api_isJr.idSubscriber')+idSubscriber)
   if (idSubscriber == 5688888888 || idSubscriber == 8888888888)
-    idSubscriber = 5624898598;
+    idSubscriber = 5535131305;
 
   let result;
   const axios = require('axios');

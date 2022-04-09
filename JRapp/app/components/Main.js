@@ -15,7 +15,7 @@ import { Icon, Input } from 'react-native-elements'
 import { Loader, WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from './elements/Elements';
 import * as styleConst from '../res/values/styles/StylesConstants'
 import * as constants from '../utils/constants/Constants'
-import { formatApiDate, setProductType } from '../utils/Utils'
+import { formatApiDate, setProductType, setProductName } from '../utils/Utils'
 import { OverlayModal } from '../components/Payments/Recharge'
 import MiPerfil from './pages/MiPerfil';
 import Asistance from './pages/Asistance';
@@ -351,37 +351,21 @@ const MainContent = ({ navigation, route }) => {
     const userData = route.params.userData
 
     let simData, simSMS, simMIN = [0,0,0,0,0]
-
-    // Open the package
-    if (userData != null || userData.simData != undefined )
-        simData = Object.values(userData.simData)
-
-    // Open the package
-    if ( userData != null || userData.simSMS != undefined)
-        simSMS = Object.values(userData.simSMS)
-
-    // Open the package
-    if ( userData != null || userData.simMIN != undefined )
-        simMIN = Object.values(userData.simMIN)
-
-
     userName = getUserName()
     //console.log("simData > Main : " + Object.values(userDataMain.simData))
 
 
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
-    const payload = !simData[4] ? 'Sin Carga' : simData[4]
-    const expireMBData = !simData[0] ? '202202010100' : simData[0]
-    
+    const payload = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const expireMBData = !userData.expireDate ? '' : userData.expireDate
     // MB
-    const unsuedMBData = !simData ? 'NaN' : simData[2]
-    const totalMBData = !simData ? 'NaN' : simData[1]
+    const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt
+    const totalMBData = !userData.initialDataAmt ? '-' : userData.initialDataAmt
     //SMS
-    const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
-    const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
+    const unsuedSMSData = !userData.totalUnusedSMS ? '-' : userData.totalUnusedSMS
     // Min
-    const unsuedMINData = !simMIN ? 'NaN' : simMIN[2]
+    const unsuedMINData = !userData.totalUnusedMin ? '-' : userData.totalUnusedMin
 
 
 
@@ -593,14 +577,14 @@ const Main = ({ navigation, route }) => {
         .finally(()=>{
             getAPIUserData(getUserId()).then((response) => {
                 console.log("[Info] - ** Bienvenido a Main **")
-                if ( response ){
+                if ( userData ){
                     setIsReady(true)
                 }
         
             })
         })
         
-    }, [userData])
+    }, [])
 
     console.log("[Info] - Main - userId : " + getUserId())
     userId = getUserId();

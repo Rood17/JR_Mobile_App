@@ -4,7 +4,7 @@ import * as data from '../../utils/services/perfil_uf.json';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { getUserEmail, getUserLastName, getUserName } from '../../utils/Storage';
 import UserContext from '../../../context/user/UserContext'
-import { formatApiDate, setProductType } from '../../utils/Utils'
+import { formatApiDate, setProductName } from '../../utils/Utils'
 
 import {
     Button,
@@ -36,33 +36,20 @@ const Details = ({ navigation, route }) => {
         getAPIUserData(idSubscriber);
      }, [])
  
-     // Open the package
-     if (userData.simData != undefined)
-         var simData = Object.values(userData.simData)
- 
-     // Open the package
-     if (userData.simSMS != undefined)
-         var simSMS = Object.values(userData.simSMS)
- 
-     // Open the package
-     if (userData.simMIN != undefined)
-         var simMIN = Object.values(userData.simMIN)
- 
- 
  
      // Oferta actual
-    const oferta = !simData[4] ? 'Sin Carga' : simData[4]
-    const expireMBData = !simData[0] ? '-' : formatApiDate(simData[0])
-    
+    const oferta = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const expireMBData = !userData.expireDate ? '' : formatApiDate(userData.expireDate)
     // MB
-    const unsuedMBData = !simData ? 'NaN' : simData[2]
-    const totalMBData = !simData ? 'NaN' : simData[1]
+    const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt
+    const totalMBData = !userData.initialDataAmt ? '-' : userData.initialDataAmt
     //SMS
-    const totalSMSData = !simSMS ? 'NaN' : simSMS[1]
-    const unsuedSMSData = !simSMS ? 'NaN' : simSMS[2]
-    //SMS
-    const totalMINData = !simMIN ? 'NaN' : simMIN[1]
-    const unsuedMINData = !simMIN ? 'NaN' : simMIN[2]
+    const totalSMSData = !userData.totalSMS ? '-' : userData.totalSMS
+    const unsuedSMSData = !userData.totalUnusedSMS ? '-' : userData.totalUnusedSMS
+    // Min
+    const totalMINData = !userData.totalMin ? '-' : userData.totalMin
+    const unsuedMINData = !userData.totalUnusedMin ? '-' : userData.totalUnusedMin
+    
 
 
     // header, text, icon

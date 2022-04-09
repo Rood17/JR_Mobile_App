@@ -6,7 +6,7 @@ import { Icon, Input } from 'react-native-elements'
 import { Loader, WarningAdvice, MainHeader, MainFooter, MainCard, SocialMainCard, ReturnHeader } from '../elements/Elements';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import * as constants from '../../utils/constants/Constants'
-import { formatApiDate, setProductType } from '../../utils/Utils'
+import { formatApiDate, setProductName } from '../../utils/Utils'
 import UserContext from '../../../context/user/UserContext'
 import PaquetesContext from '../../../context/paquetes/PaquetesContext';
 // Services
@@ -43,43 +43,29 @@ const DetailLogOut = ({ navigation, route }) => {
 
     useEffect(() => {
         getAPIUserData(idSubscriber).then((response) => {
-            if ( response ){
+            console.log('2222222 : ' + userData.offeringId)
+            if ( userData != undefined ){
                 setIsReady(true)
             }
         })
-    }, [userData])
+    }, [])
 
 
     let simData, simSMS, simMIN = [0, 0, 0, 0, 0]
-
-
-    if (isReady) {
-        // Open the package
-        if (userData != null && userData.simData != undefined) {
-            //console.log("[Info] DetailLogOut - userData.simData : " + (userData.simData))
-            if (userData.simData != undefined)
-                simData = Object.values(userData.simData)
-        }
-
-
-        // Open the package
-        if (userData != null && userData.simSMS != undefined)
-            simSMS = userData.simSMS
-    }
-
+    console.log( ' ddd ***** : ' + JSON.stringify(userData))
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
-    const oferta = !simData ? 'Sin Plan' : simData[4]
-    const expireMBData = !simData ? '' : simData[0]
+    const oferta = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const expireMBData = !userData.expireDate ? '' : userData.expireDate
 
     // MB
-    const unsuedMBData = !simData ? '-' : simData[2]
-    const totalMBData = !simData ? '-' : simData[1]
+    const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt
+    const totalMBData = !userData.initialDataAmt ? '-' : userData.initialDataAmt
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
     // respuesta Api
-    // Just accept this format '2022/02/18'
+    // Just accept this format '20220218' String
     const validityUser = formatApiDate(expireMBData)
     const validityUserCode = validityUser.replace(/\//g, '')
     console.log("[Info] DetailLogOut - validityUser : " + validityUser)
