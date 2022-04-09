@@ -14,6 +14,7 @@ const userArray = {userInfo:{}, simData:{}, simSMS:{}, simMIN:{} }
 const paquetes = getPaquetesApi()
 let expireDateFinal= 0;
 
+let aver = 0;
 const filterArray = (userData) => {
     // Get User Data
     let expireDate,initialAmt,unusedAmt, offeringId, ofertaActual = 0;
@@ -33,10 +34,18 @@ const filterArray = (userData) => {
 
                     // Data
                     // freeunit info
-                    if ( item.name == SIM_DATA){
+                    
+                    if ( item.name.indexOf('FU_Data_Altan') != -1){
+
+                        console.log( ' ******** : ' + item.name )
+                        console.log( ' ******** x : ' + item.name.indexOf('FU_Data_Altan') )
+
                         offeringId = item.detailOfferings[0].offeringId
-                        initialAmt = item.freeUnit.totalAmt;
+                        initialAmt = parseInt(item.freeUnit.totalAmt);
                         unusedAmt = parseInt(item.freeUnit.unusedAmt);
+
+
+                        console.log( ' ******** initialAmt : ' + initialAmt )
 
                         // fechas
                         Object.values(item.detailOfferings).map((data) => {
@@ -46,13 +55,16 @@ const filterArray = (userData) => {
 
                         // set
                         expireDate = expireDateFinal.toString();
+
+                        aver += initialAmt
+
                     } else {
                         dataFlag = true
                     }
     
-                    if ( item.name == SIM_DATA_EXTRA){
+                    if ( item.name == '88888'){
                         if (dataFlag) {
-                            //console.log(' ======= 1 data extra ' + dataFlag)
+                            console.log(' ======= 1 data extra ' + dataFlag)
                             
                             offeringId = item.detailOfferings[0].offeringId;
                             initialAmtExtra = item.freeUnit.totalAmt;
@@ -99,14 +111,18 @@ const filterArray = (userData) => {
         initialAmt = initialAmtExtra;
     }
     else {
-        initialAmt =  parseInt(initialAmt) + parseInt(initialAmtExtra);
+        console.log( ' ******* 1 : ' +initialAmt )
+        initialAmt +=  parseInt(initialAmt);
+        
     }
     if (unusedAmt == undefined ) {
         unusedAmt = unusedAmtExtra;
     } else {
-        unusedAmt =  parseInt(unusedAmt) + parseInt(unusedAmtExtra);
+        unusedAmt +=  parseInt(unusedAmt);
     }
 
+
+    console.log( ' ******* 2 : ' +aver )
     // Setting Array
     userArray.simData = {
         expireData: expireDate,
@@ -154,18 +170,19 @@ const UserState = (props) => {
     // Función que se ejecuta para traer los productos
     const getAPIUserData = async (number) => {
             let resultFlag = false;
-            let final;
+            let result, final;
          // Call Local Hc
          let myPromise = new Promise(function (resolve) {
             resolve(getPerfilUfAPI(number).then((response) => {
-                    filterArray(response.userData)
+                    //filterArray(response.userData)
+                    result = response.userData
                 }).catch((error) => {
                     console.error('[Error] UserState - getAPIUserData'+error.message);
                 }).finally(() => {
-                    userArray != undefined ? resultFlag = true: null
+
                     dispatch({
                         type: GET_USER_DATA,
-                        payload: userArray
+                        payload: result
                     });
                 })
             );

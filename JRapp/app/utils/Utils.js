@@ -41,6 +41,11 @@ export const quitKeyboard = () => {
     Keyboard.dismiss()
 }
 
+/**
+ * 
+ * @param {String} expireDate 
+ * @returns String yyyy/mm/dd
+ */
 export const formatApiDate = (expireDate) => {
     let result
     if ( expireDate != undefined ) {
@@ -82,6 +87,25 @@ export const setProductType = (payloadCode) => {
     result.startDate = DATE_NOW_CODE;
     result.price = payloadPrice;
     return result;
+}
+
+/**
+ * @param {String} payloadCode 
+ * @returns String Offerid Name
+ */
+export const setProductName = (payloadCode) => {
+    const paquetes = getPaquetesApi();
+    let payloadType; 
+    
+    //offeringId
+    if (!payloadCode ) payloadCode = '1809901178';
+
+    Object.values(paquetes).map((item) => {
+        if (payloadCode == item.offerId){
+            payloadType = item.name
+        }
+    })
+    return payloadType;
 }
 
 const expireDateHandler = (actualDate, offerDays) => {
