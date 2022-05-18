@@ -357,7 +357,7 @@ const MainContent = ({ navigation, route }) => {
 
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
-    const payload = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const payload = !userData.offeringId ? 'Sin Plan' : userData.offeringName
     const expireMBData = !userData.expireDate ? '' : userData.expireDate
     // MB
     const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt

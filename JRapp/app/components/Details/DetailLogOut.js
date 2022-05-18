@@ -55,7 +55,7 @@ const DetailLogOut = ({ navigation, route }) => {
     console.log( ' ddd ***** : ' + JSON.stringify(userData))
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
-    const oferta = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const oferta = !userData.offeringId ? 'Sin Plan' : userData.offeringName
     const expireMBData = !userData.expireDate ? '' : userData.expireDate
 
     // MB

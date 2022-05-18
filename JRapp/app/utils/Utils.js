@@ -77,6 +77,7 @@ export const setProductType = (payloadCode) => {
             
             payloadDays = item.days
             payloadPrice = item.precio
+            console.log('********************* precio : ' + payloadPrice)
             expireDate = expireDateHandler(DATE_NOW_CODE,item.days)
         }
         

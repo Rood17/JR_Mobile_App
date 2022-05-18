@@ -38,7 +38,7 @@ const Details = ({ navigation, route }) => {
  
  
      // Oferta actual
-    const oferta = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const oferta = !userData.offeringId ? 'Sin Plan' : userData.offeringName
     const expireMBData = !userData.expireDate ? '' : formatApiDate(userData.expireDate)
     // MB
     const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt
