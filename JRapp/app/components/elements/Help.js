@@ -6,7 +6,7 @@ import * as string from '../../res/values/strings/Strings'
 const Help = ({navigation}) => {
 
     const onPress = () => {
-        alert('go to ayudaaa')
+        //alert('go to ayudaaa')
     }
 
     return (

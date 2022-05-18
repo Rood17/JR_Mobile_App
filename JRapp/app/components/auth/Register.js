@@ -142,6 +142,26 @@ const Register = ({ navigation, route }) => {
                                 btnParams={{ idSubscriber: idSubscriber, name: name, lastName: lastName }}
                                 title='Continuar'
                             />
+                            {!btnDisabledFlag ?
+                            <>
+                            <Text style={styles.privacidad}>
+                                Al continuar el usuario reconoce que ha ledio y está de
+                                acuerdo tanto con los 
+                                <TouchableWithoutFeedback onPress={() => navigation.navigate('Terminos')}>
+                                    <Text style={styles.privacidadLinks}> Términos y Condiciones, </Text>
+                                </TouchableWithoutFeedback>
+                                 como con los
+                                <TouchableWithoutFeedback onPress={() => navigation.navigate('Privacidad')}>
+                                <Text style={styles.privacidadLinks}> Avisos de Privacidad </Text>
+                                </TouchableWithoutFeedback>
+                                 de JRmóvil.
+                                
+                                </Text>
+                            </>
+                            :
+                            <>
+                            </>
+                            }
                         </View>
 
 
@@ -187,7 +207,16 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '600',
         margin: 10
+    },
+    privacidad: {
+        margin:20,
+        textAlign:'center',
+        fontSize: 12
+    },
+    privacidadLinks:{
+        color:styleConst.COLOR_LINK[0]
     }
+
 });
 
 export default Register;

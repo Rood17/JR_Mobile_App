@@ -46,13 +46,13 @@ const Asistance = ({ navigation }) => {
                 <Text style={styles.text}>Estamos para atender cualquiera de tus dudas,
                     aclaraciones o comentarios.</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
+            <TouchableOpacity  onPress={() => navigation.navigate('Contacto')}>
                 <Card header='Contacto y/o Ayuda con la App'
                     text='Ponte en contacto, ¡estamos para ayudarte!'
                     icon='life-ring' />
             </TouchableOpacity>
             
-            <TouchableOpacity style={{marginLeft:5}} onPress={() => navigation.navigate('Faqs')}>
+            <TouchableOpacity  onPress={() => navigation.navigate('Faqs')}>
                 <Card header='Faqs'
                     text='Preguntas frecuentes.'
                     icon='question' />
