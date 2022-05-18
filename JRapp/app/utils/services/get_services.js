@@ -503,10 +503,12 @@ export const cancel_payment = (id_pago) => {
  export const get_notification_status = async (idSubscriber) => {
   const axios = require('axios');
   let result;
+  console.log(idSubscriber)
+  const urlGetNotifications = 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_notification_status/' + idSubscriber 
 
   let config = {
       method: 'get',
-      url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_notification_status/8136992795',
+      url: urlGetNotifications,
       headers: { }
   };
 
@@ -538,7 +540,7 @@ export const set_notification_status = async (idSubscriber, notification_status)
   let resultApi;
    
   var formdata = new FormData();
-  formdata.append("user_number", '8136992795');
+  formdata.append("user_number", idSubscriber);
   formdata.append("status", notification_status);
 
   var requestOptions = {
@@ -552,7 +554,7 @@ export const set_notification_status = async (idSubscriber, notification_status)
     .then(
       (result) =>
       {
-        console.log(LOG_INFO('get_services', 'set_notification_status.result')+result)
+        console.log(LOG_INFO('get_services', 'set_notification_status.result')+ result)
         resultApi = result
       }
       )

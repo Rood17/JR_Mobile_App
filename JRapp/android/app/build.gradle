@@ -135,8 +135,8 @@ android {
         applicationId "com.jrapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "1.14"
+        versionCode 19
+        versionName "1.15"
     }
     splits {
         abi {

@@ -68,7 +68,7 @@ export const CardPerfilInfo = ({navigation }) => {
     // Init
     useEffect(() => {
         let myPromise = new Promise(function (resolve) {
-            resolve(get_notification_status())
+            resolve(get_notification_status(idSubscriber))
         })
         const notificationStatusStart = myPromise.then(
             (result) => setIsEnabled(result)
