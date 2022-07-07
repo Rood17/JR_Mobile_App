@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Pressable, ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { Pressable, ActivityIndicator, Image, Dimensions, TouchableWithoutFeedback, 
+    View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import * as styleConst from '../../res/values/styles/StylesConstants'
 import { Icon, Input } from 'react-native-elements'
 import IntentBtn from '../elements/IntentBtn'
@@ -261,7 +262,7 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
 
                 <View style={stylesMainCard.datosContainer}>
                     <Text style={stylesMainCard.cardHeadTxt}>{bodyHeadOne}</Text>
-                    <Text style={styleConst.JRGREY}>{dataOne}</Text>
+                    <Text style={{color:'grey'}}>{dataOne}</Text>
                 </View>
                 <View style={stylesMainCard.verticalLine}></View>
                 <View style={stylesMainCard.datosContainer}>

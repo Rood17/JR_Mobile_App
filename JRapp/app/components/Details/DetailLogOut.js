@@ -43,7 +43,7 @@ const DetailLogOut = ({ navigation, route }) => {
 
     useEffect(() => {
         getAPIUserData(idSubscriber).then((response) => {
-            console.log('2222222 : ' + userData.offeringId)
+            //console.log('2222222 : ' + userData.offeringId)
             if ( userData != undefined ){
                 setIsReady(true)
             }
@@ -52,15 +52,15 @@ const DetailLogOut = ({ navigation, route }) => {
 
 
     let simData, simSMS, simMIN = [0, 0, 0, 0, 0]
-    console.log( ' ddd ***** : ' + JSON.stringify(userData))
+    //console.log( ' ddd ***** : ' + JSON.stringify(userData))
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
     const oferta = !userData.offeringId ? 'Sin Plan' : userData.offeringName
     const expireMBData = !userData.expireDate ? '' : userData.expireDate
 
     // MB
-    const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt
-    const totalMBData = !userData.initialDataAmt ? '-' : userData.initialDataAmt
+    const unsuedMBData = !userData.unusedDataAmt ? 0 : userData.unusedDataAmt
+    const totalMBData = !userData.initialDataAmt ? 0 : userData.initialDataAmt
 
     //Validación vigencia - falta 999
     const validitNearDaysEnd = 5
