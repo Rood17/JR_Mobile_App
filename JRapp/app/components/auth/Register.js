@@ -211,7 +211,8 @@ const styles = StyleSheet.create({
     privacidad: {
         margin:20,
         textAlign:'center',
-        fontSize: 12
+        fontSize: 12,
+        color:styleConst.PRIMARY_TXT_COLOR
     },
     privacidadLinks:{
         color:styleConst.COLOR_LINK[0]

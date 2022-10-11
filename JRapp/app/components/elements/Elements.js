@@ -204,9 +204,11 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
     let require3 = require('../../res/drawable/wifi/3.png')
     let require4 = require('../../res/drawable/wifi/4.png')
     let porcent = (dataTwo * 100) / dataOne;
+    console.log(dataOne)
+    console.log(dataOne)
 
     // Default
-    requireWifi = require0;
+    let requireWifi = require0;
     // Porcent
     if (porcent < 10 || porcent == undefined || isNaN(porcent) || !porcent) {
         requireWifi = require0;
@@ -222,7 +224,6 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
         requireWifi = require4;
 
 
-    let requireWifi
     // Now Strings
     if (!showDetalles) {
         dataOne = dataOne + ' MB';
@@ -233,15 +234,15 @@ export const MainCard = ({ isReady, title, subtitle, subtitleColor, bodyHeadOne,
         mbColor = 'red'
 
     // If nothing
-    if (!title && !showDetalles
+    if (!showDetalles
         || isNaN(porcent)) {
-        requireWifi = require0;
+        //requireWifi = require0;
         mbAlert = true
-        title = 'Sin Recarga'
-        dataOne = '0 MB';
-        dataTwo = '0 MB';
-        subtitle = ' - '
-    }
+        title = !title ? 'Sin recarga' : title;
+        dataOne = !dataOne || dataOne == 0 ? '0 MB' : dataOne ;
+        dataTwo = !dataTwo || dataTwo == 0 ? '0 MB' : dataTwo ;
+        subtitle = !subtitle ? ' - ' : subtitle;
+     }
 
 
     return (

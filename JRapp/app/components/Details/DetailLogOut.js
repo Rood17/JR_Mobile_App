@@ -56,8 +56,7 @@ const DetailLogOut = ({ navigation, route }) => {
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
     const oferta = !userData.offeringId ? 'Sin Plan' : userData.offeringName
-    const expireMBData = !userData.expireDate ? '' : userData.expireDate
-
+    const expireMBData = oferta == 'Sin Plan'  ? null : userData.expireDate
     // MB
     const unsuedMBData = !userData.unusedDataAmt ? 0 : userData.unusedDataAmt
     const totalMBData = !userData.initialDataAmt ? 0 : userData.initialDataAmt
@@ -71,7 +70,7 @@ const DetailLogOut = ({ navigation, route }) => {
     console.log("[Info] DetailLogOut - validityUser : " + validityUser)
     console.log("[Info] DetailLogOut - validityUserCode : " + validityUserCode)
     // si no tiene próxima recarga - vigencia
-    let validityResponse = 'Vigencia: ' + validityUser
+    let validityResponse = oferta == 'Sin Plan'  ? null :'Vigencia: ' + validityUser
     let validityColor = styleConst.SECONDARY_TXT_COLOR
 
     // Validity neast conditionals
@@ -95,7 +94,6 @@ const DetailLogOut = ({ navigation, route }) => {
                     (parseInt(validityUserCode) - constants.DATE_NOW_CODE)
                     + ' días'
     }
-
 
     return (
         <>
