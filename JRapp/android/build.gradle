@@ -7,6 +7,7 @@ buildscript {
         compileSdkVersion = 30
         targetSdkVersion = 30
         ndkVersion = "21.4.7075529"
+        kotlinVersion = "1.6.21"  // ★ MODERNO → evita error TLS con Kotlin 1.4.10
     }
     repositories {
         google()
@@ -14,27 +15,24 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.2.2")
-        //Firebase
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21") // ★ AGREGADO
         classpath 'com.google.gms:google-services:4.3.10'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
 allprojects {
     repositories {
+        google()
         mavenCentral()
         mavenLocal()
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url("$rootDir/../node_modules/react-native/android")
-        }
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
 
-        google()
-        maven { url 'https://www.jitpack.io' }
+        // React Native core
+        maven { url("$rootDir/../node_modules/react-native/android") }
+
+        // JSC
+        maven { url("$rootDir/../node_modules/jsc-android/dist") }
+
+        // jitpack
+        maven { url 'https://jitpack.io' }
     }
 }

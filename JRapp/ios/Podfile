@@ -16,6 +16,8 @@ target 'JRapp' do
 
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
   target 'JRappTests' do
     inherit! :complete
     # Pods for testing

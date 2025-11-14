@@ -1,4 +1,5 @@
 import axios from "axios";
+import Config from 'react-native-config';
 import {
   SECRET_AUTH, AUTHORIZATION, GET, POST,
   CONTENT_TYPE, APLICATION_JSON, TYPE_URLENCODED, BEARER,
@@ -12,6 +13,8 @@ import * as qs from 'qs'
 import {
   API_LOCAL_ENPOINT_BASE,
 } from "../constants/Constants";
+
+const BASE_URL = Config.API_URL;
 
 export const getPaquetesApi = () => {
   return paquetes
@@ -361,7 +364,7 @@ export const get_api_isJr = async (idSubscriber) => {
 
 
   console.log("[Info] get_services - get_api_isJr **")
-
+  console.log(LOG_INFO('get_services', BASE_URL))
   console.log(LOG_INFO('get_services', 'get_api_isJr.idSubscriber')+idSubscriber)
   if (idSubscriber == 5688888888 || idSubscriber == 8888888888)
     idSubscriber = 5535131305;
