@@ -50,7 +50,7 @@ const Intro: () => Node = () => {
       <View style={styles.logoContainer}>
        {/*<DisplayLogo stylesLogo={styles.logo}/>*/}
        <Animated.Image
-            source={require('../res/drawable/logo/jrlogo_2.png')}
+            source={require('../res/drawable/logo/cm_logo.png')}
             style={[{
                 left: animacion,
             }, styles.logo]}

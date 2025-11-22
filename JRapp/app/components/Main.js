@@ -602,4 +602,4 @@ const Main = ({ navigation, route }) => {
     );
 }
 
-export default Main;
+export default Main; 

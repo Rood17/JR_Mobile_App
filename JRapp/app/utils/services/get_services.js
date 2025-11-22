@@ -14,6 +14,7 @@ import {
   API_LOCAL_ENPOINT_BASE,
 } from "../constants/Constants";
 
+
 const BASE_URL = Config.API_URL;
 
 export const getPaquetesApi = () => {
@@ -80,7 +81,7 @@ export const getPerfilUfAPI = async (idSubscriber) => {
     redirect: 'follow'
   };
   try {
-    await fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_profile_uf/", requestOptions)
+    await fetch(`${BASE_URL}/jr_api/cm/1.0/get_profile_uf/`, requestOptions)
     .then(response => response.text())
     .then(function (result) {
       resultX.userData = JSON.parse(result);
@@ -174,8 +175,9 @@ export const getUserAuth = async (idSubscriber, pwd) => {
       body: formdata,
       redirect: 'follow'
     };
+    console.log(`--------------->  ${BASE_URL}/jr_api/cm/1.0/login/`); 
 
-    fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/login/", requestOptions)
+    fetch(`${BASE_URL}/jr_api/cm/1.0/login/`, requestOptions)
       .then(response => response.text())
       .then(result => {
         result = JSON.parse(result)
@@ -219,7 +221,7 @@ export const registerAPIUser = async (dataArray, email) => {
   
     let config = {
       method: 'post',
-      url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/register_user/',
+      url: `${BASE_URL}/jr_api/cm/1.0/register_user/`,
       headers: { 
           'Content-Type': 'application/json'
       },
@@ -257,7 +259,7 @@ export const editAPIUser = async (idSubscriber, editName, editLastName, editEmai
 
   let config = {
 		method: 'post',
-		url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/edit_user/',
+		url: `${BASE_URL}/jr_api/cm/1.0/edit_user/`,
 		headers: { 
 				'Content-Type': 'application/json'
 		},
@@ -300,7 +302,7 @@ export const userIsRegisterAPI = async (idSubscriber) => {
         redirect: 'follow'
       };
   
-      fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/is_register/", requestOptions)
+      fetch(`${BASE_URL}/jr_api/cm/1.0/is_register/`, requestOptions)
         .then(response => response.text())
         .then(result => {
           console.log(LOG_INFO('get_services', 'userIsRegisterAPI.result')+JSON.stringify(result))
@@ -347,7 +349,7 @@ export const get_api_preference = async (dataPorduct) => {
       redirect: 'follow'
     };
     let myPromise = new Promise(function (resolve) {
-    fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_api_preference/", requestOptions)
+    fetch(`${BASE_URL}/jr_api/cm/1.0/get_api_preference/`, requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(LOG_INFO('get_services', 'get_api_preference.result')+result)
@@ -364,15 +366,16 @@ export const get_api_isJr = async (idSubscriber) => {
 
 
   console.log("[Info] get_services - get_api_isJr **")
-  console.log(LOG_INFO('get_services', BASE_URL))
+  console.log(LOG_INFO('----> get_services', BASE_URL))
   console.log(LOG_INFO('get_services', 'get_api_isJr.idSubscriber')+idSubscriber)
   if (idSubscriber == 5688888888 || idSubscriber == 8888888888)
     idSubscriber = 5535131305;
 
   let result;
   const axios = require('axios');
-  const url = 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_isjr/' + idSubscriber
-
+  const url = `${BASE_URL}/jr_api/cm/1.0/get_isjr/` + idSubscriber
+  console.log(LOG_INFO('get_services', 'get_api_isJr.url')+url)
+  console.log(url)
   let config = {
       method: 'get',
       url:  url,
@@ -410,7 +413,7 @@ export const get_user_email = async (idSubscriber) => {
 
 let config = {
 		method: 'get',
-		url: 'https://jrmovil.pythonanywhere.com//jr_api/cm/1.0/get_user_email/'+idSubscriber,
+		url: `${BASE_URL}//jr_api/cm/1.0/get_user_email/`+idSubscriber,
 		headers: { }
 };
 
@@ -454,7 +457,7 @@ export const send_recovery_email = async (idSubscriber, rcvry_email) => {
 
   let myPromise = new Promise(function (resolve) {
     resolve(
-      fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/pwd_recovery_email/", requestOptions)
+      fetch(`${BASE_URL}/jr_api/cm/1.0/pwd_recovery_email/`, requestOptions)
       .then(response => response.text())
       .then(
         (result) =>
@@ -479,7 +482,7 @@ export const cancel_payment = (id_pago) => {
 
   let config = {
       method: 'get',
-      url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/payment_cancel/' + id_pago,
+      url: `${BASE_URL}/jr_api/cm/1.0/payment_cancel/` + id_pago,
       headers: { }
   };
 
@@ -509,7 +512,7 @@ export const cancel_payment = (id_pago) => {
 
   let config = {
       method: 'get',
-      url: 'https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/get_notification_status/8136992795',
+      url: `${BASE_URL}/jr_api/cm/1.0/get_notification_status/8136992795`,
       headers: { }
   };
 
@@ -550,7 +553,7 @@ export const set_notification_status = async (idSubscriber, notification_status)
     redirect: 'follow'
   };
 
-    await fetch("https://jrmovil.pythonanywhere.com/jr_api/cm/1.0/set_notification_status/", requestOptions)
+    await fetch(`${BASE_URL}/jr_api/cm/1.0/set_notification_status/`, requestOptions)
     .then(response => response.text())
     .then(
       (result) =>

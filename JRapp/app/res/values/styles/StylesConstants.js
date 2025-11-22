@@ -8,7 +8,7 @@
  let backgroundStyle;
  
  // JR Colors
- export const MAINCOLORS = ['#4a9462', '#2a2a2a', '#E89E20', 'black', 'grey'];
+ export const MAINCOLORS = ['#417690', '#2a2a2a', '#E89E20', 'black', 'grey'];
  export const MAINCOLORSLIGHT = ['#ddf4e7db', '#539190', 'grey', '#b6b7bd', '#DAEAE0']
 
  export const PRIMARY_TXT_COLOR = 'black'
@@ -60,7 +60,7 @@
  export const MAIN_CONTAINER_STYLE = 
  {
      flex:1,
-     backgroundColor: 'white'
+     backgroundColor: '#417690'
      //height: WINDOWS_HEIGHT,
  }
 

@@ -476,6 +476,7 @@ const Login = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: styleConst.MAIN_CONTAINER_STYLE.backgroundColor,
     },
     logoContainer: {
         padding: 20,
@@ -485,10 +486,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         flex: 1,
-        height: 90,
+        height: 180,
         margin: 30,
-        marginTop:80,
-        marginBottom:80
+        marginTop:60,
+        marginBottom:60
     },
     btnActionContainer: {
         paddingLeft: 20,
