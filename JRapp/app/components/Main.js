@@ -357,15 +357,15 @@ const MainContent = ({ navigation, route }) => {
 
     const [gbProduct, setGbProduct] = useState()
     // Oferta actual
-    const payload = !userData.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
-    const expireMBData = !userData.expireDate ? '' : userData.expireDate
+    const payload = !userData?.offeringId ? 'Sin Plan' : setProductName(userData.offeringId )
+    const expireMBData = !userData?.expireDate ? '' : userData.expireDate
     // MB
-    const unsuedMBData = !userData.unusedDataAmt ? '-' : userData.unusedDataAmt
-    const totalMBData = !userData.initialDataAmt ? '-' : userData.initialDataAmt
+    const unsuedMBData = !userData?.unusedDataAmt ? '-' : userData.unusedDataAmt
+    const totalMBData = !userData?.initialDataAmt ? '-' : userData.initialDataAmt
     //SMS
-    const unsuedSMSData = !userData.totalUnusedSMS ? '-' : userData.totalUnusedSMS
+    const unsuedSMSData = !userData?.totalUnusedSMS ? '-' : userData.totalUnusedSMS
     // Min
-    const unsuedMINData = !userData.totalUnusedMin ? '-' : userData.totalUnusedMin
+    const unsuedMINData = !userData?.totalUnusedMin ? '-' : userData.totalUnusedMin
 
 
 

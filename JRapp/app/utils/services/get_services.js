@@ -49,11 +49,11 @@ export const getPerfilUfAPI2 = async (idSubscriber, secret) => {
         //console.log("Services response.data : " + JSON.stringify(result.userData))
       })
       .catch(function (error) {
-        console.error('[Error] getServices - getPerfileUFApi : '+error.message);
+        console.error('[Error] getServices - getPerfilUfAPI2 : '+error.message);
         result.error = error.message;
       }).finally(function () {
         // always executed
-        console.info('[Info]  getServices - getPerfilUf Fin*')
+        console.info('[Info]  getServices - getPerfilUfAPI2 Fin*')
         result.statusResponse = true;
       });
   } catch (error) {
